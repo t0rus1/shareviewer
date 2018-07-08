@@ -10,12 +10,15 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace ShareViewer
 {
 
-    public static class ShareSite
+    internal static class ShareSite
     {
+        internal static int NumDownloadTasksActive=0;
+
         //gets 'Inhalt.txt' from remote Shares website 
         //and converts to list of strings
         public static List<String> GetDataDaysListing(AppUserSettings appUserSettings, String userName, String passWord)
@@ -66,18 +69,21 @@ namespace ShareViewer
            
         }
 
-        private static void DownloadFromStack(ConcurrentStack<String> cs, AppUserSettings appUserSettings, String userName, String passWord)
+        internal static void DownloadFromStack(ConcurrentStack<String> cs, AppUserSettings appUserSettings, 
+            String userName, String passWord)
         {
+            var url = appUserSettings.SharesUrl; //eg = "http://www.bsb-software.de/rese/";
+
             string item;
             if (cs.Count > 0 && cs.TryPop(out item))
             {
-                var url = appUserSettings.SharesUrl; //eg = "http://www.bsb-software.de/rese/";
-                var targetFile = item.Substring(0, 14); //2017_01_30.TXT
-
-                Match m = Regex.Match(item, @"\d{4}_\d{2}_\d{2}.TXT (\d+) ");
+                //NOTE, there may be a leading 'tick' at the beginning of item
+                //make sure to not let it mess up the file name!
+                Match m = Regex.Match(item, @"(\d{4}_\d{2}_\d{2}.TXT) (\d+) ");
                 if (m.Success)
                 {
-                    Int64 targetFileReportedSize = Convert.ToInt64(m.Groups[1].Value);
+                    string targetFile = m.Groups[1].Value;    
+                    Int64 targetFileReportedSize = Convert.ToInt64(m.Groups[2].Value);
                     var webResource = url + $"/{targetFile}";
                     var webClient = new WebClient();
                     webClient.Credentials = new NetworkCredential(userName, passWord);
@@ -88,37 +94,64 @@ namespace ShareViewer
                         try
                         {
                             var downloadTask = webClient.DownloadFileTaskAsync(webResource, localFilename);
+
                             var awaiter = downloadTask.GetAwaiter();
                             awaiter.OnCompleted(() =>
                             {
-                                Helper.DecrementProgressCountdown("progressBar1");
-                                Helper.TickListboxItem("listBoxLeft", item);
                                 Helper.Log("Info", $"{targetFile} downloaded.");
+                                Helper.DecrementProgressCountdown("progressBarDownload","labelBusyDownload");
 
+                                var totalFiles = 0;
+                                if (Helper.MarkListboxItem("listBoxInhalt", item, out totalFiles) == 0)
+                                {
+                                    Helper.Status($"Done. {totalFiles} files downloaded.");
+                                }
+                                //go get another (even if stack is empty, since we want to exit down below)
                                 DownloadFromStack(cs, appUserSettings, userName, passWord);
                             });
+
                         }
                         catch (Exception e)
                         {
                             Helper.LogStatus("Error", $"Exception: {e.Message}");
-                            throw;
+                            Helper.Log("Error", "Download terminated early.");
+                            cs.Clear();
+                            MessageBox.Show(e.Message, "An error ocurred - download will end early.", MessageBoxButtons.OK);
+                            cs.Clear();
                         }
                     }
                     else
                     {
-                        Helper.DecrementProgressCountdown("progressBar1");
-                        Helper.TickListboxItem("listBoxLeft", item);
-                        Helper.LogStatus("Warn", $"{targetFile} exists, skipping {targetFileReportedSize} size file");
+                        Helper.Log("Warn", $"{targetFile} exists, skipping file.");
+                        Helper.DecrementProgressCountdown("progressBarDownload", "labelBusyDownload");
+                        var totalFiles = 0;
+                        Helper.MarkListboxItem("listBoxInhalt", item, out totalFiles);
+                        //go get another (even if stack is empty, since we want to exit down below)
                         DownloadFromStack(cs, appUserSettings, userName, passWord);
                     }
                 }
                 else
                 {
-                    Helper.DecrementProgressCountdown("progressBar1");
                     Helper.LogStatus("Warn", $"skipping malformed entry {item}");
+                    Helper.DecrementProgressCountdown("progressBarDownload", "labelBusyDownload");
+                    //go get another (even if stack is empty, since we want to exit down below)
                     DownloadFromStack(cs, appUserSettings, userName, passWord);
                 }
 
+            }
+            else
+            {
+                if (cs.Count == 0)
+                {
+                    //exit route... for each concurrent task                   
+                    Helper.Log("Info",$"Exiting DownloadFromStack. NumDownloadTasksActive={NumDownloadTasksActive}");
+                    NumDownloadTasksActive--;
+                    if (NumDownloadTasksActive == 0)
+                    {
+                        LocalStore.TickOffListboxFileItems("listBoxInhalt", appUserSettings.ExtraFolder);
+                        Helper.HoldMajorActivity(false);
+                    }
+                }
             }
 
         }
@@ -126,10 +159,9 @@ namespace ShareViewer
         //downloads files currently referenced in the left hand list box
         public static void DownloadDayDataFiles(AppUserSettings appUserSettings, String userName, String passWord, ICollection items)
         {
-            var url = appUserSettings.SharesUrl; //eg = "http://www.bsb-software.de/rese/";
+            //var url = appUserSettings.SharesUrl; //eg = "http://www.bsb-software.de/rese/";
 
-            Helper.LogStatus("Info", $"downloading {items.Count} files from {url}");
-            // put items into a concurrent stack
+            // put items into a concurrent stack // eg ✔2017_01_06.TXT 24332169 06.01.2017 22:30:34 (leading tick mark not always there)
             ConcurrentStack<String> stack = new ConcurrentStack<string>();
             foreach (string item in items)
             {
@@ -139,8 +171,10 @@ namespace ShareViewer
             if (!stack.IsEmpty)
             {
                 //get 2 concurrent download chains going
+                NumDownloadTasksActive++;
                 DownloadFromStack(stack, appUserSettings, userName, passWord);
                 Thread.Sleep(1000);
+                NumDownloadTasksActive++;
                 DownloadFromStack(stack, appUserSettings, userName, passWord);
             }
 

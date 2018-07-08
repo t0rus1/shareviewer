@@ -37,8 +37,8 @@ namespace ShareViewer
             }
         }
 
-        //initialize a progressbar countdown, make it visible as well
-        internal static void InitProgressCountdown(string progressBarName, int count)
+        //initialize a progressbar countdown, make it and its partner Label visible as well
+        internal static void InitProgressCountdown(string progressBarName,string partnerLabel, int count)
         {
             var form = GetMainForm();
 
@@ -46,10 +46,12 @@ namespace ShareViewer
             progressBar.Maximum = count;
             progressBar.Value = count;
             progressBar.Visible = true;
+            var busyLabel = (Label)form.Controls.Find(partnerLabel, true).FirstOrDefault();
+            busyLabel.Visible = true;
         }
 
         //decrement a progressbar and hide it when it hits zero
-        internal static void DecrementProgressCountdown(string progressBarName)
+        internal static void DecrementProgressCountdown(string progressBarName, string partnerLabel)
         {
             var form = GetMainForm();
 
@@ -58,20 +60,27 @@ namespace ShareViewer
             if (progressBar.Value > 0)
             {
                 progressBar.Value -= 1;
-                if (progressBar.Value == 0) progressBar.Visible = false;
+                if (progressBar.Value == 0)
+                {
+                    progressBar.Visible = false;
+                    var busyLabel = (Label)form.Controls.Find(partnerLabel, true).FirstOrDefault();
+                    busyLabel.Visible = false;
+                }
             }
         }
 
-        internal static void TickListboxItem(string listBoxName, string item)
+        //selects passed in item and returns number of items remaining unselected.
+        //also returns totalItems as an out parameter
+        internal static int MarkListboxItem(string listBoxName, string item, out int totalItems)
         {
             var form = GetMainForm();
 
             var lb = (ListBox)form.Controls.Find(listBoxName, true).FirstOrDefault();
+            //note: '\x2714' = ✔
+            //note: item may have a leading ✔
             lb.SelectedIndex = lb.Items.IndexOf(item);
-            //char tick = '\x2714'; //✔
-            //string tickStr = $"{tick}";
-            //item.Replace(tickStr, "");
-            //lb.Items[lb.SelectedIndex] = $"{item} {tick}";
+            totalItems = lb.Items.Count;
+            return totalItems - lb.SelectedItems.Count;
         }
 
         internal static void SetProgressBarVisibility(string progressBarName, bool visible)
@@ -143,6 +152,21 @@ namespace ShareViewer
                 File.Move(fromPath, toPath);
             } // exits silently if not found
         }
+
+        //disable / enable some buttons
+        internal static void HoldMajorActivity(bool hold)
+        {
+            var form = GetMainForm();
+            ((Button)form.Controls.Find("buttonDayDataDownload", true)[0]).Enabled = !hold;
+            //((Button)form.Controls.Find("buttonNewShareList", true)[0]).Enabled = !hold;
+            ((GroupBox)form.Controls.Find("groupBoxSource", true)[0]).Enabled = !hold;
+
+            ((MonthCalendar)form.Controls.Find("calendarFrom", true)[0]).Enabled = !hold;
+            ((MonthCalendar)form.Controls.Find("calendarTo", true)[0]).Enabled = !hold;
+            ((NumericUpDown)form.Controls.Find("daysBack", true)[0]).Enabled = !hold;
+
+        }
+
 
     }
 }
