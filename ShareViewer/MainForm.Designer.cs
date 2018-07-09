@@ -42,8 +42,9 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.buttonLogin = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBoxSource = new System.Windows.Forms.GroupBox();
+            this.buttonLogin = new System.Windows.Forms.Button();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButtonSource = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -59,7 +60,7 @@
             this.calendarTo = new System.Windows.Forms.MonthCalendar();
             this.calendarFrom = new System.Windows.Forms.MonthCalendar();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.label2 = new System.Windows.Forms.Label();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabControlMain.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -74,6 +75,7 @@
             // 
             this.tabControlMain.Controls.Add(this.tabPage1);
             this.tabControlMain.Controls.Add(this.tabPage2);
+            this.tabControlMain.Controls.Add(this.tabPage3);
             this.tabControlMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlMain.Location = new System.Drawing.Point(0, 0);
             this.tabControlMain.Name = "tabControlMain";
@@ -236,16 +238,15 @@
             this.panel1.Size = new System.Drawing.Size(770, 215);
             this.panel1.TabIndex = 0;
             // 
-            // buttonLogin
+            // label2
             // 
-            this.buttonLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonLogin.Location = new System.Drawing.Point(1, 46);
-            this.buttonLogin.Name = "buttonLogin";
-            this.buttonLogin.Size = new System.Drawing.Size(248, 27);
-            this.buttonLogin.TabIndex = 5;
-            this.buttonLogin.Text = "Show Inhalt for Date range";
-            this.buttonLogin.UseVisualStyleBackColor = true;
-            this.buttonLogin.Click += new System.EventHandler(this.OnLogin);
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(1, 199);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(136, 13);
+            this.label2.TabIndex = 12;
+            this.label2.Text = "✔= file already downloaded";
             // 
             // groupBoxSource
             // 
@@ -258,6 +259,17 @@
             this.groupBoxSource.TabIndex = 10;
             this.groupBoxSource.TabStop = false;
             this.groupBoxSource.Text = "Inhalt Source";
+            // 
+            // buttonLogin
+            // 
+            this.buttonLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonLogin.Location = new System.Drawing.Point(1, 46);
+            this.buttonLogin.Name = "buttonLogin";
+            this.buttonLogin.Size = new System.Drawing.Size(248, 27);
+            this.buttonLogin.TabIndex = 5;
+            this.buttonLogin.Text = "Show Inhalt for Date range";
+            this.buttonLogin.UseVisualStyleBackColor = true;
+            this.buttonLogin.Click += new System.EventHandler(this.OnLogin);
             // 
             // radioButton2
             // 
@@ -408,17 +420,16 @@
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(776, 735);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "tabPage2";
+            this.tabPage2.Text = "All-table";
             // 
-            // label2
+            // tabPage3
             // 
-            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(1, 199);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(136, 13);
-            this.label2.TabIndex = 12;
-            this.label2.Text = "✔= file already downloaded";
+            this.tabPage3.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(776, 735);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Settings";
             // 
             // MainForm
             // 
@@ -483,6 +494,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label labelBusyDownload;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TabPage tabPage3;
     }
 }
 

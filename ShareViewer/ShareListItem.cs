@@ -12,12 +12,21 @@ namespace ShareViewer
         {
             number = shareNumber;
             name = shareName;
+            code = ""; // later
+            exchange = ""; // later
         }
 
-        private int number;
-        private String name;
-        internal int Number { get => number; set => number = value; }
         internal string Name { get => name; set => name = value; }
+        private String name;
+
+        internal int Number { get => number; set => number = value; }
+        private int number;
+
+        internal string Code { get => code; set => code = value; }
+        private string code;
+
+        internal string Exchange { get => exchange; set => exchange = value; }
+        private string exchange;
 
         public override string ToString()
         {

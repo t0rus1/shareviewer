@@ -38,6 +38,24 @@ namespace ShareViewer
         }
 
         [UserScopedSetting()]
+        [DefaultSettingValue("Default")]
+        public String AllTablesFolder
+        {
+            get
+            {
+                return ((String)this["AllTablesFolder"]);
+            }
+            set
+            {
+                //this is the value that ExtraFolder must be set to in user.config:                
+                //Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\ShareViewer\AllTables";
+                this["AllTablesFolder"] = (String)value;
+            }
+
+        }
+
+
+        [UserScopedSetting()]
         [DefaultSettingValue("http://www.bsb-software.de/rese/")]
         public string SharesUrl
         {

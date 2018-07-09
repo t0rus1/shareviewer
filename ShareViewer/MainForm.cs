@@ -31,14 +31,16 @@ namespace ShareViewer
             //C:\Users\User\AppData\Local\ShareViewer\ShareViewer.exe_Url_03nbdbcxshupknkk45nsaba23z5qq403\1.0.0.0\user.config
             appUserSettings = new AppUserSettings();
 
-            CheckSettings();
+            CheckExtraFolderSettings();
+            CheckAllTableFolderSettings();
+
             BindFormProperties();
             InitializeShareViewer();
             Helper.LogStatus("Info", "Ready");
         }
 
         //instantiate, load and bind app user settings
-        private void CheckSettings()
+        private void CheckExtraFolderSettings()
         {
             if (appUserSettings.ExtraFolder.Equals("Default"))
             {
@@ -60,7 +62,7 @@ namespace ShareViewer
             }
             catch (Exception e)
             {
-                string msg = "Exception thrown in OnLoad: CheckSettings";
+                string msg = "Exception thrown in OnLoad: CheckExtraFolderSettings";
                 Helper.Status(msg);
                 Program.log.Error(msg);
                 Program.log.Error(e.Message);
@@ -69,6 +71,39 @@ namespace ShareViewer
             }
 
         }
+
+        private void CheckAllTableFolderSettings()
+        {
+            if (appUserSettings.AllTablesFolder.Equals("Default"))
+            {
+                //not been set yet. set it to default and save.
+                appUserSettings.AllTablesFolder = Environment.CurrentDirectory + @"\AllTables";
+                appUserSettings.Save();
+            }
+            try
+            {
+                if (!Directory.Exists(appUserSettings.AllTablesFolder))
+                {
+                    Directory.CreateDirectory(appUserSettings.AllTablesFolder);
+                    Helper.LogStatus("Warn", $"AllTablesFolder {appUserSettings.AllTablesFolder} created");
+                }
+                else
+                {
+                    Helper.LogStatus("Info", $"AllTablesFolder {appUserSettings.AllTablesFolder} existing");
+                }
+            }
+            catch (Exception e)
+            {
+                string msg = "Exception thrown in OnLoad: CheckAllTableFolderSettings";
+                Helper.Status(msg);
+                Program.log.Error(msg);
+                Program.log.Error(e.Message);
+                MessageBox.Show($"Error relating to the 'AllTablesFolder' setting:\n{e.Message}");
+                //throw;
+            }
+
+        }
+
 
         private void BindFormProperties()
         {

@@ -136,7 +136,12 @@ namespace ShareViewer
 
         internal static String[] ReadShareList(AppUserSettings appUserSettings)
         {
-            return File.ReadAllLines(appUserSettings.ExtraFolder + @"\ShareList.txt");
+            var shareListFilename = appUserSettings.ExtraFolder + @"\ShareList.txt";
+            if (File.Exists(shareListFilename)) {
+                return File.ReadAllLines(shareListFilename);
+            }
+            return new string[] { };
+
         }
 
     }
