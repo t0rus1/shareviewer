@@ -124,6 +124,8 @@ namespace ShareViewer
             calendarFrom.SetDate(DateTime.Now.AddDays(-100));
             //load ShareList
             listBoxShareList.DataSource = LocalStore.ReadShareList(appUserSettings);
+            //possibly enable the New AllTables button
+            buttonNewAllTables.Enabled = listBoxShareList.Items.Count > 0;
         }
 
 
@@ -287,7 +289,8 @@ namespace ShareViewer
                     {
                         var sharesList = LocalStore.GenerateShareList(appUserSettings, selectedDayFile);
 
-                        listBoxShareList.DataSource = LocalStore.WriteShareList(appUserSettings, sharesList);
+                        listBoxShareList.DataSource = LocalStore.WriteShareList(appUserSettings, sharesList, selectedDayFile);
+                        buttonNewAllTables.Enabled = listBoxShareList.Items.Count > 0;
                     }
                 }
                 else
@@ -307,6 +310,82 @@ namespace ShareViewer
             //{
             //    buttonNewShareList.Enabled = true;
             //}
+        }
+
+        private void OnMakeNewAllTables(object sender, EventArgs e)
+        {
+            DateTime newestDate, oldestDate;
+            var numShares = listBoxShareList.Items.Count;
+            if ( numShares > 0)
+            {
+                LocalStore.GetDayDataRange(appUserSettings, out newestDate, out oldestDate);
+                if (newestDate > DateTime.MinValue && oldestDate <= newestDate) {
+                    var daysSpan = (newestDate - oldestDate).Days + 1;
+                    var msg = $"Generate NEW All-Table files for the current Share List?\n\n" +
+                              $"The most recent data on hand is {newestDate.ToShortDateString()}.\n" +
+                              $"The oldest data on hand is {oldestDate.ToShortDateString()}, (a {daysSpan} day span)\n\n" +
+                               "NOTE: A maximum of 100 most recent days will be processed!";
+                    if ((MessageBox.Show(msg, $"New All-Tables", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes))
+                    {
+                        //disable button
+                        buttonNewAllTables.Enabled = false;
+                        LocalStore.GenerateNewAllTables(appUserSettings, newestDate, 100);
+                        buttonNewAllTables.Enabled = true;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("No suitable day-data files were found","Cannot proceed",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                }
+            }
+        }
+
+        //user wants to look at a single share's All-Table in details
+        private void OnShareDoubleClicked(object sender, EventArgs e)
+        {
+            if (((ListBox)sender).SelectedIndex == 0) return;
+
+            string shareItem = ((ListBox)sender).SelectedItem.ToString();
+            Match m = Regex.Match(shareItem, @"(.+)\s(\d+)$");
+            if (m.Success)
+            {
+                string shareName = m.Groups[1].Value;
+                string shareNum = m.Groups[2].Value;
+                string allTableFilename = appUserSettings.AllTablesFolder + $"\\alltable_{shareNum}.at";
+                if (File.Exists(allTableFilename))
+                {
+                    var AtShareForm = new SingleAllTableForm(allTableFilename);
+                    AtShareForm.Text = $"[{shareNum}] {shareName}";
+                    AtShareForm.Show();
+                }
+                else
+                {
+                    MessageBox.Show($"All table for share {shareNum} not found.\nBe sure to generate it.", "Warning",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                }
+            }
+        }
+
+        private void OnSearchForShare(object sender, EventArgs e)
+        {
+            string quest = ((TextBox)sender).Text;
+            for (int i = 0; i < listBoxShareList.Items.Count; i++)
+            {
+                if (listBoxShareList.Items[i].ToString().EndsWith(quest))
+                {
+                    listBoxShareList.SelectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        //ensure only digits are typed into share search textbox
+        private void textBoxShareNumSearch_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Verify that the pressed key isn't CTRL or any non-numeric digit
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
+            {
+                e.Handled = true;
+            }
         }
     }
 }

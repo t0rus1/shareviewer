@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -166,6 +168,42 @@ namespace ShareViewer
             ((NumericUpDown)form.Controls.Find("daysBack", true)[0]).Enabled = !hold;
 
         }
+
+        internal static void SerializeAllTableRecord(FileStream fs, AllTable atRec)
+        {
+            // Construct a BinaryFormatter and use it to serialize the data to the stream.
+            BinaryFormatter formatter = new BinaryFormatter();
+            try
+            {
+                formatter.Serialize(fs, atRec);
+            }
+            catch (SerializationException e)
+            {
+                Helper.Log("Error", "Failed to serialize. Reason: " + e.Message);
+                throw;
+            }
+            //finally
+            //{
+            //    fs.Close();
+            //}
+        }
+
+        internal static ICollection<AllTable> DeserializeList<AllTable>(FileStream fs)
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            List<AllTable> list = new List<AllTable>();
+            while (fs.Position != fs.Length)
+            {
+                //deserialize each object in the file
+                var deserialized = (AllTable)bf.Deserialize(fs);
+                //add individual object to a list
+                list.Add(deserialized);
+            }
+            //return the list of objects
+            return list;
+        }
+
+
 
 
     }

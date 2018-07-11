@@ -29,8 +29,9 @@
         private void InitializeComponent()
         {
             this.tabControlMain = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPageImportation = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.buttonNewAllTables = new System.Windows.Forms.Button();
             this.labelBusyDownload = new System.Windows.Forms.Label();
             this.buttonNewShareList = new System.Windows.Forms.Button();
             this.buttonLogfile = new System.Windows.Forms.Button();
@@ -59,10 +60,11 @@
             this.label3 = new System.Windows.Forms.Label();
             this.calendarTo = new System.Windows.Forms.MonthCalendar();
             this.calendarFrom = new System.Windows.Forms.MonthCalendar();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tabPageSettings = new System.Windows.Forms.TabPage();
+            this.textBoxShareNumSearch = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.tabControlMain.SuspendLayout();
-            this.tabPage1.SuspendLayout();
+            this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -73,9 +75,8 @@
             // 
             // tabControlMain
             // 
-            this.tabControlMain.Controls.Add(this.tabPage1);
-            this.tabControlMain.Controls.Add(this.tabPage2);
-            this.tabControlMain.Controls.Add(this.tabPage3);
+            this.tabControlMain.Controls.Add(this.tabPageImportation);
+            this.tabControlMain.Controls.Add(this.tabPageSettings);
             this.tabControlMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlMain.Location = new System.Drawing.Point(0, 0);
             this.tabControlMain.Name = "tabControlMain";
@@ -83,22 +84,23 @@
             this.tabControlMain.Size = new System.Drawing.Size(784, 761);
             this.tabControlMain.TabIndex = 0;
             // 
-            // tabPage1
+            // tabPageImportation
             // 
-            this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
-            this.tabPage1.Controls.Add(this.panel2);
-            this.tabPage1.Controls.Add(this.statusStrip);
-            this.tabPage1.Controls.Add(this.panel1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(776, 735);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Importation";
+            this.tabPageImportation.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageImportation.Controls.Add(this.panel2);
+            this.tabPageImportation.Controls.Add(this.statusStrip);
+            this.tabPageImportation.Controls.Add(this.panel1);
+            this.tabPageImportation.Location = new System.Drawing.Point(4, 22);
+            this.tabPageImportation.Name = "tabPageImportation";
+            this.tabPageImportation.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageImportation.Size = new System.Drawing.Size(776, 735);
+            this.tabPageImportation.TabIndex = 0;
+            this.tabPageImportation.Text = "Importation";
             // 
             // panel2
             // 
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.buttonNewAllTables);
             this.panel2.Controls.Add(this.labelBusyDownload);
             this.panel2.Controls.Add(this.buttonNewShareList);
             this.panel2.Controls.Add(this.buttonLogfile);
@@ -112,6 +114,18 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(770, 492);
             this.panel2.TabIndex = 4;
+            // 
+            // buttonNewAllTables
+            // 
+            this.buttonNewAllTables.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.buttonNewAllTables.Enabled = false;
+            this.buttonNewAllTables.Location = new System.Drawing.Point(413, 141);
+            this.buttonNewAllTables.Name = "buttonNewAllTables";
+            this.buttonNewAllTables.Size = new System.Drawing.Size(75, 54);
+            this.buttonNewAllTables.TabIndex = 15;
+            this.buttonNewAllTables.Text = "Make New AllTables";
+            this.buttonNewAllTables.UseVisualStyleBackColor = true;
+            this.buttonNewAllTables.Click += new System.EventHandler(this.OnMakeNewAllTables);
             // 
             // labelBusyDownload
             // 
@@ -191,6 +205,7 @@
             this.listBoxShareList.Sorted = true;
             this.listBoxShareList.TabIndex = 14;
             this.listBoxShareList.ValueMember = "Number";
+            this.listBoxShareList.DoubleClick += new System.EventHandler(this.OnShareDoubleClicked);
             // 
             // listBoxInhalt
             // 
@@ -222,6 +237,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label8);
+            this.panel1.Controls.Add(this.textBoxShareNumSearch);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.groupBoxSource);
             this.panel1.Controls.Add(this.groupBox2);
@@ -347,7 +364,7 @@
             this.label7.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(689, 192);
+            this.label7.Location = new System.Drawing.Point(496, 192);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(81, 20);
             this.label7.TabIndex = 9;
@@ -412,24 +429,34 @@
             this.calendarFrom.TabIndex = 6;
             this.calendarFrom.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.FromDateChanged);
             // 
-            // tabPage2
+            // tabPageSettings
             // 
-            this.tabPage2.BackColor = System.Drawing.SystemColors.Control;
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(776, 735);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "All-table";
+            this.tabPageSettings.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSettings.Name = "tabPageSettings";
+            this.tabPageSettings.Size = new System.Drawing.Size(776, 735);
+            this.tabPageSettings.TabIndex = 2;
+            this.tabPageSettings.Text = "Settings";
             // 
-            // tabPage3
+            // textBoxShareNumSearch
             // 
-            this.tabPage3.BackColor = System.Drawing.SystemColors.Control;
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(776, 735);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Settings";
+            this.textBoxShareNumSearch.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.textBoxShareNumSearch.Location = new System.Drawing.Point(714, 193);
+            this.textBoxShareNumSearch.Name = "textBoxShareNumSearch";
+            this.textBoxShareNumSearch.Size = new System.Drawing.Size(50, 20);
+            this.textBoxShareNumSearch.TabIndex = 13;
+            this.textBoxShareNumSearch.TextChanged += new System.EventHandler(this.OnSearchForShare);
+            this.textBoxShareNumSearch.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxShareNumSearch_KeyPress);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(632, 196);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(78, 13);
+            this.label8.TabIndex = 14;
+            this.label8.Text = "search share #";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // MainForm
             // 
@@ -443,8 +470,8 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClose);
             this.Load += new System.EventHandler(this.OnLoad);
             this.tabControlMain.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
+            this.tabPageImportation.ResumeLayout(false);
+            this.tabPageImportation.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.statusStrip.ResumeLayout(false);
@@ -463,8 +490,7 @@
         #endregion
 
         private System.Windows.Forms.TabControl tabControlMain;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage tabPageImportation;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
@@ -494,7 +520,10 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label labelBusyDownload;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabPage tabPageSettings;
+        private System.Windows.Forms.Button buttonNewAllTables;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox textBoxShareNumSearch;
     }
 }
 
