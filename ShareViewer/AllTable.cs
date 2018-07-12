@@ -67,22 +67,22 @@ namespace ShareViewer
         private double col_46;
         private double col_47;
         private double col_48;
-        private double fV; // XXXXXXX (Sum of the Volume of the Five minutes section: Five minutes volume)
+        private UInt32 fV; // XXXXXXX (Sum of the Volume of the Five minutes section: Five minutes volume)
         private double col_50;
         //cols 51-60
-        private double sVa; //XXXXXXX (Slow Volume a)
+        private UInt32 sVa; //XXXXXXX (Slow Volume a)
         private double aPSVac; //XXX,X (Self adjusting parameter c)
         private double sVFac; //X,XXXXXX (Slow Volume Figure)
         private double col_54; // 54 Do ignore: 
-        private double sVb; //XXXXXXX (Slow Volume b)
+        private UInt32 sVb; //XXXXXXX (Slow Volume b)
         private double aPSVbd; //XXX,X (Self adjusting parameter)
         private double sVFbd; //X,XXXXXX (Slow Volume Figure)
         private double col_58;
-        private double sVc; //XXXXXXX (Slow volume c)
+        private UInt32 sVc; //XXXXXXX (Slow volume c)
         private double rPGFV; //XXX,X (Related PGF volume Figure)
         //cols 61-70
         private double col_61;
-        private double sVd; //XXXXXXX (Slow volume d)
+        private UInt32 sVd; //XXXXXXX (Slow volume d)
         private double col_63;
         private double ptsGradA; // XXX,X (Points Gradient a)
         private double col_65;
@@ -162,22 +162,22 @@ namespace ShareViewer
         public double Col_46 { get => col_46; set => col_46 = value; }
         public double Col_47 { get => col_47; set => col_47 = value; }
         public double Col_48 { get => col_48; set => col_48 = value; }
-        public double FV { get => fV; set => fV = value; }
+        public UInt32 FV { get => fV; set => fV = value; }
         public double Col_50 { get => col_50; set => col_50 = value; }
         //51-60
-        public double SVa { get => sVa; set => sVa = value; }
+        public UInt32 SVa { get => sVa; set => sVa = value; }
         public double APSVac { get => aPSVac; set => aPSVac = value; }
         public double SVFac { get => sVFac; set => sVFac = value; }
         public double Col_54 { get => col_54; set => col_54 = value; }
-        public double SVb { get => sVb; set => sVb = value; }
+        public UInt32 SVb { get => sVb; set => sVb = value; }
         public double APSVbd { get => aPSVbd; set => aPSVbd = value; }
         public double SVFbd { get => sVFbd; set => sVFbd = value; }
         public double Col_58 { get => col_58; set => col_58 = value; }
-        public double SVc { get => sVc; set => sVc = value; }
+        public UInt32 SVc { get => sVc; set => sVc = value; }
         public double RPGFV { get => rPGFV; set => rPGFV = value; }
         //61-70
         public double Col_61 { get => col_61; set => col_61 = value; }
-        public double SVd { get => sVd; set => sVd = value; }
+        public UInt32 SVd { get => sVd; set => sVd = value; }
         public double Col_63 { get => col_63; set => col_63 = value; }
         public double PtsGradA { get => ptsGradA; set => ptsGradA = value; }
         public double Col_65 { get => col_65; set => col_65 = value; }
@@ -270,24 +270,24 @@ namespace ShareViewer
             at.Col_46 = 1;
             at.Col_47 = 1;
             at.Col_48 = 1;
-            //public double FV; // XXXXXXX (Sum of the Volume of the Five minutes section: Five minutes volume)
+            //public UInt32 FV; // XXXXXXX (Sum of the Volume of the Five minutes section: Five minutes volume)
             at.Col_50 = 1;
 
             //cols 51-60
-            //public double SVa; //XXXXXXX (Slow Volume a)
+            //public UInt32 SVa; //XXXXXXX (Slow Volume a)
             //public double APSVac; //XXX,X (Self adjusting parameter c)
             //public double SVFac; //X,XXXXXX (Slow Volume Figure)
             at.Col_54 = 1; // 54 Do ignore: 
-            //public double SVb; //XXXXXXX (Slow Volume b)
+            //public UInt32 SVb; //XXXXXXX (Slow Volume b)
             //public double APSVbd; //XXX,X (Self adjusting parameter)
             //public double SVFbd; //X,XXXXXX (Slow Volume Figure)
             at.Col_58 = 1;
-            //public double SVc; //XXXXXXX (Slow volume c)
+            //public UInt32 SVc; //XXXXXXX (Slow volume c)
             //public double RPGFV; //XXX,X (Related PGF volume Figure)
 
             //cols 61-70
             at.Col_61 = 1;
-            //public double SVd; //XXXXXXX (Slow volume d)
+            //public UInt32 SVd; //XXXXXXX (Slow volume d)
             at.Col_63 = 1;
             //public double PtsGradA; // XXX,X (Points Gradient a)
             at.Col_65 = 0; // <--------------------------------------------- prefilling changes to zero

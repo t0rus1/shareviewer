@@ -84,6 +84,36 @@ namespace ShareViewer
 
         }
 
+        [UserScopedSetting()]
+        [DefaultSettingValue("")]
+        public String AllTableDataStart
+        {
+            get
+            {
+                return ((String)this["AllTableDataStart"]);
+            }
+            set
+            {
+                this["AllTableDataStart"] = (String)value;
+            }
+
+        }
+
+        [UserScopedSetting()]
+        [DefaultSettingValue("")]
+        public String AllTableDataEnd
+        {
+            get
+            {
+                return ((String)this["AllTableDataEnd"]);
+            }
+            set
+            {
+                this["AllTableDataEnd"] = (String)value;
+            }
+
+        }
+
 
     }
 }

@@ -16,7 +16,7 @@ namespace ShareViewer
     public partial class MainForm : Form
     {
 
-        AppUserSettings appUserSettings;
+        internal AppUserSettings appUserSettings;
 
         public MainForm()
         {
@@ -123,7 +123,7 @@ namespace ShareViewer
             //set From date initially to 100 days back
             calendarFrom.SetDate(DateTime.Now.AddDays(-100));
             //load ShareList
-            listBoxShareList.DataSource = LocalStore.ReadShareList(appUserSettings);
+            listBoxShareList.DataSource = LocalStore.ReadShareList();
             //possibly enable the New AllTables button
             buttonNewAllTables.Enabled = listBoxShareList.Items.Count > 0;
         }
@@ -144,7 +144,7 @@ namespace ShareViewer
             }
             catch (ArgumentException exc)
             {
-                MessageBox.Show(exc.Message,"Calendar");
+                MessageBox.Show(exc.Message, "Calendar");
             }
         }
 
@@ -156,12 +156,12 @@ namespace ShareViewer
             if (whichSource.Text.Equals("internet"))
             {
                 //retrieve 'inhalt.txt' file from shares site and bind left list box to lines within the file
-                dataDaysList = ShareSite.GetDataDaysListing(appUserSettings, textBoxUsername.Text, textBoxPassword.Text);
+                dataDaysList = ShareSite.GetDataDaysListing(textBoxUsername.Text, textBoxPassword.Text);
             }
             else
             {
                 //read local inhalt file
-                dataDaysList = LocalStore.GetDataDaysListing(appUserSettings);
+                dataDaysList = LocalStore.GetDataDaysListing();
             }
 
             buttonNewShareList.Enabled = (dataDaysList.Count > 0);
@@ -192,7 +192,7 @@ namespace ShareViewer
                 }
                 catch (Exception e)
                 {
-                    Helper.LogStatus("Warn",$"entry {entry} skipped");
+                    Helper.LogStatus("Warn", $"entry {entry} skipped");
                     //throw;
                 }
             }
@@ -238,15 +238,15 @@ namespace ShareViewer
             }
             else
             {
-                if ((MessageBox.Show($"Download {listBoxInhalt.Items.Count} files?", "Confirmation required",  
+                if ((MessageBox.Show($"Download {listBoxInhalt.Items.Count} files?", "Confirmation required",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes))
                 {
 
                     Helper.InitProgressCountdown("progressBarDownload", "labelBusyDownload", listBoxInhalt.Items.Count);
                     listBoxInhalt.ClearSelected();
-                    Helper.HoldMajorActivity(true); //reversed once all files downloaded
+                    Helper.HoldWhileDownloadingDayData(true); //reversed once all files downloaded
                     // downloads take place as async tasks
-                    ShareSite.DownloadDayDataFiles(appUserSettings, textBoxUsername.Text, textBoxPassword.Text, listBoxInhalt.Items);
+                    ShareSite.DownloadDayDataFiles(textBoxUsername.Text, textBoxPassword.Text, listBoxInhalt.Items);
                 }
             }
         }
@@ -287,9 +287,9 @@ namespace ShareViewer
                     $"Generation from {selectedDayFile}",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes))
                     {
-                        var sharesList = LocalStore.GenerateShareList(appUserSettings, selectedDayFile);
+                        var sharesList = LocalStore.GenerateShareList(selectedDayFile);
 
-                        listBoxShareList.DataSource = LocalStore.WriteShareList(appUserSettings, sharesList, selectedDayFile);
+                        listBoxShareList.DataSource = LocalStore.WriteShareList(sharesList, selectedDayFile);
                         buttonNewAllTables.Enabled = listBoxShareList.Items.Count > 0;
                     }
                 }
@@ -318,7 +318,8 @@ namespace ShareViewer
             var numShares = listBoxShareList.Items.Count;
             if ( numShares > 0)
             {
-                LocalStore.GetDayDataRange(appUserSettings, out newestDate, out oldestDate);
+                LocalStore.GetDayDataRange(out newestDate, out oldestDate);
+
                 if (newestDate > DateTime.MinValue && oldestDate <= newestDate) {
                     var daysSpan = (newestDate - oldestDate).Days + 1;
                     var msg = $"Generate NEW All-Table files for the current Share List?\n\n" +
@@ -327,10 +328,12 @@ namespace ShareViewer
                                "NOTE: A maximum of 100 most recent days will be processed!";
                     if ((MessageBox.Show(msg, $"New All-Tables", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes))
                     {
-                        //disable button
-                        buttonNewAllTables.Enabled = false;
-                        LocalStore.GenerateNewAllTables(appUserSettings, newestDate, 100);
-                        buttonNewAllTables.Enabled = true;
+                        //put some buttons on hold, make progress bar visible etc..
+                        Helper.HoldWhileGeneratingNewAllTables(true);
+                        Helper.LogStatus("Info", "New All-Tables generation task started");
+
+                        LocalStore.GenerateNewAllTables(newestDate, 99); //will queue up a lot of tasks!
+
                     }
                 }
                 else

@@ -17,12 +17,25 @@ namespace ShareViewer
         {
             return (MainForm)Application.OpenForms["MainForm"];
         }
-        
+
+        internal static AppUserSettings GetAppUserSettings()
+        {
+            var form = GetMainForm();
+            return ((MainForm)form).appUserSettings;
+
+        }
+
         //place message on status strip
         internal static void Status(string msg)
         {
             var form = GetMainForm();
             form.statusStrip.Items["stripText"].Text = msg;
+        }
+
+        internal static void UpdateNewAllTableGenerationProgress(string msg)
+        {
+            var form = GetMainForm();
+            ((MainForm)form).labelGenNewAllTables.Text = msg;
         }
 
 
@@ -156,16 +169,40 @@ namespace ShareViewer
         }
 
         //disable / enable some buttons
-        internal static void HoldMajorActivity(bool hold)
+        internal static void HoldWhileDownloadingDayData(bool hold)
         {
             var form = GetMainForm();
             ((Button)form.Controls.Find("buttonDayDataDownload", true)[0]).Enabled = !hold;
             //((Button)form.Controls.Find("buttonNewShareList", true)[0]).Enabled = !hold;
             ((GroupBox)form.Controls.Find("groupBoxSource", true)[0]).Enabled = !hold;
+            ((Button)form.Controls.Find("buttonNewAllTables", true)[0]).Enabled = !hold;
+            ((TextBox)form.Controls.Find("textBoxShareNumSearch", true)[0]).Enabled = !hold;
 
             ((MonthCalendar)form.Controls.Find("calendarFrom", true)[0]).Enabled = !hold;
             ((MonthCalendar)form.Controls.Find("calendarTo", true)[0]).Enabled = !hold;
             ((NumericUpDown)form.Controls.Find("daysBack", true)[0]).Enabled = !hold;
+
+        }
+
+        //disable / enable some buttons
+        internal static void HoldWhileGeneratingNewAllTables(bool hold)
+        {
+            var form = GetMainForm();
+            ((Button)form.Controls.Find("buttonDayDataDownload", true)[0]).Enabled = !hold;
+            ((Button)form.Controls.Find("buttonNewShareList", true)[0]).Enabled = !hold;
+            ((ListBox)form.Controls.Find("listBoxShareList", true)[0]).Enabled = !hold;
+            ((TextBox)form.Controls.Find("textBoxShareNumSearch", true)[0]).Enabled = !hold;
+
+            ((GroupBox)form.Controls.Find("groupBoxSource", true)[0]).Enabled = !hold;
+            ((Button)form.Controls.Find("buttonNewAllTables", true)[0]).Enabled = !hold;
+
+            ((MonthCalendar)form.Controls.Find("calendarFrom", true)[0]).Enabled = !hold;
+            ((MonthCalendar)form.Controls.Find("calendarTo", true)[0]).Enabled = !hold;
+            ((NumericUpDown)form.Controls.Find("daysBack", true)[0]).Enabled = !hold;
+
+            //make progressBar and paired label visible/not
+            ((ProgressBar)form.Controls.Find("progressBarGenNewAllTables", true)[0]).Visible = hold;
+            ((Label)form.Controls.Find("labelGenNewAllTables", true)[0]).Visible = hold;
 
         }
 

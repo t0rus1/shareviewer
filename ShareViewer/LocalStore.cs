@@ -18,8 +18,9 @@ namespace ShareViewer
     {
         //gets 'Inhalt.txt' from local ExtraFolder  
         //and converts to list of strings
-        internal static List<String> GetDataDaysListing(AppUserSettings appUserSettings)
+        internal static List<String> GetDataDaysListing()
         {
+            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
 
             var localFilename = appUserSettings.ExtraFolder + @"\" + appUserSettings.DataDaysListingFilename;
 
@@ -77,8 +78,9 @@ namespace ShareViewer
         }
 
         //generate a new ShareList file
-        internal static List<ShareListItem> GenerateShareList(AppUserSettings appUserSettings, string sourceName)
+        internal static List<ShareListItem> GenerateShareList(string sourceName)
         {
+            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
             var shareList = new List<ShareListItem>();
 
             var sourceFilename = appUserSettings.ExtraFolder + @"\" + sourceName;
@@ -126,8 +128,10 @@ namespace ShareViewer
 
         }
 
-        internal static List<String> WriteShareList(AppUserSettings appUserSettings, List<ShareListItem> shareList, string basedOnDate)
+        internal static List<String> WriteShareList(List<ShareListItem> shareList, string basedOnDate)
         {
+            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
+
             var shares = from s in shareList
                          select s.ToString();
 
@@ -139,8 +143,9 @@ namespace ShareViewer
             return shareStrings;
         }
 
-        internal static String[] ReadShareList(AppUserSettings appUserSettings)
+        internal static String[] ReadShareList()
         {
+            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
             var shareListFilename = appUserSettings.ExtraFolder + @"\ShareList.txt";
             if (File.Exists(shareListFilename)) {
                 return File.ReadAllLines(shareListFilename);
@@ -149,8 +154,9 @@ namespace ShareViewer
 
         }
 
-        internal static void GetDayDataRange(AppUserSettings appUserSettings, out DateTime newest, out DateTime oldest)
+        internal static void GetDayDataRange(out DateTime newest, out DateTime oldest)
         {
+            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
             var directory = new DirectoryInfo(appUserSettings.ExtraFolder);
 
             var fileInfos = directory.GetFiles("????_??_??.TXT");
@@ -252,10 +258,13 @@ namespace ShareViewer
 
         private static void GenerateAllAllTables(DateTime newestDate, int backSpan, string atPath, string[] allShares)
         {
+            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
             //skip 1st informational line of sharelist and sweep thru the rest of the shares
             //building new All-table files
+            int numShares = allShares.Count() - 1;
+            int sharesDone = 0; 
             foreach (string share in allShares.Skip(1))
-            {
+            {                
                 Match m = Regex.Match(share, @"(.+)\s(\d+)$");
                 if (m.Success)
                 {
@@ -263,15 +272,43 @@ namespace ShareViewer
                     var shareNum = Convert.ToInt16(m.Groups[2].Value);
                     var allTableFile = atPath + @"\" + $"alltable_{shareNum}.at";
 
-                    GenerateSingleShareAllTable(allTableFile, newestDate, backSpan);
+                    var genTask = Task.Run(() =>
+                    {
+                        GenerateSingleShareAllTable(allTableFile, newestDate, backSpan);
+                    });
+                    var awaiter = genTask.GetAwaiter();
+                    awaiter.OnCompleted(() =>
+                    {
+                        sharesDone++;
+                        Helper.SetProgressBar("progressBarGenNewAllTables", sharesDone, numShares);
+                        var progressMsg = $"Share {shareName}...";
+                        Helper.UpdateNewAllTableGenerationProgress(progressMsg);
+                        Helper.Log("Info", progressMsg);
+                        
+                        if (sharesDone == numShares)
+                        {
+                            //re-enable buttons, hide progress bar etc
+                            Helper.HoldWhileGeneratingNewAllTables(false);
+                            Helper.LogStatus("Info", $"Task completed, {sharesDone} shares processed.");
+
+                            //store date range now held in the AllTables
+                            appUserSettings.AllTableDataEnd = newestDate.ToShortDateString();
+                            appUserSettings.AllTableDataStart = newestDate.AddDays(-backSpan).ToShortDateString();
+                            appUserSettings.Save();
+
+                        }
+
+                    });
+
 
                 }
             }
         }
 
         //Sweep thru the ShareList, creating one AllTable for each share, populated with initial values
-        internal static void GenerateNewAllTables(AppUserSettings appUserSettings, DateTime newestDate, int backSpan)
+        internal static void GenerateNewAllTables(DateTime newestDate, int backSpan)
         {
+            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
             var slPath = appUserSettings.ExtraFolder;
             var atPath = appUserSettings.AllTablesFolder;
 
@@ -294,6 +331,7 @@ namespace ShareViewer
             DeleteAllAllTables(atPath, allShares);
             GenerateAllAllTables(newestDate, backSpan, atPath, allShares);
         }
+
 
 
     }

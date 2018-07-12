@@ -21,8 +21,9 @@ namespace ShareViewer
 
         //gets 'Inhalt.txt' from remote Shares website 
         //and converts to list of strings
-        public static List<String> GetDataDaysListing(AppUserSettings appUserSettings, String userName, String passWord)
+        public static List<String> GetDataDaysListing(String userName, String passWord)
         {
+            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
 
             var url = appUserSettings.SharesUrl; //eg = "http://www.bsb-software.de/rese/";
             var remoteFilename = appUserSettings.DataDaysListingFilename;
@@ -69,9 +70,9 @@ namespace ShareViewer
            
         }
 
-        internal static void DownloadFromStack(ConcurrentStack<String> cs, AppUserSettings appUserSettings, 
-            String userName, String passWord)
+        internal static void DownloadFromStack(ConcurrentStack<String> cs, String userName, String passWord)
         {
+            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
             var url = appUserSettings.SharesUrl; //eg = "http://www.bsb-software.de/rese/";
 
             string item;
@@ -107,7 +108,7 @@ namespace ShareViewer
                                     Helper.Status($"Done. {totalFiles} files downloaded.");
                                 }
                                 //go get another (even if stack is empty, since we want to exit down below)
-                                DownloadFromStack(cs, appUserSettings, userName, passWord);
+                                DownloadFromStack(cs, userName, passWord);
                             });
 
                         }
@@ -127,7 +128,7 @@ namespace ShareViewer
                         var totalFiles = 0;
                         Helper.MarkListboxItem("listBoxInhalt", item, out totalFiles);
                         //go get another (even if stack is empty, since we want to exit down below)
-                        DownloadFromStack(cs, appUserSettings, userName, passWord);
+                        DownloadFromStack(cs, userName, passWord);
                     }
                 }
                 else
@@ -135,7 +136,7 @@ namespace ShareViewer
                     Helper.LogStatus("Warn", $"skipping malformed entry {item}");
                     Helper.DecrementProgressCountdown("progressBarDownload", "labelBusyDownload");
                     //go get another (even if stack is empty, since we want to exit down below)
-                    DownloadFromStack(cs, appUserSettings, userName, passWord);
+                    DownloadFromStack(cs, userName, passWord);
                 }
 
             }
@@ -149,7 +150,7 @@ namespace ShareViewer
                     if (NumDownloadTasksActive == 0)
                     {
                         LocalStore.TickOffListboxFileItems("listBoxInhalt", appUserSettings.ExtraFolder);
-                        Helper.HoldMajorActivity(false);
+                        Helper.HoldWhileDownloadingDayData(false);
                     }
                 }
             }
@@ -157,8 +158,9 @@ namespace ShareViewer
         }
 
         //downloads files currently referenced in the left hand list box
-        public static void DownloadDayDataFiles(AppUserSettings appUserSettings, String userName, String passWord, ICollection items)
+        public static void DownloadDayDataFiles(String userName, String passWord, ICollection items)
         {
+            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
             //var url = appUserSettings.SharesUrl; //eg = "http://www.bsb-software.de/rese/";
 
             // put items into a concurrent stack // eg ✔2017_01_06.TXT 24332169 06.01.2017 22:30:34 (leading tick mark not always there)
@@ -172,10 +174,10 @@ namespace ShareViewer
             {
                 //get 2 concurrent download chains going
                 NumDownloadTasksActive++;
-                DownloadFromStack(stack, appUserSettings, userName, passWord);
+                DownloadFromStack(stack, userName, passWord);
                 Thread.Sleep(1000);
                 NumDownloadTasksActive++;
-                DownloadFromStack(stack, appUserSettings, userName, passWord);
+                DownloadFromStack(stack, userName, passWord);
             }
 
         }

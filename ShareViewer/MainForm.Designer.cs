@@ -31,6 +31,8 @@
             this.tabControlMain = new System.Windows.Forms.TabControl();
             this.tabPageImportation = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.labelGenNewAllTables = new System.Windows.Forms.Label();
+            this.progressBarGenNewAllTables = new System.Windows.Forms.ProgressBar();
             this.buttonNewAllTables = new System.Windows.Forms.Button();
             this.labelBusyDownload = new System.Windows.Forms.Label();
             this.buttonNewShareList = new System.Windows.Forms.Button();
@@ -43,6 +45,8 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label8 = new System.Windows.Forms.Label();
+            this.textBoxShareNumSearch = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBoxSource = new System.Windows.Forms.GroupBox();
             this.buttonLogin = new System.Windows.Forms.Button();
@@ -61,8 +65,6 @@
             this.calendarTo = new System.Windows.Forms.MonthCalendar();
             this.calendarFrom = new System.Windows.Forms.MonthCalendar();
             this.tabPageSettings = new System.Windows.Forms.TabPage();
-            this.textBoxShareNumSearch = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -81,7 +83,7 @@
             this.tabControlMain.Location = new System.Drawing.Point(0, 0);
             this.tabControlMain.Name = "tabControlMain";
             this.tabControlMain.SelectedIndex = 0;
-            this.tabControlMain.Size = new System.Drawing.Size(784, 761);
+            this.tabControlMain.Size = new System.Drawing.Size(984, 761);
             this.tabControlMain.TabIndex = 0;
             // 
             // tabPageImportation
@@ -93,13 +95,15 @@
             this.tabPageImportation.Location = new System.Drawing.Point(4, 22);
             this.tabPageImportation.Name = "tabPageImportation";
             this.tabPageImportation.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageImportation.Size = new System.Drawing.Size(776, 735);
+            this.tabPageImportation.Size = new System.Drawing.Size(976, 735);
             this.tabPageImportation.TabIndex = 0;
             this.tabPageImportation.Text = "Importation";
             // 
             // panel2
             // 
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.labelGenNewAllTables);
+            this.panel2.Controls.Add(this.progressBarGenNewAllTables);
             this.panel2.Controls.Add(this.buttonNewAllTables);
             this.panel2.Controls.Add(this.labelBusyDownload);
             this.panel2.Controls.Add(this.buttonNewShareList);
@@ -112,26 +116,48 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(3, 218);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(770, 492);
+            this.panel2.Size = new System.Drawing.Size(970, 492);
             this.panel2.TabIndex = 4;
+            // 
+            // labelGenNewAllTables
+            // 
+            this.labelGenNewAllTables.AutoSize = true;
+            this.labelGenNewAllTables.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.labelGenNewAllTables.ForeColor = System.Drawing.Color.ForestGreen;
+            this.labelGenNewAllTables.Location = new System.Drawing.Point(299, 336);
+            this.labelGenNewAllTables.Name = "labelGenNewAllTables";
+            this.labelGenNewAllTables.Size = new System.Drawing.Size(56, 13);
+            this.labelGenNewAllTables.TabIndex = 17;
+            this.labelGenNewAllTables.Text = "progress...";
+            this.labelGenNewAllTables.Visible = false;
+            // 
+            // progressBarGenNewAllTables
+            // 
+            this.progressBarGenNewAllTables.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.progressBarGenNewAllTables.Location = new System.Drawing.Point(299, 349);
+            this.progressBarGenNewAllTables.Name = "progressBarGenNewAllTables";
+            this.progressBarGenNewAllTables.Size = new System.Drawing.Size(395, 23);
+            this.progressBarGenNewAllTables.TabIndex = 16;
+            this.progressBarGenNewAllTables.Visible = false;
             // 
             // buttonNewAllTables
             // 
-            this.buttonNewAllTables.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.buttonNewAllTables.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.buttonNewAllTables.Enabled = false;
-            this.buttonNewAllTables.Location = new System.Drawing.Point(413, 141);
+            this.buttonNewAllTables.Location = new System.Drawing.Point(299, 372);
             this.buttonNewAllTables.Name = "buttonNewAllTables";
-            this.buttonNewAllTables.Size = new System.Drawing.Size(75, 54);
+            this.buttonNewAllTables.Size = new System.Drawing.Size(395, 72);
             this.buttonNewAllTables.TabIndex = 15;
-            this.buttonNewAllTables.Text = "Make New AllTables";
+            this.buttonNewAllTables.Text = "Prepare New All-Tables per the ShareList";
             this.buttonNewAllTables.UseVisualStyleBackColor = true;
             this.buttonNewAllTables.Click += new System.EventHandler(this.OnMakeNewAllTables);
             // 
             // labelBusyDownload
             // 
             this.labelBusyDownload.AutoSize = true;
+            this.labelBusyDownload.Dock = System.Windows.Forms.DockStyle.Top;
             this.labelBusyDownload.ForeColor = System.Drawing.Color.ForestGreen;
-            this.labelBusyDownload.Location = new System.Drawing.Point(308, 67);
+            this.labelBusyDownload.Location = new System.Drawing.Point(299, 46);
             this.labelBusyDownload.Name = "labelBusyDownload";
             this.labelBusyDownload.Size = new System.Drawing.Size(115, 13);
             this.labelBusyDownload.TabIndex = 11;
@@ -140,11 +166,11 @@
             // 
             // buttonNewShareList
             // 
-            this.buttonNewShareList.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.buttonNewShareList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonNewShareList.Enabled = false;
             this.buttonNewShareList.Location = new System.Drawing.Point(305, 89);
             this.buttonNewShareList.Name = "buttonNewShareList";
-            this.buttonNewShareList.Size = new System.Drawing.Size(183, 23);
+            this.buttonNewShareList.Size = new System.Drawing.Size(383, 23);
             this.buttonNewShareList.TabIndex = 11;
             this.buttonNewShareList.Text = "New Share List";
             this.buttonNewShareList.UseVisualStyleBackColor = true;
@@ -155,7 +181,7 @@
             this.buttonLogfile.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.buttonLogfile.Location = new System.Drawing.Point(299, 444);
             this.buttonLogfile.Name = "buttonLogfile";
-            this.buttonLogfile.Size = new System.Drawing.Size(195, 23);
+            this.buttonLogfile.Size = new System.Drawing.Size(395, 23);
             this.buttonLogfile.TabIndex = 12;
             this.buttonLogfile.Text = "Open Logfile Folder";
             this.buttonLogfile.UseVisualStyleBackColor = true;
@@ -166,7 +192,7 @@
             this.buttonExplorer.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.buttonExplorer.Location = new System.Drawing.Point(299, 467);
             this.buttonExplorer.Name = "buttonExplorer";
-            this.buttonExplorer.Size = new System.Drawing.Size(195, 23);
+            this.buttonExplorer.Size = new System.Drawing.Size(395, 23);
             this.buttonExplorer.TabIndex = 13;
             this.buttonExplorer.Text = "Open Extra Folder";
             this.buttonExplorer.UseVisualStyleBackColor = true;
@@ -174,18 +200,20 @@
             // 
             // progressBarDownload
             // 
-            this.progressBarDownload.Location = new System.Drawing.Point(305, 41);
+            this.progressBarDownload.Dock = System.Windows.Forms.DockStyle.Top;
+            this.progressBarDownload.Location = new System.Drawing.Point(299, 23);
             this.progressBarDownload.Name = "progressBarDownload";
-            this.progressBarDownload.Size = new System.Drawing.Size(183, 23);
+            this.progressBarDownload.Size = new System.Drawing.Size(395, 23);
             this.progressBarDownload.TabIndex = 3;
             this.progressBarDownload.Visible = false;
             // 
             // buttonDayDataDownload
             // 
+            this.buttonDayDataDownload.Dock = System.Windows.Forms.DockStyle.Top;
             this.buttonDayDataDownload.Enabled = false;
-            this.buttonDayDataDownload.Location = new System.Drawing.Point(305, 12);
+            this.buttonDayDataDownload.Location = new System.Drawing.Point(299, 0);
             this.buttonDayDataDownload.Name = "buttonDayDataDownload";
-            this.buttonDayDataDownload.Size = new System.Drawing.Size(183, 23);
+            this.buttonDayDataDownload.Size = new System.Drawing.Size(395, 23);
             this.buttonDayDataDownload.TabIndex = 10;
             this.buttonDayDataDownload.Text = "Download data files";
             this.buttonDayDataDownload.UseVisualStyleBackColor = true;
@@ -198,7 +226,7 @@
             this.listBoxShareList.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listBoxShareList.FormattingEnabled = true;
             this.listBoxShareList.ItemHeight = 11;
-            this.listBoxShareList.Location = new System.Drawing.Point(494, 0);
+            this.listBoxShareList.Location = new System.Drawing.Point(694, 0);
             this.listBoxShareList.Name = "listBoxShareList";
             this.listBoxShareList.ScrollAlwaysVisible = true;
             this.listBoxShareList.Size = new System.Drawing.Size(274, 490);
@@ -226,7 +254,7 @@
             this.stripText});
             this.statusStrip.Location = new System.Drawing.Point(3, 710);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(770, 22);
+            this.statusStrip.Size = new System.Drawing.Size(970, 22);
             this.statusStrip.TabIndex = 3;
             // 
             // stripText
@@ -252,8 +280,29 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(770, 215);
+            this.panel1.Size = new System.Drawing.Size(970, 215);
             this.panel1.TabIndex = 0;
+            // 
+            // label8
+            // 
+            this.label8.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(832, 196);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(78, 13);
+            this.label8.TabIndex = 14;
+            this.label8.Text = "search share #";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // textBoxShareNumSearch
+            // 
+            this.textBoxShareNumSearch.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.textBoxShareNumSearch.Location = new System.Drawing.Point(914, 193);
+            this.textBoxShareNumSearch.Name = "textBoxShareNumSearch";
+            this.textBoxShareNumSearch.Size = new System.Drawing.Size(50, 20);
+            this.textBoxShareNumSearch.TabIndex = 13;
+            this.textBoxShareNumSearch.TextChanged += new System.EventHandler(this.OnSearchForShare);
+            this.textBoxShareNumSearch.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxShareNumSearch_KeyPress);
             // 
             // label2
             // 
@@ -364,7 +413,7 @@
             this.label7.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(496, 192);
+            this.label7.Location = new System.Drawing.Point(696, 192);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(81, 20);
             this.label7.TabIndex = 9;
@@ -434,39 +483,19 @@
             this.tabPageSettings.BackColor = System.Drawing.SystemColors.Control;
             this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
             this.tabPageSettings.Name = "tabPageSettings";
-            this.tabPageSettings.Size = new System.Drawing.Size(776, 735);
+            this.tabPageSettings.Size = new System.Drawing.Size(976, 735);
             this.tabPageSettings.TabIndex = 2;
             this.tabPageSettings.Text = "Settings";
-            // 
-            // textBoxShareNumSearch
-            // 
-            this.textBoxShareNumSearch.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.textBoxShareNumSearch.Location = new System.Drawing.Point(714, 193);
-            this.textBoxShareNumSearch.Name = "textBoxShareNumSearch";
-            this.textBoxShareNumSearch.Size = new System.Drawing.Size(50, 20);
-            this.textBoxShareNumSearch.TabIndex = 13;
-            this.textBoxShareNumSearch.TextChanged += new System.EventHandler(this.OnSearchForShare);
-            this.textBoxShareNumSearch.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxShareNumSearch_KeyPress);
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(632, 196);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(78, 13);
-            this.label8.TabIndex = 14;
-            this.label8.Text = "search share #";
-            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(784, 761);
+            this.ClientSize = new System.Drawing.Size(984, 761);
             this.Controls.Add(this.tabControlMain);
             this.Name = "MainForm";
-            this.Text = "ShareViewer";
+            this.Text = "ShareViewer v 0.0.1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClose);
             this.Load += new System.EventHandler(this.OnLoad);
             this.tabControlMain.ResumeLayout(false);
@@ -524,6 +553,8 @@
         private System.Windows.Forms.Button buttonNewAllTables;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox textBoxShareNumSearch;
+        internal System.Windows.Forms.ProgressBar progressBarGenNewAllTables;
+        internal System.Windows.Forms.Label labelGenNewAllTables;
     }
 }
 
