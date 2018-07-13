@@ -203,6 +203,10 @@ namespace ShareViewer
         public double SumRow1Only { get => sumRow1Only; set => sumRow1Only = value; }
         public double SameAs83DiffTreatment { get => sameAs83DiffTreatment; set => sameAs83DiffTreatment = value; }
 
+        public override String ToString()
+        {
+            return $"{date},{f},{fP},{fV}";
+        }
 
     }
 

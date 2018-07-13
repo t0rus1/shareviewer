@@ -197,7 +197,25 @@ namespace ShareViewer
             }
         }
 
-        private static void GenerateSingleShareAllTable(string allTableFile, DateTime newestDate, int backSpan)
+        //skip 1st informational line of sharelist and sweep thru the rest of the shares
+        //deleting existing All-Tables
+        private static void DeleteAllAllTables(string atPath, string[] allShares)
+        {
+            foreach (string share in allShares.Skip(1))
+            {
+                Match m = Regex.Match(share, @"(.+)\s(\d+)$");
+                if (m.Success)
+                {
+                    var shareName = m.Groups[1].Value.TrimEnd();
+                    var shareNum = Convert.ToInt16(m.Groups[2].Value);
+                    var allTableFile = atPath + @"\" + $"at_{shareNum}.at";
+                    Helper.Log("Info", $"deleting {allTableFile}");
+                    File.Delete(allTableFile);
+                }
+            }
+        }
+
+        private static void GenerateSingleShareAllTable(string allTableFile, DateTime newestDate, int backSpan, Dictionary<string, Trade> tradeHash)
         {
             Helper.Log("Info", $"creating {allTableFile}");
 
@@ -216,7 +234,7 @@ namespace ShareViewer
                 while (runDate <= newestDate)
                 {
                     //new day
-                    var rowDate = runDate.ToShortDateString().Replace("/", "");
+                    var rowDate = runDate.ToShortDateString().Replace("/", "").Substring(2); //YYMMDD
                     var rowDay = runDate.DayOfWeek.ToString().Substring(0, 3);
 
                     //each day has 104 five-minute bands from 09h00 to 17h40
@@ -230,6 +248,9 @@ namespace ShareViewer
                         string timeTo = hr.ToString("00") + ":" + (min + 4).ToString("00") + ":59";
 
                         atRec = AllTableFactory.InitialRow(rowNum++, rowDate, rowDay, timeFrom, timeTo);
+                        // now fill from passed in tradeHash
+                        FillAllTableRowFromTradehash(atRec,tradeHash);
+
                         Helper.SerializeAllTableRecord(fs, atRec);
                     }
                     runDate = runDate.AddDays(1);
@@ -238,22 +259,122 @@ namespace ShareViewer
             }
         }
 
-        //skip 1st informational line of sharelist and sweep thru the rest of the shares
-        //deleting existing All-Tables
-        private static void DeleteAllAllTables(string atPath, string[] allShares)
+        //updates prices and volumes from hash for given alltable
+        private static void FillAllTableRowFromTradehash(AllTable atRec, Dictionary<string, Trade> tradeHash)
         {
-            foreach (string share in allShares.Skip(1))
+            string key = $"{atRec.Date},{atRec.F}";
+            if (tradeHash.ContainsKey(key))
             {
-                Match m = Regex.Match(share, @"(.+)\s(\d+)$");
-                if (m.Success)
-                {
-                    var shareName = m.Groups[1].Value.TrimEnd();
-                    var shareNum = Convert.ToInt16(m.Groups[2].Value);
-                    var allTableFile = atPath + @"\" + $"at_{shareNum}.at";
-                    Helper.Log("Info", $"deleting {allTableFile}");
-                    File.Delete(allTableFile);
-                }
+                atRec.FP = tradeHash[atRec.Date].Price;
+                atRec.FV = tradeHash[atRec.Date].Volume;
             }
+            else
+            {
+                //Helper.Log("Warn", $"Could not fill AT row {key}");
+            }
+        }
+
+        //build the dictionary which helps us in filling the alltables with price and volume info
+        private static Dictionary<string, Trade> BuildTradeHash(string shareName, int shareNum, DateTime newestDate, int backSpan)
+        {
+            //traverse Extra folder opening each day-data file which falls into the date range.
+            //read each line and skip over trades which do not belong to passed in share name
+            //as soon as a desired share is encountered on a WERTPAPIER leading line, note the date.
+            //for the subsequent trade untils a new WERTPAPIER is encountered, add/update entries to the Hash
+            //day-data file excerpt:
+            //...
+            //WERTPAPIER; 09.07.2018; TMC CONTENT GR.AG INH.SF1; 121527.ETR
+            //09:18:21; 0,19; 3400; 3400
+            //17:35:39; 0,182; 0; 3400
+            //WERTPAPIER; 09.07.2018; TMC CONTENT GR.AG INH.SF1; 121527.FFM
+            //08:17:25; 0,142; 0; 0
+            //14:16:22; 0,16; 2000; 2000
+            //...
+            //...
+
+            var tradeHash = new Dictionary<string, Trade>();
+
+            Helper.Log("Info", $"building Trade Hash for {shareName} ({shareNum})");
+            var oldestDate = newestDate.AddDays(-backSpan);
+            var runDate = newestDate.AddDays(-backSpan);
+
+            while (runDate <= newestDate)
+            {
+                //ASSUME all trades inside the daydata file are dated the same as indicated by the file name
+                var tradeDate = runDate.ToShortDateString().Replace("/", "").Substring(2); //YYMMDD
+
+                //does a data file exist for this day?
+                var dayFilename = Helper.BuildDayDataFilename(runDate);
+                var dayFile = Helper.GetAppUserSettings().ExtraFolder + $"\\{dayFilename}";
+                if (File.Exists(dayFile))
+                {
+                    //open and read each line
+                    Helper.LogStatus("Info", $"reading {dayFilename}");
+                    AddUpdateTradeHash(shareName, shareNum, tradeHash, tradeDate, dayFile);
+                }
+                else
+                {
+                    Helper.Log("Debug", $"File {dayFilename} not present...");
+                }
+                runDate = runDate.AddDays(1);
+            }
+            Helper.Log("Info", $"Trade Hash for {shareName} ({shareNum}) has {tradeHash.Count} entries");
+            return tradeHash;
+
+        }
+
+        //updates/adds to tradehash for passed in shareName
+        private static void AddUpdateTradeHash(string shareName, int shareNum, Dictionary<string, Trade> tradeHash, string tradeDate, string dayFile)
+        {
+            using (FileStream fs = File.Open(dayFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                using (BufferedStream bs = new BufferedStream(fs))
+                {
+                    using (StreamReader sr = new StreamReader(bs))
+                    {
+                        bool ourTrades = false;
+                        string line;
+                        while ((line = sr.ReadLine()) != null)
+                        {
+                            //look for lines starting WERTPAPIER and containing share name
+                            if (line.StartsWith("WERTPAPIER"))
+                            {
+                                string pattern = @"^WERTPAPIER;\d{2}\.\d{2}\.\d{4};" + shareName + @";\d+\.(ETR|FFM)$";
+                                ourTrades = Regex.Match(line, pattern).Success;
+                            }
+                            else
+                            {
+                                //ignore all trades not belonging to the share of interest
+                                if (ourTrades)
+                                {
+                                    //one of our trades, build/update a Trade object eg 13:29:55;4,7;1069;1884
+                                    var newTrade = new Trade(shareNum, tradeDate, line);
+                                    var bandNum = Helper.ComputeTimeBand(line);
+                                    var hashKey = $"{tradeDate},{bandNum}";
+                                    if (tradeHash.ContainsKey(hashKey))
+                                    {
+                                        //replace price with a later price for the band
+                                        if (newTrade.Band == bandNum) //ought to always be true
+                                        {
+                                            tradeHash[hashKey].Price = newTrade.Price;
+                                            tradeHash[hashKey].Volume += newTrade.Volume;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        tradeHash.Add(hashKey, newTrade);
+                                    }
+                                    if (shareNum == 1) // Telecom Italia
+                                    {
+                                        Helper.Log("Debug", $"{hashKey}: " + tradeHash[hashKey].ToString());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            } //using FileStream
         }
 
         private static void GenerateAllAllTables(DateTime newestDate, int backSpan, string atPath, string[] allShares)
@@ -274,7 +395,10 @@ namespace ShareViewer
 
                     var genTask = Task.Run(() =>
                     {
-                        GenerateSingleShareAllTable(allTableFile, newestDate, backSpan);
+                        //build the dictionary which helps us in filling the alltables with price and volume info
+                        var tradeHash = BuildTradeHash(shareName, shareNum, newestDate, backSpan);
+                        //generate an all-table
+                        GenerateSingleShareAllTable(allTableFile, newestDate, backSpan,tradeHash); 
                     });
                     var awaiter = genTask.GetAwaiter();
                     awaiter.OnCompleted(() =>
@@ -305,7 +429,8 @@ namespace ShareViewer
             }
         }
 
-        //Sweep thru the ShareList, creating one AllTable for each share, populated with initial values
+        //Entrypoint for the generation of a complete batch of fresh new AllTables
+        //Sweeps thru the ShareList, creating one AllTable for each share, populated with initial values
         internal static void GenerateNewAllTables(DateTime newestDate, int backSpan)
         {
             AppUserSettings appUserSettings = Helper.GetAppUserSettings();

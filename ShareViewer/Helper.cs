@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using log4net.Core;
@@ -53,7 +54,7 @@ namespace ShareViewer
         }
 
         //initialize a progressbar countdown, make it and its partner Label visible as well
-        internal static void InitProgressCountdown(string progressBarName,string partnerLabel, int count)
+        internal static void InitProgressCountdown(string progressBarName, string partnerLabel, int count)
         {
             var form = GetMainForm();
 
@@ -240,8 +241,30 @@ namespace ShareViewer
             return list;
         }
 
+        //given a date, construct a file name like "YYYY_MM_DD.TXT"
+        internal static string BuildDayDataFilename(DateTime date)
+        {
+            return date.ToShortDateString().Replace("/", "_") + ".TXT";
+        }
 
-
-
+        internal static int ComputeTimeBand(string trade)
+        {
+            //Compute timeband (timband 1 is from 09:00:00 - 09:04:59)
+            //The timebands in practice run from 1 to 104 each day ie 09:00:00 to 17:39:59
+            Match regMatch = Regex.Match(trade, @"((\d{2}):(\d{2}):(\d{2}));([\d,]+);(\d+);(\d+)");
+            if (regMatch.Success)
+            {
+                int hr, min, sec, totalsecs; ;
+                hr = Convert.ToInt16(regMatch.Groups[2].Value);
+                min = Convert.ToInt16(regMatch.Groups[3].Value);
+                sec = Convert.ToInt16(regMatch.Groups[4].Value);
+                totalsecs = 3600 * hr + 60 * min + sec;
+                return (totalsecs / (9 * 3600)) + (totalsecs % (9 * 3600)) / 300;
+            }
+            else
+            {
+                throw (new FormatException($"could not extract timeband from trade '{trade}'"));
+            }
+        }
     }
 }
