@@ -265,13 +265,13 @@ namespace ShareViewer
             string key = $"{atRec.Date},{atRec.F}";
             if (tradeHash.ContainsKey(key))
             {
-                atRec.FP = tradeHash[atRec.Date].Price;
-                atRec.FV = tradeHash[atRec.Date].Volume;
+                atRec.FP = tradeHash[key].Price;
+                atRec.FV = tradeHash[key].Volume;
             }
-            else
-            {
-                //Helper.Log("Warn", $"Could not fill AT row {key}");
-            }
+            //else
+            //{
+            //    Helper.Log("Warn", $"No trade data for AT row {key}");
+            //}
         }
 
         //build the dictionary which helps us in filling the alltables with price and volume info
@@ -297,7 +297,7 @@ namespace ShareViewer
             Helper.Log("Info", $"building Trade Hash for {shareName} ({shareNum})");
             var oldestDate = newestDate.AddDays(-backSpan);
             var runDate = newestDate.AddDays(-backSpan);
-
+            int dayOffset = 0;
             while (runDate <= newestDate)
             {
                 //ASSUME all trades inside the daydata file are dated the same as indicated by the file name
@@ -310,12 +310,13 @@ namespace ShareViewer
                 {
                     //open and read each line
                     Helper.LogStatus("Info", $"reading {dayFilename}");
-                    AddUpdateTradeHash(shareName, shareNum, tradeHash, tradeDate, dayFile);
+                    AddUpdateTradeHash(shareName, shareNum, tradeHash, tradeDate, dayFile, dayOffset);
                 }
                 else
                 {
                     Helper.Log("Debug", $"File {dayFilename} not present...");
                 }
+                dayOffset++;
                 runDate = runDate.AddDays(1);
             }
             Helper.Log("Info", $"Trade Hash for {shareName} ({shareNum}) has {tradeHash.Count} entries");
@@ -324,7 +325,8 @@ namespace ShareViewer
         }
 
         //updates/adds to tradehash for passed in shareName
-        private static void AddUpdateTradeHash(string shareName, int shareNum, Dictionary<string, Trade> tradeHash, string tradeDate, string dayFile)
+        private static void AddUpdateTradeHash(string shareName, int shareNum, Dictionary<string, Trade> tradeHash, 
+            string tradeDate, string dayFile, int dayOffset)
         {
             using (FileStream fs = File.Open(dayFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
@@ -349,16 +351,14 @@ namespace ShareViewer
                                 {
                                     //one of our trades, build/update a Trade object eg 13:29:55;4,7;1069;1884
                                     var newTrade = new Trade(shareNum, tradeDate, line);
-                                    var bandNum = Helper.ComputeTimeBand(line);
+                                    var bandNum = Helper.ComputeTimeBand(line) + 104*dayOffset;
                                     var hashKey = $"{tradeDate},{bandNum}";
                                     if (tradeHash.ContainsKey(hashKey))
                                     {
-                                        //replace price with a later price for the band
-                                        if (newTrade.Band == bandNum) //ought to always be true
-                                        {
-                                            tradeHash[hashKey].Price = newTrade.Price;
-                                            tradeHash[hashKey].Volume += newTrade.Volume;
-                                        }
+                                        tradeHash[hashKey].Price = newTrade.Price;
+                                        tradeHash[hashKey].Volume += newTrade.Volume;
+                                        //and for Audit, addd this new ticker
+                                        tradeHash[hashKey].Tickers.Add(line);
                                     }
                                     else
                                     {
@@ -397,6 +397,8 @@ namespace ShareViewer
                     {
                         //build the dictionary which helps us in filling the alltables with price and volume info
                         var tradeHash = BuildTradeHash(shareName, shareNum, newestDate, backSpan);
+                        //save for audit purposes
+                        SaveTradehashAudit(tradeHash,shareName, shareNum, newestDate, backSpan);
                         //generate an all-table
                         GenerateSingleShareAllTable(allTableFile, newestDate, backSpan,tradeHash); 
                     });
@@ -427,6 +429,26 @@ namespace ShareViewer
 
                 }
             }
+        }
+
+        private static void SaveTradehashAudit(Dictionary<String, Trade> tradeHash, string shareName, short shareNum, DateTime newestDate, int backSpan)
+        {
+            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
+            var auditPath = appUserSettings.AllTablesFolder + @"\Audit";
+            Directory.CreateDirectory(auditPath);
+
+            var auditFile = auditPath + @"\" + $"{shareNum.ToString("000")}.txt";
+            using (StreamWriter sw = new StreamWriter(auditFile, false))
+            {
+                sw.WriteLine($"{shareName} ({shareNum})");
+                foreach (string key in tradeHash.Keys)
+                {
+                    var tradeDate = tradeHash[key].TradeDate;
+                    sw.WriteLine(tradeDate);
+                    sw.WriteLine(tradeHash[key].AllTickers());
+                    sw.WriteLine();
+                }                
+            };
         }
 
         //Entrypoint for the generation of a complete batch of fresh new AllTables

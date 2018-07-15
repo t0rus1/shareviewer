@@ -49,7 +49,7 @@ namespace ShareViewer
             else
             {
                 labelCurrentDateRange.ForeColor = Color.Green;
-                labelCurrentDateRange.Text = $"This 99-day All-table data range is from: {periodStart} to {periodEnd}";
+                labelCurrentDateRange.Text = $"{periodStart} --> {periodEnd}";
                 buttonInitialView.Enabled = true;
             }
 

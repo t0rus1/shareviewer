@@ -44,6 +44,11 @@ namespace ShareViewer
                 //compute timeband (timband 1 is at 09:00:00 - 09:04:59
                 //the timebands in practice run from 1 to 104 each day 
                 this.band = (totalsecs / (9 * 3600)) + (totalsecs % (9 * 3600))/300;
+                //A Trade object get instantiated with this single ticker, but subsequently this Trade
+                //is held in a hash for a single share-date-band combo, and additional tickers may be added 
+                //to this Trade object's tickers List as price and volume get adjusted
+                tickers = new List<string>();
+                tickers.Add(ticker); // for AUDIT purposes
             }
             else
             {
@@ -60,8 +65,8 @@ namespace ShareViewer
         private double price;
         private UInt32 volume;
         private UInt32 cumVolume;
-
         private int band;
+        private List<String> tickers;
 
         internal int ShareNum { get => shareNum; }
         internal string TradeDate { get => tradeDate; }
@@ -70,10 +75,17 @@ namespace ShareViewer
         internal UInt32 Volume { get => volume; set => volume = value; }
         internal UInt32 CumVolume { get => cumVolume; }
         internal int Band { get => band; set => band = value; }
+        internal List<string> Tickers { get => tickers; set => tickers = value; }
 
         public override String ToString()
         {
             return $"{shareNum},{tradeDate},{band},{price},{volume}";
+        }
+
+        internal string AllTickers()
+        {
+            return String.Join("\r\n", tickers);
+            
         }
 
     }

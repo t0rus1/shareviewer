@@ -15,8 +15,11 @@ namespace ShareViewer
 {
     public partial class MainForm : Form
     {
-
+        public const String Version = "0.0.2";
         internal AppUserSettings appUserSettings;
+        bool SuppressDaysBackChangeHandling = false; // when true, suppresses OnChangehandling
+        bool SuppressFromDateChangeHandling = false;
+        bool SuppressToDateChangeHandling = false;
 
         public MainForm()
         {
@@ -25,6 +28,8 @@ namespace ShareViewer
 
         private void OnLoad(object sender, EventArgs e)
         {
+            Text = "ShareViewer v 0.0.2";
+
             //Get existing setting values from user.config file. These may not exist initially
             //in which case default values will be gotten from attributes on the class
             //An example location of the settings file, 'user.config' (after appUserSetting.Save() has been called) is:
@@ -117,35 +122,28 @@ namespace ShareViewer
         //initialize the app
         private void InitializeShareViewer()
         {
+            daysBack.Maximum = 300; // represents trading days!!
+            daysBack.Minimum = 1;
+            daysBack.Value = 100; // represents trading days!! Change event wont fire at this stage (which is good)
             //don't allow future dates
-            calendarFrom.MaxDate = DateTime.Now;
-            calendarTo.MaxDate = DateTime.Now;
-            //set From date initially to 100 days back
-            calendarFrom.SetDate(DateTime.Now.AddDays(-100));
+            calendarFrom.MaxDate = DateTime.Today;
+            calendarFrom.MinDate = DateTime.Today.AddDays(-Helper.ActualDaysBackToEncompassTradingDays(DateTime.Today, 300));
+            Helper.Log("Debug", $"calendarFrom MinDate= {calendarFrom.MinDate.ToShortDateString()}");
+
+            calendarTo.MaxDate = DateTime.Today;
+            //set From date initially to sync with numericUpDown TradingDays
+            calendarFrom.SetDate(DateTime.Today.AddDays(-Helper.ActualDaysBackToEncompassTradingDays(DateTime.Today, 100)));
+            calendarTo.SetDate(DateTime.Today);
+            labelBackFrom.Text = "until Today";
             //load ShareList
             listBoxShareList.DataSource = LocalStore.ReadShareList();
             //possibly enable the New AllTables button
             buttonNewAllTables.Enabled = listBoxShareList.Items.Count > 0;
         }
 
-
         private void OnClose(object sender, FormClosingEventArgs e)
         {
             Program.log.Info("App Closed");
-        }
-
-        private void DaysBackChanged(object sender, EventArgs e)
-        {
-            Double minusDays = -(Double)((NumericUpDown)sender).Value;
-
-            try
-            {
-                calendarFrom.SetDate(DateTime.Today.AddDays(minusDays));
-            }
-            catch (ArgumentException exc)
-            {
-                MessageBox.Show(exc.Message, "Calendar");
-            }
         }
 
         //gets data days listing from the approropriate source (local/internet)
@@ -253,14 +251,72 @@ namespace ShareViewer
 
         private void FromDateChanged(object sender, DateRangeEventArgs e)
         {
+            if (SuppressFromDateChangeHandling)
+            {
+                SuppressFromDateChangeHandling = false;
+                return;
+            }
+
             buttonDayDataDownload.Enabled = false;
             listBoxInhalt.DataSource = null;
+
+            //recalc number of trading days back
+            //prevent daysBack change handler from doing anything
+
+            SuppressDaysBackChangeHandling = true;
+            daysBack.Value = Helper.ComputeTradingDays(calendarFrom.SelectionStart, calendarTo.SelectionStart);
+            SuppressDaysBackChangeHandling = false;
+
         }
 
         private void ToDateChanged(object sender, DateRangeEventArgs e)
         {
+            if (SuppressToDateChangeHandling)
+            {
+                SuppressToDateChangeHandling = false;
+                return;
+            }
+
             buttonDayDataDownload.Enabled = false;
             listBoxInhalt.DataSource = null;
+            if (calendarTo.SelectionStart.ToShortDateString() == DateTime.Today.ToShortDateString())
+            {
+                labelBackFrom.Text = "until Today";
+            }
+            else
+            {
+                labelBackFrom.Text = "until " + calendarTo.SelectionStart.ToShortDateString();
+            }
+
+            //recalc number of trading days back
+            SuppressDaysBackChangeHandling = true;
+            daysBack.Value = Helper.ComputeTradingDays(calendarFrom.SelectionStart, calendarTo.SelectionStart);
+            SuppressDaysBackChangeHandling = false;
+            
+
+        }
+
+        //trading days back changed
+        private void DaysBackChanged(object sender, EventArgs e)
+        {
+            if (SuppressDaysBackChangeHandling)
+            {
+                //don't respond if we are programmatically setting this control
+                return;
+            }
+
+            int tradingDays = (Int16)((NumericUpDown)sender).Value;
+            int actualDays = Helper.ActualDaysBackToEncompassTradingDays(calendarTo.SelectionStart, tradingDays);
+
+            try
+            {
+                SuppressFromDateChangeHandling = true;
+                calendarFrom.SetDate(calendarTo.SelectionStart.AddDays(-actualDays));
+            }
+            catch (ArgumentException exc)
+            {
+                MessageBox.Show(exc.Message, "Calendar");
+            }
         }
 
         private void OnOpenExplorer(object sender, MouseEventArgs e)
@@ -322,17 +378,16 @@ namespace ShareViewer
 
                 if (newestDate > DateTime.MinValue && oldestDate <= newestDate) {
                     var daysSpan = (newestDate - oldestDate).Days + 1;
-                    var msg = $"Generate NEW All-Table files for the current Share List?\n\n" +
-                              $"The most recent data on hand is {newestDate.ToShortDateString()}.\n" +
-                              $"The oldest data on hand is {oldestDate.ToShortDateString()}, (a {daysSpan} day span)\n\n" +
-                               "NOTE: A maximum of 100 most recent days will be processed!";
-                    if ((MessageBox.Show(msg, $"New All-Tables", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes))
+                    var msg = $"Latest day-data date is: {newestDate.ToShortDateString()}.\n\n" +
+                        "Generate NEW All-Tables for 100 prior trading days? (if possible)";
+                    if ((MessageBox.Show(msg, $"New All-Tables", 
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes))
                     {
                         //put some buttons on hold, make progress bar visible etc..
                         Helper.HoldWhileGeneratingNewAllTables(true);
-                        Helper.LogStatus("Info", "New All-Tables generation task started");
-
-                        LocalStore.GenerateNewAllTables(newestDate, 99); //will queue up a lot of tasks!
+                        int backDays = 140; // Convert.ToInt16(daysBack.Value);
+                        Helper.LogStatus("Info", $"New All-Tables task. {backDays} days back from newest data {newestDate.ToShortDateString()}");
+                        LocalStore.GenerateNewAllTables(newestDate, backDays); //will queue up a lot of tasks!
 
                     }
                 }
@@ -373,7 +428,7 @@ namespace ShareViewer
             string quest = ((TextBox)sender).Text;
             for (int i = 0; i < listBoxShareList.Items.Count; i++)
             {
-                if (listBoxShareList.Items[i].ToString().EndsWith(quest))
+                if (listBoxShareList.Items[i].ToString().EndsWith(" " + quest))
                 {
                     listBoxShareList.SelectedIndex = i;
                     break;
@@ -389,6 +444,7 @@ namespace ShareViewer
             {
                 e.Handled = true;
             }
+
         }
     }
 }

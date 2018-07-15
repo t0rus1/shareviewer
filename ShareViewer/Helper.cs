@@ -174,7 +174,7 @@ namespace ShareViewer
         {
             var form = GetMainForm();
             ((Button)form.Controls.Find("buttonDayDataDownload", true)[0]).Enabled = !hold;
-            //((Button)form.Controls.Find("buttonNewShareList", true)[0]).Enabled = !hold;
+            ((Button)form.Controls.Find("buttonNewShareList", true)[0]).Enabled = !hold;
             ((GroupBox)form.Controls.Find("groupBoxSource", true)[0]).Enabled = !hold;
             ((Button)form.Controls.Find("buttonNewAllTables", true)[0]).Enabled = !hold;
             ((TextBox)form.Controls.Find("textBoxShareNumSearch", true)[0]).Enabled = !hold;
@@ -266,5 +266,66 @@ namespace ShareViewer
                 throw (new FormatException($"could not extract timeband from trade '{trade}'"));
             }
         }
+
+        internal static int ComputeTradingDays(DateTime fromDate, DateTime toDate)
+        {
+            int days = 0;
+            DateTime runDate = fromDate;
+            while (runDate <= toDate)
+            {
+                DayOfWeek dow = runDate.DayOfWeek;
+                runDate = runDate.AddDays(1);
+                if (dow == DayOfWeek.Saturday || dow == DayOfWeek.Sunday)
+                {
+                    continue;
+                }
+                days++;
+            }
+                
+            return days;
+        }
+
+        //given an endDate, compute how many actual days we need to go back such that we encompass
+        //the given number of trading days
+        internal static int ActualDaysBackToEncompassTradingDays(DateTime endDate, int tradingDays)
+        {
+            int estimatedDaysback = ((tradingDays * 7) / 5);
+
+            var computedTradingDays = ComputeTradingDays(endDate.AddDays(-estimatedDaysback), endDate);
+            var diff = computedTradingDays - tradingDays;
+            while (diff != 0)
+            {
+                if (diff > 0)
+                {
+                    //computed Trading days too much, move start day up by 1
+                    estimatedDaysback--;
+
+                }
+                else if (diff < 0)
+                {
+                    //computed Trading days too few, move start day back by 1
+                    estimatedDaysback++;
+                }
+                computedTradingDays = ComputeTradingDays(endDate.AddDays(-estimatedDaysback), endDate);
+                diff = computedTradingDays - tradingDays;
+            }
+
+            //we now have a correct number of days back, but it might be a day or two further back than needed
+            //if we've gone back too far to a sunday, move a day forward
+            var landingDay = endDate.AddDays(-estimatedDaysback).DayOfWeek;
+            if (landingDay == DayOfWeek.Sunday)
+            {
+                estimatedDaysback--;
+            }
+            else if (landingDay == DayOfWeek.Saturday)
+            {
+                //else if we've gone back too far to a saturday, move 2 days forward
+                estimatedDaysback -= 2;
+            }
+
+            return estimatedDaysback;
+
+        }
+
     }
 }

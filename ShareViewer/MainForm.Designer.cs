@@ -60,8 +60,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.daysBack = new System.Windows.Forms.NumericUpDown();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.labelBackFrom = new System.Windows.Forms.Label();
             this.calendarTo = new System.Windows.Forms.MonthCalendar();
             this.calendarFrom = new System.Windows.Forms.MonthCalendar();
             this.tabPageSettings = new System.Windows.Forms.TabPage();
@@ -273,8 +272,7 @@
             this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.daysBack);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.labelBackFrom);
             this.panel1.Controls.Add(this.calendarTo);
             this.panel1.Controls.Add(this.calendarFrom);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -422,15 +420,20 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(417, 12);
+            this.label1.Location = new System.Drawing.Point(385, 8);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(56, 13);
+            this.label1.Size = new System.Drawing.Size(91, 13);
             this.label1.TabIndex = 5;
-            this.label1.Text = "days back";
+            this.label1.Text = "trading days back";
             // 
             // daysBack
             // 
-            this.daysBack.Location = new System.Drawing.Point(366, 5);
+            this.daysBack.Location = new System.Drawing.Point(334, 3);
+            this.daysBack.Maximum = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
             this.daysBack.Name = "daysBack";
             this.daysBack.Size = new System.Drawing.Size(47, 20);
             this.daysBack.TabIndex = 7;
@@ -441,36 +444,26 @@
             0});
             this.daysBack.ValueChanged += new System.EventHandler(this.DaysBackChanged);
             // 
-            // label4
+            // labelBackFrom
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(533, 12);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(46, 13);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "To Date";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(301, 12);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(56, 13);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "From Date";
+            this.labelBackFrom.AutoSize = true;
+            this.labelBackFrom.Location = new System.Drawing.Point(543, 8);
+            this.labelBackFrom.Name = "labelBackFrom";
+            this.labelBackFrom.Size = new System.Drawing.Size(55, 13);
+            this.labelBackFrom.TabIndex = 3;
+            this.labelBackFrom.Text = "until today";
             // 
             // calendarTo
             // 
-            this.calendarTo.Location = new System.Drawing.Point(536, 26);
+            this.calendarTo.Location = new System.Drawing.Point(542, 24);
             this.calendarTo.MaxSelectionCount = 1;
             this.calendarTo.Name = "calendarTo";
-            this.calendarTo.ShowToday = false;
             this.calendarTo.TabIndex = 8;
             this.calendarTo.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.ToDateChanged);
             // 
             // calendarFrom
             // 
-            this.calendarFrom.Location = new System.Drawing.Point(300, 27);
+            this.calendarFrom.Location = new System.Drawing.Point(297, 24);
             this.calendarFrom.MaxSelectionCount = 1;
             this.calendarFrom.Name = "calendarFrom";
             this.calendarFrom.ShowToday = false;
@@ -495,7 +488,6 @@
             this.ClientSize = new System.Drawing.Size(984, 761);
             this.Controls.Add(this.tabControlMain);
             this.Name = "MainForm";
-            this.Text = "ShareViewer v 0.0.1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClose);
             this.Load += new System.EventHandler(this.OnLoad);
             this.tabControlMain.ResumeLayout(false);
@@ -521,8 +513,7 @@
         private System.Windows.Forms.TabControl tabControlMain;
         private System.Windows.Forms.TabPage tabPageImportation;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label labelBackFrom;
         private System.Windows.Forms.MonthCalendar calendarTo;
         private System.Windows.Forms.MonthCalendar calendarFrom;
         private System.Windows.Forms.Label label1;
