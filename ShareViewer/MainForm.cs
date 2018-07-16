@@ -17,6 +17,7 @@ namespace ShareViewer
     {
         public const String Version = "0.0.2";
         internal AppUserSettings appUserSettings;
+        bool initializing = true;
         bool SuppressDaysBackChangeHandling = false; // when true, suppresses OnChangehandling
         bool SuppressFromDateChangeHandling = false;
         bool SuppressToDateChangeHandling = false;
@@ -41,6 +42,7 @@ namespace ShareViewer
 
             BindFormProperties();
             InitializeShareViewer();
+            initializing = false;
             Helper.LogStatus("Info", "Ready");
         }
 
@@ -134,11 +136,14 @@ namespace ShareViewer
             //set From date initially to sync with numericUpDown TradingDays
             calendarFrom.SetDate(DateTime.Today.AddDays(-Helper.ActualDaysBackToEncompassTradingDays(DateTime.Today, 100)));
             calendarTo.SetDate(DateTime.Today);
-            labelBackFrom.Text = "until Today";
+            labelBackFrom.Text = "until Today (inclusive)";
             //load ShareList
             listBoxShareList.DataSource = LocalStore.ReadShareList();
             //possibly enable the New AllTables button
             buttonNewAllTables.Enabled = listBoxShareList.Items.Count > 0;
+            //
+            labelDatafilesCount.Text = "";
+
         }
 
         private void OnClose(object sender, FormClosingEventArgs e)
@@ -197,24 +202,37 @@ namespace ShareViewer
             return false;
         }
 
-        //'Connect/Refresh' button click handler
+        //'Show Inhalt' button click handler
         private void OnLogin(object sender, EventArgs e)
         {
-            var whichSource = groupBoxSource.Controls.OfType<RadioButton>().FirstOrDefault(n => n.Checked);
-            if (whichSource.Text.Equals("internet") && (textBoxUsername.Text.Length == 0 || textBoxPassword.Text.Length == 0))
+            ShowDataOnHand(false);
+        }
+
+        private void ShowDataOnHand(bool forceLocal)
+        {
+            if (!forceLocal)
             {
-                MessageBox.Show("Please enter both username and password.", "Credentials Needed");
+                //decide whether to use local inahlt file or download a fresh one from the internet
+                var whichSource = groupBoxSource.Controls.OfType<RadioButton>().FirstOrDefault(n => n.Checked);
+                if (whichSource.Text.Equals("internet") && (textBoxUsername.Text.Length == 0 || textBoxPassword.Text.Length == 0))
+                {
+                    MessageBox.Show("Please enter both username and password.", "Credentials Needed");
+                    return;
+                }
+                listBoxInhalt.DataSource = GetDaysListingPerSource().Where((entry) => WithinDateRange(entry)).ToList();
             }
             else
             {
-                listBoxInhalt.DataSource = GetDaysListingPerSource().Where((entry) => WithinDateRange(entry)).ToList();
-                LocalStore.TickOffListboxFileItems("listBoxInhalt", appUserSettings.ExtraFolder);
-
-                Helper.ListBoxClearAndScrollToBottom(listBoxInhalt);
-                buttonDayDataDownload.Enabled = listBoxInhalt.Items.Count > 0;
-
+                //use local inhalt file otherwise
+                listBoxInhalt.DataSource = LocalStore.GetDataDaysListing().Where((entry) => WithinDateRange(entry)).ToList();
             }
+            var numFilesTicked = LocalStore.TickOffListboxFileItems("listBoxInhalt", appUserSettings.ExtraFolder);
+            Helper.ListBoxClearAndScrollToBottom(listBoxInhalt);           
+            buttonDayDataDownload.Enabled = listBoxInhalt.Items.Count > 0;
+            labelDatafilesCount.Text = $"{numFilesTicked} files local";
         }
+
+
 
         //radiobutton source changed 
         private void radioButtonSource_CheckedChanged(object sender, EventArgs e)
@@ -257,6 +275,7 @@ namespace ShareViewer
                 return;
             }
 
+
             buttonDayDataDownload.Enabled = false;
             listBoxInhalt.DataSource = null;
 
@@ -266,6 +285,7 @@ namespace ShareViewer
             SuppressDaysBackChangeHandling = true;
             daysBack.Value = Helper.ComputeTradingDays(calendarFrom.SelectionStart, calendarTo.SelectionStart);
             SuppressDaysBackChangeHandling = false;
+            if (!initializing) ShowDataOnHand(true);
 
         }
 
@@ -277,22 +297,23 @@ namespace ShareViewer
                 return;
             }
 
+
             buttonDayDataDownload.Enabled = false;
             listBoxInhalt.DataSource = null;
             if (calendarTo.SelectionStart.ToShortDateString() == DateTime.Today.ToShortDateString())
             {
-                labelBackFrom.Text = "until Today";
+                labelBackFrom.Text = "until Today (inclusive)";
             }
             else
             {
-                labelBackFrom.Text = "until " + calendarTo.SelectionStart.ToShortDateString();
+                labelBackFrom.Text = "until " + calendarTo.SelectionStart.ToShortDateString() + " (inclusive)";
             }
 
             //recalc number of trading days back
             SuppressDaysBackChangeHandling = true;
             daysBack.Value = Helper.ComputeTradingDays(calendarFrom.SelectionStart, calendarTo.SelectionStart);
             SuppressDaysBackChangeHandling = false;
-            
+            if (!initializing) ShowDataOnHand(true);
 
         }
 
@@ -317,6 +338,7 @@ namespace ShareViewer
             {
                 MessageBox.Show(exc.Message, "Calendar");
             }
+            if (!initializing) ShowDataOnHand(true);
         }
 
         private void OnOpenExplorer(object sender, MouseEventArgs e)
@@ -370,25 +392,24 @@ namespace ShareViewer
 
         private void OnMakeNewAllTables(object sender, EventArgs e)
         {
-            DateTime newestDate, oldestDate;
+            DateTime endDate, startDate;
+            startDate = calendarFrom.SelectionStart;
+            endDate = calendarTo.SelectionStart;
+            int tradingSpan = Helper.ComputeTradingDays(startDate, endDate);
             var numShares = listBoxShareList.Items.Count;
             if ( numShares > 0)
             {
-                LocalStore.GetDayDataRange(out newestDate, out oldestDate);
-
-                if (newestDate > DateTime.MinValue && oldestDate <= newestDate) {
-                    var daysSpan = (newestDate - oldestDate).Days + 1;
-                    var msg = $"Latest day-data date is: {newestDate.ToShortDateString()}.\n\n" +
-                        "Generate NEW All-Tables for 100 prior trading days? (if possible)";
-                    if ((MessageBox.Show(msg, $"New All-Tables", 
+                //LocalStore.GetDayDataRange(out newestDate, out oldestDate);
+                if (startDate <= endDate) {
+                    var msg = $"Generate new tables for the {tradingSpan} trading days up to {endDate.ToShortDateString()} (inclusive)?";
+                        if ((MessageBox.Show(msg, $"New All-Tables", 
                             MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes))
                     {
                         //put some buttons on hold, make progress bar visible etc..
                         Helper.HoldWhileGeneratingNewAllTables(true);
-                        int backDays = 140; // Convert.ToInt16(daysBack.Value);
-                        Helper.LogStatus("Info", $"New All-Tables task. {backDays} days back from newest data {newestDate.ToShortDateString()}");
-                        LocalStore.GenerateNewAllTables(newestDate, backDays); //will queue up a lot of tasks!
-
+                        Helper.Log("Info", Helper.Repeat("==========",8));
+                        Helper.Log("Info", msg);
+                        LocalStore.GenerateNewAllTables(startDate, tradingSpan); //will queue up a lot of tasks!
                     }
                 }
                 else

@@ -48,7 +48,8 @@ namespace ShareViewer
         }
 
         //confirms the presence in the ExtraFolder of each file items in the list box
-        internal static void TickOffListboxFileItems(string listBoxName, string extraFolder)
+        //and returns number ticked
+        internal static int TickOffListboxFileItems(string listBoxName, string extraFolder)
         {
             char tick = '\x2714'; //✔
             string tickStr = $"{tick}";
@@ -75,6 +76,7 @@ namespace ShareViewer
             }
             //now databind new list
             lbox.DataSource = ticked;
+            return ticked.Count;
         }
 
         //generate a new ShareList file
@@ -201,7 +203,9 @@ namespace ShareViewer
         //deleting existing All-Tables
         private static void DeleteAllAllTables(string atPath, string[] allShares)
         {
-            foreach (string share in allShares.Skip(1))
+            Helper.Log("Info", $"deleting all *.at files");
+            var victims = allShares.Skip(1);
+            foreach (string share in victims)
             {
                 Match m = Regex.Match(share, @"(.+)\s(\d+)$");
                 if (m.Success)
@@ -209,18 +213,19 @@ namespace ShareViewer
                     var shareName = m.Groups[1].Value.TrimEnd();
                     var shareNum = Convert.ToInt16(m.Groups[2].Value);
                     var allTableFile = atPath + @"\" + $"at_{shareNum}.at";
-                    Helper.Log("Info", $"deleting {allTableFile}");
                     File.Delete(allTableFile);
                 }
             }
+            Helper.Log("Info", $"{victims.Count()} '.at' files deleted");
         }
 
-        private static void GenerateSingleShareAllTable(string allTableFile, DateTime newestDate, int backSpan, Dictionary<string, Trade> tradeHash)
+        private static void GenerateSingleShareAllTable(string allTableFile, DateTime startDate, int tradingSpan, Dictionary<string, Trade> tradeHash)
         {
             Helper.Log("Info", $"creating {allTableFile}");
 
-            var oldestDate = newestDate.AddDays(-backSpan);
-            var runDate = newestDate.AddDays(-backSpan);
+            //var oldestDate = newestDate.AddDays(-backSpan);
+            //var runDate = newestDate.AddDays(-backSpan);
+            var runDate = startDate.AddDays(0);
             
             using (FileStream fs = new FileStream(allTableFile,FileMode.Create)) 
             {
@@ -231,27 +236,30 @@ namespace ShareViewer
                 Helper.SerializeAllTableRecord(fs, atRec);
 
                 int rowNum = 2;
-                while (runDate <= newestDate)
+                int tradingDays = 0;
+                while (tradingDays < tradingSpan)
                 {
-                    //new day
-                    var rowDate = runDate.ToShortDateString().Replace("/", "").Substring(2); //YYMMDD
-                    var rowDay = runDate.DayOfWeek.ToString().Substring(0, 3);
-
-                    //each day has 104 five-minute bands from 09h00 to 17h40
-                    for (int timeBand = 0; timeBand < 104; timeBand++)
+                    if (runDate.DayOfWeek != DayOfWeek.Saturday && runDate.DayOfWeek != DayOfWeek.Sunday)
                     {
-                        int minsIntoDay = 9 * 60 + 5*timeBand;
-                        int hr = minsIntoDay / 60;
-                        int min = minsIntoDay % (60*hr);
+                        //each day has 104 five-minute bands from 09h00 to 17h40 - save each one as an 'at' record to disk
+                        var rowDate = runDate.ToShortDateString().Replace("/", "").Substring(2); //YYMMDD
+                        var rowDay = runDate.DayOfWeek.ToString().Substring(0, 3);
+                        for (int timeBand = 0; timeBand < 104; timeBand++)
+                        {
+                            int minsIntoDay = 9 * 60 + 5*timeBand;
+                            int hr = minsIntoDay / 60;
+                            int min = minsIntoDay % (60*hr);
 
-                        string timeFrom = hr.ToString("00") + ":" + min.ToString("00") + ":00";
-                        string timeTo = hr.ToString("00") + ":" + (min + 4).ToString("00") + ":59";
+                            string timeFrom = hr.ToString("00") + ":" + min.ToString("00") + ":00";
+                            string timeTo = hr.ToString("00") + ":" + (min + 4).ToString("00") + ":59";
 
-                        atRec = AllTableFactory.InitialRow(rowNum++, rowDate, rowDay, timeFrom, timeTo);
-                        // now fill from passed in tradeHash
-                        FillAllTableRowFromTradehash(atRec,tradeHash);
-
-                        Helper.SerializeAllTableRecord(fs, atRec);
+                            atRec = AllTableFactory.InitialRow(rowNum++, rowDate, rowDay, timeFrom, timeTo);
+                            // now fill from passed in tradeHash
+                            FillAllTableRowFromTradehash(atRec,tradeHash);
+                            //save AllTable row record to disk
+                            Helper.SerializeAllTableRecord(fs, atRec);
+                        }
+                        tradingDays++;
                     }
                     runDate = runDate.AddDays(1);
                 }
@@ -275,7 +283,7 @@ namespace ShareViewer
         }
 
         //build the dictionary which helps us in filling the alltables with price and volume info
-        private static Dictionary<string, Trade> BuildTradeHash(string shareName, int shareNum, DateTime newestDate, int backSpan)
+        private static Dictionary<string, Trade> BuildTradeHash(string shareName, int shareNum, DateTime startDate, int tradingSpan)
         {
             //traverse Extra folder opening each day-data file which falls into the date range.
             //read each line and skip over trades which do not belong to passed in share name
@@ -295,14 +303,13 @@ namespace ShareViewer
             var tradeHash = new Dictionary<string, Trade>();
 
             Helper.Log("Info", $"building Trade Hash for {shareName} ({shareNum})");
-            var oldestDate = newestDate.AddDays(-backSpan);
-            var runDate = newestDate.AddDays(-backSpan);
-            int dayOffset = 0;
-            while (runDate <= newestDate)
+
+            var runDate = startDate.AddDays(0); // start at startDate with a new runDate object
+            int dayOffset = 0; int tradingDayCounter = 0;
+            while (tradingDayCounter < tradingSpan)
             {
                 //ASSUME all trades inside the daydata file are dated the same as indicated by the file name
                 var tradeDate = runDate.ToShortDateString().Replace("/", "").Substring(2); //YYMMDD
-
                 //does a data file exist for this day?
                 var dayFilename = Helper.BuildDayDataFilename(runDate);
                 var dayFile = Helper.GetAppUserSettings().ExtraFolder + $"\\{dayFilename}";
@@ -315,6 +322,10 @@ namespace ShareViewer
                 else
                 {
                     Helper.Log("Debug", $"File {dayFilename} not present...");
+                }               
+                if (runDate.DayOfWeek != DayOfWeek.Saturday && runDate.DayOfWeek != DayOfWeek.Sunday)
+                {
+                    tradingDayCounter++;
                 }
                 dayOffset++;
                 runDate = runDate.AddDays(1);
@@ -377,7 +388,7 @@ namespace ShareViewer
             } //using FileStream
         }
 
-        private static void GenerateAllAllTables(DateTime newestDate, int backSpan, string atPath, string[] allShares)
+        private static void GenerateAllAllTables(DateTime startDate, int tradingSpan, string atPath, string[] allShares)
         {
             AppUserSettings appUserSettings = Helper.GetAppUserSettings();
             //skip 1st informational line of sharelist and sweep thru the rest of the shares
@@ -396,11 +407,13 @@ namespace ShareViewer
                     var genTask = Task.Run(() =>
                     {
                         //build the dictionary which helps us in filling the alltables with price and volume info
-                        var tradeHash = BuildTradeHash(shareName, shareNum, newestDate, backSpan);
-                        //save for audit purposes
-                        SaveTradehashAudit(tradeHash,shareName, shareNum, newestDate, backSpan);
+                        var tradeHash = BuildTradeHash(shareName, shareNum, startDate, tradingSpan);
+
+                        //save for audit purposes (TODO: perhaps rather leave up to user to generate singly, on demand?)
+                        SaveTradehashAudit(tradeHash,shareName, shareNum);
                         //generate an all-table
-                        GenerateSingleShareAllTable(allTableFile, newestDate, backSpan,tradeHash); 
+
+                        GenerateSingleShareAllTable(allTableFile, startDate, tradingSpan,tradeHash); 
                     });
                     var awaiter = genTask.GetAwaiter();
                     awaiter.OnCompleted(() =>
@@ -418,8 +431,8 @@ namespace ShareViewer
                             Helper.LogStatus("Info", $"Task completed, {sharesDone} shares processed.");
 
                             //store date range now held in the AllTables
-                            appUserSettings.AllTableDataEnd = newestDate.ToShortDateString();
-                            appUserSettings.AllTableDataStart = newestDate.AddDays(-backSpan).ToShortDateString();
+                            appUserSettings.AllTableDataStart = startDate.ToShortDateString();
+                            appUserSettings.AllTableTradingSpan = tradingSpan.ToString();
                             appUserSettings.Save();
 
                         }
@@ -431,7 +444,7 @@ namespace ShareViewer
             }
         }
 
-        private static void SaveTradehashAudit(Dictionary<String, Trade> tradeHash, string shareName, short shareNum, DateTime newestDate, int backSpan)
+        private static void SaveTradehashAudit(Dictionary<String, Trade> tradeHash, string shareName, short shareNum)
         {
             AppUserSettings appUserSettings = Helper.GetAppUserSettings();
             var auditPath = appUserSettings.AllTablesFolder + @"\Audit";
@@ -453,7 +466,7 @@ namespace ShareViewer
 
         //Entrypoint for the generation of a complete batch of fresh new AllTables
         //Sweeps thru the ShareList, creating one AllTable for each share, populated with initial values
-        internal static void GenerateNewAllTables(DateTime newestDate, int backSpan)
+        internal static void GenerateNewAllTables(DateTime startDate, int tradingSpan)
         {
             AppUserSettings appUserSettings = Helper.GetAppUserSettings();
             var slPath = appUserSettings.ExtraFolder;
@@ -476,7 +489,7 @@ namespace ShareViewer
                 return;
             }
             DeleteAllAllTables(atPath, allShares);
-            GenerateAllAllTables(newestDate, backSpan, atPath, allShares);
+            GenerateAllAllTables(startDate, tradingSpan, atPath, allShares);
         }
 
 

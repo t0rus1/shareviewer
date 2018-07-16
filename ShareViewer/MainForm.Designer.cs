@@ -64,6 +64,7 @@
             this.calendarTo = new System.Windows.Forms.MonthCalendar();
             this.calendarFrom = new System.Windows.Forms.MonthCalendar();
             this.tabPageSettings = new System.Windows.Forms.TabPage();
+            this.labelDatafilesCount = new System.Windows.Forms.Label();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -264,6 +265,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.labelDatafilesCount);
             this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.textBoxShareNumSearch);
             this.panel1.Controls.Add(this.label2);
@@ -480,6 +482,17 @@
             this.tabPageSettings.TabIndex = 2;
             this.tabPageSettings.Text = "Settings";
             // 
+            // labelDatafilesCount
+            // 
+            this.labelDatafilesCount.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.labelDatafilesCount.AutoSize = true;
+            this.labelDatafilesCount.Location = new System.Drawing.Point(240, 201);
+            this.labelDatafilesCount.Name = "labelDatafilesCount";
+            this.labelDatafilesCount.Size = new System.Drawing.Size(63, 13);
+            this.labelDatafilesCount.TabIndex = 15;
+            this.labelDatafilesCount.Text = "files present";
+            this.labelDatafilesCount.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -546,6 +559,7 @@
         private System.Windows.Forms.TextBox textBoxShareNumSearch;
         internal System.Windows.Forms.ProgressBar progressBarGenNewAllTables;
         internal System.Windows.Forms.Label labelGenNewAllTables;
+        private System.Windows.Forms.Label labelDatafilesCount;
     }
 }
 

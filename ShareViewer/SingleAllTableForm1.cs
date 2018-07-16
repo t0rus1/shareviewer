@@ -14,7 +14,7 @@ namespace ShareViewer
     public partial class SingleAllTableForm : Form
     {
         private string _allTableFilename;
-        
+
 
         public SingleAllTableForm(string allTableFilename)
         {
@@ -39,17 +39,15 @@ namespace ShareViewer
         private void SingleAllTableForm_Load(object sender, EventArgs e)
         {
             var periodStart = Helper.GetAppUserSettings().AllTableDataStart;
-            var periodEnd = Helper.GetAppUserSettings().AllTableDataEnd;
-            if (periodStart == "" || periodEnd == "")
+            var tradingSpan = Helper.GetAppUserSettings().AllTableTradingSpan;
+            if (periodStart == "")
             {
-                labelCurrentDateRange.Text = "Date Range unknown - Please close this form and re-generate new All-Tables";
-                labelCurrentDateRange.ForeColor = Color.IndianRed;
+                this.Text += "Date Range unknown - Please close form & re-generate!";
                 buttonInitialView.Enabled = false;
             }
             else
             {
-                labelCurrentDateRange.ForeColor = Color.Green;
-                labelCurrentDateRange.Text = $"{periodStart} --> {periodEnd}";
+                this.Text += $"from {periodStart} for {tradingSpan} trading days";
                 buttonInitialView.Enabled = true;
             }
 
@@ -59,7 +57,7 @@ namespace ShareViewer
             int i = 1;
             foreach (var prop in typeof(AllTable).GetProperties())
             {
-                var colName = $"{i.ToString().PadRight(3,' ')}{prop.Name}";
+                var colName = $"{i.ToString().PadRight(3, ' ')}{prop.Name}";
                 columnNames.Add(colName);
                 i++;
             }
@@ -79,6 +77,9 @@ namespace ShareViewer
             }
             dgView.DataSource = bindingSource1;
             AddInitialColumnsToView();
+            HighightMondayRows();
+
+            dgView.Focus();
         }
 
         private void listBoxCols_SelectedIndexChanged(object sender, EventArgs e)
@@ -101,8 +102,66 @@ namespace ShareViewer
         private void buttonInitialView_Click(object sender, EventArgs e)
         {
             AddInitialColumnsToView();
+            HighightMondayRows();
+        }
+
+        private void HighightMondayRows()
+        {
+            //determine which column the 'Row' is in
+            int colIndex = 0;
+            bool rowFound = false;
+            foreach (var col in dgView.Columns)
+            {
+                if (col is DataGridViewTextBoxColumn)
+                {
+                    if (((DataGridViewTextBoxColumn)col).DataPropertyName == "Row")
+                    {
+                        rowFound = true;
+                        break;
+                    }
+                }
+                colIndex++;
+            }
+            if (!rowFound) return;
+
+            foreach (DataGridViewRow row in dgView.Rows)
+            {
+                int rowNumCellValue = Convert.ToInt16(row.Cells[colIndex].Value);
+                if (((rowNumCellValue - 2) % 104) == 0)
+                {
+                    row.HeaderCell.Style.BackColor = Color.Wheat;
+                }
+            }
+        }
+
+        private void buttonNextDay_Click(object sender, EventArgs e)
+        {
+            //scroll gridview by 104 rows            
+            try
+            {
+                dgView.FirstDisplayedScrollingRowIndex += 104;
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private void buttonPrevDay_Click(object sender, EventArgs e)
+        {
+            //scroll gridview by 104 rows            
+            try
+            {
+                dgView.FirstDisplayedScrollingRowIndex -= 104;
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private void buttonSaveView_Click(object sender, EventArgs e)
+        {
+            //save currently selected colums to Usersettings under a name
+
         }
     }
-
-
-}
+ }

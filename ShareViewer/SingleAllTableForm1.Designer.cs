@@ -28,17 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new System.Windows.Forms.Panel();
             this.listBoxCols = new System.Windows.Forms.ListBox();
             this.dgView = new System.Windows.Forms.DataGridView();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.buttonInitialView = new System.Windows.Forms.Button();
-            this.labelCurrentDateRange = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.buttonInitialView = new System.Windows.Forms.Button();
+            this.buttonNextDay = new System.Windows.Forms.Button();
+            this.buttonPrevDay = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.buttonSaveView = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgView)).BeginInit();
             this.panel2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -65,16 +70,19 @@
             // 
             this.dgView.AllowUserToDeleteRows = false;
             this.dgView.AllowUserToResizeRows = false;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.dgView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.dgView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgView.EnableHeadersVisualStyles = false;
             this.dgView.Location = new System.Drawing.Point(130, 82);
             this.dgView.Name = "dgView";
             this.dgView.ReadOnly = true;
@@ -83,34 +91,15 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.buttonSaveView);
+            this.panel2.Controls.Add(this.groupBox1);
             this.panel2.Controls.Add(this.label1);
-            this.panel2.Controls.Add(this.labelCurrentDateRange);
             this.panel2.Controls.Add(this.buttonInitialView);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(130, 0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(670, 82);
             this.panel2.TabIndex = 2;
-            // 
-            // buttonInitialView
-            // 
-            this.buttonInitialView.Location = new System.Drawing.Point(11, 10);
-            this.buttonInitialView.Name = "buttonInitialView";
-            this.buttonInitialView.Size = new System.Drawing.Size(75, 42);
-            this.buttonInitialView.TabIndex = 0;
-            this.buttonInitialView.Text = "Initial View";
-            this.buttonInitialView.UseVisualStyleBackColor = true;
-            this.buttonInitialView.Click += new System.EventHandler(this.buttonInitialView_Click);
-            // 
-            // labelCurrentDateRange
-            // 
-            this.labelCurrentDateRange.AutoSize = true;
-            this.labelCurrentDateRange.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelCurrentDateRange.Location = new System.Drawing.Point(95, 10);
-            this.labelCurrentDateRange.Name = "labelCurrentDateRange";
-            this.labelCurrentDateRange.Size = new System.Drawing.Size(140, 20);
-            this.labelCurrentDateRange.TabIndex = 1;
-            this.labelCurrentDateRange.Text = "current date range";
             // 
             // label1
             // 
@@ -120,6 +109,57 @@
             this.label1.Size = new System.Drawing.Size(176, 13);
             this.label1.TabIndex = 2;
             this.label1.Text = "<-- ctrl-click to add/remove columns";
+            // 
+            // buttonInitialView
+            // 
+            this.buttonInitialView.Location = new System.Drawing.Point(11, 10);
+            this.buttonInitialView.Name = "buttonInitialView";
+            this.buttonInitialView.Size = new System.Drawing.Size(75, 28);
+            this.buttonInitialView.TabIndex = 0;
+            this.buttonInitialView.Text = "Initial View";
+            this.buttonInitialView.UseVisualStyleBackColor = true;
+            this.buttonInitialView.Click += new System.EventHandler(this.buttonInitialView_Click);
+            // 
+            // buttonNextDay
+            // 
+            this.buttonNextDay.Location = new System.Drawing.Point(118, 11);
+            this.buttonNextDay.Name = "buttonNextDay";
+            this.buttonNextDay.Size = new System.Drawing.Size(81, 28);
+            this.buttonNextDay.TabIndex = 0;
+            this.buttonNextDay.Text = "Next Day";
+            this.buttonNextDay.UseVisualStyleBackColor = true;
+            this.buttonNextDay.Click += new System.EventHandler(this.buttonNextDay_Click);
+            // 
+            // buttonPrevDay
+            // 
+            this.buttonPrevDay.Location = new System.Drawing.Point(24, 11);
+            this.buttonPrevDay.Name = "buttonPrevDay";
+            this.buttonPrevDay.Size = new System.Drawing.Size(81, 28);
+            this.buttonPrevDay.TabIndex = 1;
+            this.buttonPrevDay.Text = "Prev Day";
+            this.buttonPrevDay.UseVisualStyleBackColor = true;
+            this.buttonPrevDay.Click += new System.EventHandler(this.buttonPrevDay_Click);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.groupBox1.Controls.Add(this.buttonPrevDay);
+            this.groupBox1.Controls.Add(this.buttonNextDay);
+            this.groupBox1.Location = new System.Drawing.Point(435, 32);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(223, 44);
+            this.groupBox1.TabIndex = 3;
+            this.groupBox1.TabStop = false;
+            // 
+            // buttonSaveView
+            // 
+            this.buttonSaveView.Location = new System.Drawing.Point(113, 13);
+            this.buttonSaveView.Name = "buttonSaveView";
+            this.buttonSaveView.Size = new System.Drawing.Size(96, 23);
+            this.buttonSaveView.TabIndex = 4;
+            this.buttonSaveView.Text = "Save view as...";
+            this.buttonSaveView.UseVisualStyleBackColor = true;
+            this.buttonSaveView.Click += new System.EventHandler(this.buttonSaveView_Click);
             // 
             // SingleAllTableForm
             // 
@@ -137,6 +177,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgView)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -148,7 +189,10 @@
         private System.Windows.Forms.DataGridView dgView;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button buttonInitialView;
-        private System.Windows.Forms.Label labelCurrentDateRange;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button buttonPrevDay;
+        private System.Windows.Forms.Button buttonNextDay;
+        private System.Windows.Forms.Button buttonSaveView;
     }
 }

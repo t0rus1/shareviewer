@@ -327,5 +327,10 @@ namespace ShareViewer
 
         }
 
+        internal static string Repeat(string value, int count)
+        {
+            return new StringBuilder(value.Length * count).Insert(0, value, count).ToString();
+        }
+
     }
 }

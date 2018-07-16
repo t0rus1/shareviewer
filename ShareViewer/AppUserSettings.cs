@@ -101,15 +101,15 @@ namespace ShareViewer
 
         [UserScopedSetting()]
         [DefaultSettingValue("")]
-        public String AllTableDataEnd
+        public String AllTableTradingSpan
         {
             get
             {
-                return ((String)this["AllTableDataEnd"]);
+                return ((String)this["AllTableTradingSpan"]);
             }
             set
             {
-                this["AllTableDataEnd"] = (String)value;
+                this["AllTableTradingSpan"] = (String)value;
             }
 
         }
