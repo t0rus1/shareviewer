@@ -204,6 +204,8 @@ namespace ShareViewer
             //make progressBar and paired label visible/not
             ((ProgressBar)form.Controls.Find("progressBarGenNewAllTables", true)[0]).Visible = hold;
             ((Label)form.Controls.Find("labelGenNewAllTables", true)[0]).Visible = hold;
+            ((Label)form.Controls.Find("labelBusyAllTables", true)[0]).Visible = hold;
+
 
         }
 
@@ -331,6 +333,12 @@ namespace ShareViewer
         {
             return new StringBuilder(value.Length * count).Insert(0, value, count).ToString();
         }
+
+        internal static bool IsTradingDay(DateTime runDate)
+        {
+            return runDate.DayOfWeek != DayOfWeek.Saturday && runDate.DayOfWeek != DayOfWeek.Sunday;
+        }
+
 
     }
 }

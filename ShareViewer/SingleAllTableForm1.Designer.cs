@@ -34,16 +34,18 @@
             this.listBoxCols = new System.Windows.Forms.ListBox();
             this.dgView = new System.Windows.Forms.DataGridView();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.radioDays = new System.Windows.Forms.RadioButton();
+            this.radioHours = new System.Windows.Forms.RadioButton();
+            this.radio5mins = new System.Windows.Forms.RadioButton();
+            this.buttonSaveView = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.buttonInitialView = new System.Windows.Forms.Button();
-            this.buttonNextDay = new System.Windows.Forms.Button();
-            this.buttonPrevDay = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.buttonSaveView = new System.Windows.Forms.Button();
+            this.radioWeekly = new System.Windows.Forms.RadioButton();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgView)).BeginInit();
             this.panel2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -52,7 +54,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(130, 450);
+            this.panel1.Size = new System.Drawing.Size(130, 670);
             this.panel1.TabIndex = 0;
             // 
             // listBoxCols
@@ -62,7 +64,7 @@
             this.listBoxCols.Location = new System.Drawing.Point(0, 0);
             this.listBoxCols.Name = "listBoxCols";
             this.listBoxCols.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBoxCols.Size = new System.Drawing.Size(130, 450);
+            this.listBoxCols.Size = new System.Drawing.Size(130, 670);
             this.listBoxCols.TabIndex = 0;
             this.listBoxCols.SelectedIndexChanged += new System.EventHandler(this.listBoxCols_SelectedIndexChanged);
             // 
@@ -83,23 +85,84 @@
             this.dgView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgView.EnableHeadersVisualStyles = false;
-            this.dgView.Location = new System.Drawing.Point(130, 82);
+            this.dgView.Location = new System.Drawing.Point(130, 106);
             this.dgView.Name = "dgView";
             this.dgView.ReadOnly = true;
-            this.dgView.Size = new System.Drawing.Size(670, 368);
+            this.dgView.Size = new System.Drawing.Size(670, 564);
             this.dgView.TabIndex = 1;
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.groupBox2);
             this.panel2.Controls.Add(this.buttonSaveView);
-            this.panel2.Controls.Add(this.groupBox1);
             this.panel2.Controls.Add(this.label1);
             this.panel2.Controls.Add(this.buttonInitialView);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(130, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(670, 82);
+            this.panel2.Size = new System.Drawing.Size(670, 106);
             this.panel2.TabIndex = 2;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.radioWeekly);
+            this.groupBox2.Controls.Add(this.radioDays);
+            this.groupBox2.Controls.Add(this.radioHours);
+            this.groupBox2.Controls.Add(this.radio5mins);
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Right;
+            this.groupBox2.Location = new System.Drawing.Point(567, 0);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(103, 106);
+            this.groupBox2.TabIndex = 5;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Vertically";
+            // 
+            // radioDays
+            // 
+            this.radioDays.AutoSize = true;
+            this.radioDays.Location = new System.Drawing.Point(8, 60);
+            this.radioDays.Name = "radioDays";
+            this.radioDays.Size = new System.Drawing.Size(80, 17);
+            this.radioDays.TabIndex = 2;
+            this.radioDays.TabStop = true;
+            this.radioDays.Text = "Daily bands";
+            this.radioDays.UseVisualStyleBackColor = true;
+            this.radioDays.CheckedChanged += new System.EventHandler(this.radioDays_CheckedChanged);
+            // 
+            // radioHours
+            // 
+            this.radioHours.AutoSize = true;
+            this.radioHours.Location = new System.Drawing.Point(8, 38);
+            this.radioHours.Name = "radioHours";
+            this.radioHours.Size = new System.Drawing.Size(87, 17);
+            this.radioHours.TabIndex = 1;
+            this.radioHours.TabStop = true;
+            this.radioHours.Text = "Hourly bands";
+            this.radioHours.UseVisualStyleBackColor = true;
+            this.radioHours.CheckedChanged += new System.EventHandler(this.radioHours_CheckedChanged);
+            // 
+            // radio5mins
+            // 
+            this.radio5mins.AutoSize = true;
+            this.radio5mins.Checked = true;
+            this.radio5mins.Location = new System.Drawing.Point(8, 16);
+            this.radio5mins.Name = "radio5mins";
+            this.radio5mins.Size = new System.Drawing.Size(82, 17);
+            this.radio5mins.TabIndex = 0;
+            this.radio5mins.TabStop = true;
+            this.radio5mins.Text = "5 min bands";
+            this.radio5mins.UseVisualStyleBackColor = true;
+            this.radio5mins.CheckedChanged += new System.EventHandler(this.radio5mins_CheckedChanged);
+            // 
+            // buttonSaveView
+            // 
+            this.buttonSaveView.Location = new System.Drawing.Point(113, 13);
+            this.buttonSaveView.Name = "buttonSaveView";
+            this.buttonSaveView.Size = new System.Drawing.Size(96, 23);
+            this.buttonSaveView.TabIndex = 4;
+            this.buttonSaveView.Text = "Save view as...";
+            this.buttonSaveView.UseVisualStyleBackColor = true;
+            this.buttonSaveView.Click += new System.EventHandler(this.buttonSaveView_Click);
             // 
             // label1
             // 
@@ -120,52 +183,23 @@
             this.buttonInitialView.UseVisualStyleBackColor = true;
             this.buttonInitialView.Click += new System.EventHandler(this.buttonInitialView_Click);
             // 
-            // buttonNextDay
+            // radioWeekly
             // 
-            this.buttonNextDay.Location = new System.Drawing.Point(118, 11);
-            this.buttonNextDay.Name = "buttonNextDay";
-            this.buttonNextDay.Size = new System.Drawing.Size(81, 28);
-            this.buttonNextDay.TabIndex = 0;
-            this.buttonNextDay.Text = "Next Day";
-            this.buttonNextDay.UseVisualStyleBackColor = true;
-            this.buttonNextDay.Click += new System.EventHandler(this.buttonNextDay_Click);
-            // 
-            // buttonPrevDay
-            // 
-            this.buttonPrevDay.Location = new System.Drawing.Point(24, 11);
-            this.buttonPrevDay.Name = "buttonPrevDay";
-            this.buttonPrevDay.Size = new System.Drawing.Size(81, 28);
-            this.buttonPrevDay.TabIndex = 1;
-            this.buttonPrevDay.Text = "Prev Day";
-            this.buttonPrevDay.UseVisualStyleBackColor = true;
-            this.buttonPrevDay.Click += new System.EventHandler(this.buttonPrevDay_Click);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.groupBox1.Controls.Add(this.buttonPrevDay);
-            this.groupBox1.Controls.Add(this.buttonNextDay);
-            this.groupBox1.Location = new System.Drawing.Point(435, 32);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(223, 44);
-            this.groupBox1.TabIndex = 3;
-            this.groupBox1.TabStop = false;
-            // 
-            // buttonSaveView
-            // 
-            this.buttonSaveView.Location = new System.Drawing.Point(113, 13);
-            this.buttonSaveView.Name = "buttonSaveView";
-            this.buttonSaveView.Size = new System.Drawing.Size(96, 23);
-            this.buttonSaveView.TabIndex = 4;
-            this.buttonSaveView.Text = "Save view as...";
-            this.buttonSaveView.UseVisualStyleBackColor = true;
-            this.buttonSaveView.Click += new System.EventHandler(this.buttonSaveView_Click);
+            this.radioWeekly.AutoSize = true;
+            this.radioWeekly.Location = new System.Drawing.Point(8, 82);
+            this.radioWeekly.Name = "radioWeekly";
+            this.radioWeekly.Size = new System.Drawing.Size(93, 17);
+            this.radioWeekly.TabIndex = 3;
+            this.radioWeekly.TabStop = true;
+            this.radioWeekly.Text = "Weekly bands";
+            this.radioWeekly.UseVisualStyleBackColor = true;
+            this.radioWeekly.CheckedChanged += new System.EventHandler(this.radioWeekly_CheckedChanged);
             // 
             // SingleAllTableForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(800, 670);
             this.Controls.Add(this.dgView);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -177,7 +211,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgView)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -190,9 +225,11 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button buttonInitialView;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button buttonPrevDay;
-        private System.Windows.Forms.Button buttonNextDay;
         private System.Windows.Forms.Button buttonSaveView;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.RadioButton radioHours;
+        private System.Windows.Forms.RadioButton radio5mins;
+        private System.Windows.Forms.RadioButton radioDays;
+        private System.Windows.Forms.RadioButton radioWeekly;
     }
 }

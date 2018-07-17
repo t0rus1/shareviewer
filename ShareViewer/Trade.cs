@@ -82,6 +82,11 @@ namespace ShareViewer
             return $"{shareNum},{tradeDate},{band},{price},{volume}";
         }
 
+        internal string DateAndBand()
+        {
+            return $"{tradeDate}_{band}";
+        }
+
         internal string AllTickers()
         {
             return String.Join("\r\n", tickers);

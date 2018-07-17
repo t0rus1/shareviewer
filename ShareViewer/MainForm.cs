@@ -136,7 +136,7 @@ namespace ShareViewer
             //set From date initially to sync with numericUpDown TradingDays
             calendarFrom.SetDate(DateTime.Today.AddDays(-Helper.ActualDaysBackToEncompassTradingDays(DateTime.Today, 100)));
             calendarTo.SetDate(DateTime.Today);
-            labelBackFrom.Text = "until Today (inclusive)";
+            labelBackFrom.Text = "from Today";
             //load ShareList
             listBoxShareList.DataSource = LocalStore.ReadShareList();
             //possibly enable the New AllTables button
@@ -254,7 +254,7 @@ namespace ShareViewer
             }
             else
             {
-                if ((MessageBox.Show($"Download {listBoxInhalt.Items.Count} files?", "Confirmation required",
+                if ((MessageBox.Show($"Download (up to) {listBoxInhalt.Items.Count} files?", "Confirmation required",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes))
                 {
 
@@ -302,11 +302,11 @@ namespace ShareViewer
             listBoxInhalt.DataSource = null;
             if (calendarTo.SelectionStart.ToShortDateString() == DateTime.Today.ToShortDateString())
             {
-                labelBackFrom.Text = "until Today (inclusive)";
+                labelBackFrom.Text = "from Today";
             }
             else
             {
-                labelBackFrom.Text = "until " + calendarTo.SelectionStart.ToShortDateString() + " (inclusive)";
+                labelBackFrom.Text = "from " + calendarTo.SelectionStart.ToShortDateString();
             }
 
             //recalc number of trading days back
