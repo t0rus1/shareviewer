@@ -11,6 +11,7 @@ using System.Collections;
 using ShareViewer;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
+using System.Threading;
 
 namespace ShareViewer
 {
@@ -221,7 +222,7 @@ namespace ShareViewer
             Helper.Log("Info", $"{victims.Count()} '.at' files deleted");
         }
 
-        private static void GenerateSingleShareAllTable(string allTableFile, DateTime startDate, int tradingSpan, Dictionary<string, Trade> tradeHash)
+        private static void GenerateSingleShareAllTable(CancellationToken ct, string allTableFile, DateTime startDate, int tradingSpan, Dictionary<string, Trade> tradeHash)
         {
             Helper.Log("Info", $"creating all-table for:\n{allTableFile}");
 
@@ -241,7 +242,7 @@ namespace ShareViewer
                 int tradingDays = 0;
                 double yesterPrice = 0;
                 double lastPrice = 0;
-                while (tradingDays < tradingSpan)
+                while (!ct.IsCancellationRequested && tradingDays < tradingSpan)
                 {
                     if (Helper.IsTradingDay(runDate))
                     {
@@ -259,6 +260,7 @@ namespace ShareViewer
                             string timeTo = hr.ToString("00") + ":" + (min + 4).ToString("00") + ":59";
 
                             atRec = AllTableFactory.InitialRow(rowNum++, rowDate, rowDay, timeFrom, timeTo);
+                            atRec.FP = lastPrice;
                             // now fill from passed in tradeHash
                             lastPrice = FillAllTableRowFromTradehash(atRec,timeBand+1,tradeHash, lastPrice);
                             //save AllTable row record to disk
@@ -270,6 +272,17 @@ namespace ShareViewer
                     runDate = runDate.AddDays(1);
                 }
 
+            }
+            if (ct.IsCancellationRequested)
+            {
+                //delete the All-Table file just saved
+                try
+                {
+                    File.Delete(allTableFile);
+                }
+                catch (Exception ex)
+                {
+                }
             }
         }
 
@@ -291,7 +304,7 @@ namespace ShareViewer
         }
 
         //build the dictionary which helps us in filling the alltables with price and volume info
-        private static Dictionary<string, Trade> BuildTradeHash(string shareName, int shareNum, DateTime startDate, int tradingSpan)
+        private static Dictionary<string, Trade> BuildTradeHash(CancellationToken ct, string shareName, int shareNum, DateTime startDate, int tradingSpan)
         {
             //traverse Extra folder opening each day-data file which falls into the date range.
             //read each line and skip over trades which do not belong to passed in share name
@@ -315,7 +328,7 @@ namespace ShareViewer
             //we need to use all day-data trading files in the range
             var runDate = startDate.AddDays(0); // start at startDate with a new runDate object
             int dayOffset = 0; int tradingDayCounter = 0;
-            while (tradingDayCounter < tradingSpan)
+            while (!ct.IsCancellationRequested && tradingDayCounter < tradingSpan)
             {
                 //ASSUME all trades inside the daydata file are dated the same as indicated by the file name
                 var tradeDate = runDate.ToShortDateString().Replace("/", "").Substring(2); //YYMMDD
@@ -328,7 +341,10 @@ namespace ShareViewer
                 }
                 else
                 {
-                    Helper.Log("Warn", $"{dayFilename} not present...");
+                    if (Helper.IsTradingDay(runDate))
+                    {
+                        Helper.LogStatus("Warn", $"{dayFilename} not present !!!");
+                    }
                 }
                 if (Helper.IsTradingDay(runDate))
                 {
@@ -337,9 +353,15 @@ namespace ShareViewer
                 dayOffset++;
                 runDate = runDate.AddDays(1);
             }
-            Helper.Log("Info", $"Trade Hash for {shareName} ({shareNum}) has {tradeHash.Count} entries");
+            if (ct.IsCancellationRequested)
+            {
+                Helper.Log("Info", $"Trade Hash build for {shareName} ({shareNum}) CANCELLED");
+            }
+            else
+            {
+                Helper.Log("Info", $"Trade Hash for {shareName} ({shareNum}) has {tradeHash.Count} entries");
+            }
             return tradeHash;
-
         }
 
         //updates/adds to tradehash for passed in shareName and a day's trades file
@@ -400,9 +422,9 @@ namespace ShareViewer
             //skip 1st informational line of sharelist and sweep thru the rest of the shares
             //building new All-table files
             int numShares = allShares.Count() - 1;
-            int sharesDone = 0; 
+            int sharesDone = 0;
             foreach (string share in allShares.Skip(1))
-            {                
+            {
                 Match m = Regex.Match(share, @"(.+)\s(\d+)$");
                 if (m.Success)
                 {
@@ -410,17 +432,20 @@ namespace ShareViewer
                     var shareNum = Convert.ToInt16(m.Groups[2].Value);
                     var allTableFile = atPath + @"\" + $"alltable_{shareNum}.at";
 
+                    var tokenSource = new CancellationTokenSource();
+                    TaskMaster.CtsStack.Push(tokenSource);
+                    CancellationToken ct = tokenSource.Token;                    
+
                     var genTask = Task.Run(() =>
                     {
                         //build the dictionary which helps us in filling the alltables with price and volume info
-                        var tradeHash = BuildTradeHash(shareName, shareNum, startDate, tradingSpan);
-
+                        var tradeHash = BuildTradeHash(ct, shareName, shareNum, startDate, tradingSpan);
                         //save for audit purposes (TODO: perhaps rather leave up to user to generate singly, on demand?)
                         SaveTradehashAudit(tradeHash,shareName, shareNum);
                         //generate an all-table
-
-                        GenerateSingleShareAllTable(allTableFile, startDate, tradingSpan,tradeHash); 
-                    });
+                        GenerateSingleShareAllTable(ct, allTableFile, startDate, tradingSpan,tradeHash);                         
+                    }, tokenSource.Token);
+                    
                     var awaiter = genTask.GetAwaiter();
                     awaiter.OnCompleted(() =>
                     {
@@ -429,26 +454,33 @@ namespace ShareViewer
                         var progressMsg = $"All-Table done. (Share {shareName})";
                         Helper.UpdateNewAllTableGenerationProgress(progressMsg);
                         Helper.Log("Info", progressMsg);
-                        
                         if (sharesDone == numShares)
                         {
+                            //end of run, ALL shares done (or task was cancelled)
+                            var btnBusy = (Button)Helper.GetMainFormControl("buttonBusyAllTables");
+                            if (btnBusy.Text.StartsWith("Stopping"))
+                            {
+                                //run tasks were cancelled
+                                var msg = "All-Tables Run was cancelled.";
+                                Helper.LogStatus("Info",msg);
+                                Helper.ContinueEnableAllTableGeneration();
+                                MessageBox.Show(msg, "CANCELLED", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                            {
+                                //normal end of run, store date range now held in the AllTables
+                                appUserSettings.AllTableDataStart = startDate.ToShortDateString();
+                                appUserSettings.AllTableTradingSpan = tradingSpan.ToString();
+                                appUserSettings.Save();
+                                var msg = $"All-Table generation completed, {sharesDone} shares processed.";
+                                Helper.LogStatus("Info", msg);
+                                MessageBox.Show(msg, "Completed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
                             //re-enable buttons, hide progress bar etc
                             Helper.HoldWhileGeneratingNewAllTables(false);
-                            var msg = $"All-Table generation completed, {sharesDone} shares processed.";
-                            Helper.LogStatus("Info", msg);
-
-                            //store date range now held in the AllTables
-                            appUserSettings.AllTableDataStart = startDate.ToShortDateString();
-                            appUserSettings.AllTableTradingSpan = tradingSpan.ToString();
-                            appUserSettings.Save();
-
-                            MessageBox.Show(msg, "Completed", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                        }
+                        }    
 
                     });
-
-
                 }
             }
         }

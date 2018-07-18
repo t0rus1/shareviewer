@@ -28,20 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new System.Windows.Forms.Panel();
             this.listBoxCols = new System.Windows.Forms.ListBox();
             this.dgView = new System.Windows.Forms.DataGridView();
             this.panel2 = new System.Windows.Forms.Panel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.radioWeekly = new System.Windows.Forms.RadioButton();
             this.radioDays = new System.Windows.Forms.RadioButton();
             this.radioHours = new System.Windows.Forms.RadioButton();
             this.radio5mins = new System.Windows.Forms.RadioButton();
             this.buttonSaveView = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.buttonInitialView = new System.Windows.Forms.Button();
-            this.radioWeekly = new System.Windows.Forms.RadioButton();
+            this.labelShareDesc = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgView)).BeginInit();
             this.panel2.SuspendLayout();
@@ -72,16 +73,16 @@
             // 
             this.dgView.AllowUserToDeleteRows = false;
             this.dgView.AllowUserToResizeRows = false;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            this.dgView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.dgView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dgView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgView.EnableHeadersVisualStyles = false;
@@ -93,6 +94,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.labelShareDesc);
             this.panel2.Controls.Add(this.groupBox2);
             this.panel2.Controls.Add(this.buttonSaveView);
             this.panel2.Controls.Add(this.label1);
@@ -116,6 +118,18 @@
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Vertically";
+            // 
+            // radioWeekly
+            // 
+            this.radioWeekly.AutoSize = true;
+            this.radioWeekly.Location = new System.Drawing.Point(8, 82);
+            this.radioWeekly.Name = "radioWeekly";
+            this.radioWeekly.Size = new System.Drawing.Size(93, 17);
+            this.radioWeekly.TabIndex = 3;
+            this.radioWeekly.TabStop = true;
+            this.radioWeekly.Text = "Weekly bands";
+            this.radioWeekly.UseVisualStyleBackColor = true;
+            this.radioWeekly.CheckedChanged += new System.EventHandler(this.radioWeekly_CheckedChanged);
             // 
             // radioDays
             // 
@@ -156,7 +170,7 @@
             // 
             // buttonSaveView
             // 
-            this.buttonSaveView.Location = new System.Drawing.Point(113, 13);
+            this.buttonSaveView.Location = new System.Drawing.Point(113, 10);
             this.buttonSaveView.Name = "buttonSaveView";
             this.buttonSaveView.Size = new System.Drawing.Size(96, 23);
             this.buttonSaveView.TabIndex = 4;
@@ -183,17 +197,17 @@
             this.buttonInitialView.UseVisualStyleBackColor = true;
             this.buttonInitialView.Click += new System.EventHandler(this.buttonInitialView_Click);
             // 
-            // radioWeekly
+            // labelShareDesc
             // 
-            this.radioWeekly.AutoSize = true;
-            this.radioWeekly.Location = new System.Drawing.Point(8, 82);
-            this.radioWeekly.Name = "radioWeekly";
-            this.radioWeekly.Size = new System.Drawing.Size(93, 17);
-            this.radioWeekly.TabIndex = 3;
-            this.radioWeekly.TabStop = true;
-            this.radioWeekly.Text = "Weekly bands";
-            this.radioWeekly.UseVisualStyleBackColor = true;
-            this.radioWeekly.CheckedChanged += new System.EventHandler(this.radioWeekly_CheckedChanged);
+            this.labelShareDesc.AutoSize = true;
+            this.labelShareDesc.Dock = System.Windows.Forms.DockStyle.Right;
+            this.labelShareDesc.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelShareDesc.ForeColor = System.Drawing.Color.SteelBlue;
+            this.labelShareDesc.Location = new System.Drawing.Point(501, 0);
+            this.labelShareDesc.Name = "labelShareDesc";
+            this.labelShareDesc.Size = new System.Drawing.Size(66, 26);
+            this.labelShareDesc.TabIndex = 6;
+            this.labelShareDesc.Text = "share";
             // 
             // SingleAllTableForm
             // 
@@ -231,5 +245,6 @@
         private System.Windows.Forms.RadioButton radio5mins;
         private System.Windows.Forms.RadioButton radioDays;
         private System.Windows.Forms.RadioButton radioWeekly;
+        private System.Windows.Forms.Label labelShareDesc;
     }
 }

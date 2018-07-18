@@ -15,7 +15,7 @@ namespace ShareViewer
 {
     public partial class MainForm : Form
     {
-        public const String Version = "0.0.2";
+        public const String Version = "0.0.3";
         internal AppUserSettings appUserSettings;
         bool initializing = true;
         bool SuppressDaysBackChangeHandling = false; // when true, suppresses OnChangehandling
@@ -136,7 +136,7 @@ namespace ShareViewer
             //set From date initially to sync with numericUpDown TradingDays
             calendarFrom.SetDate(DateTime.Today.AddDays(-Helper.ActualDaysBackToEncompassTradingDays(DateTime.Today, 100)));
             calendarTo.SetDate(DateTime.Today);
-            labelBackFrom.Text = "from Today";
+            labelBackFrom.Text = "ending Today";
             //load ShareList
             listBoxShareList.DataSource = LocalStore.ReadShareList();
             //possibly enable the New AllTables button
@@ -302,11 +302,11 @@ namespace ShareViewer
             listBoxInhalt.DataSource = null;
             if (calendarTo.SelectionStart.ToShortDateString() == DateTime.Today.ToShortDateString())
             {
-                labelBackFrom.Text = "from Today";
+                labelBackFrom.Text = "ending Today";
             }
             else
             {
-                labelBackFrom.Text = "from " + calendarTo.SelectionStart.ToShortDateString();
+                labelBackFrom.Text = "ending " + calendarTo.SelectionStart.ToShortDateString();
             }
 
             //recalc number of trading days back
@@ -317,7 +317,7 @@ namespace ShareViewer
 
         }
 
-        //trading days back changed
+        //trading days back changed (up down spinner or enter pressed in it's textbox)
         private void DaysBackChanged(object sender, EventArgs e)
         {
             if (SuppressDaysBackChangeHandling)
@@ -392,6 +392,27 @@ namespace ShareViewer
 
         private void OnMakeNewAllTables(object sender, EventArgs e)
         {
+            //if datafiles List is empty, bleat
+            if (listBoxInhalt.Items.Count == 0)
+            {
+                string dataFilesBtnText = buttonLogin.Text;
+                MessageBox.Show($"The 'Datafiles List' is empty.\nPlease select the source (Internet or Local)\nthen click the '{dataFilesBtnText}' button\nin order to confirm that data is on hand.", 
+                    "Precaution", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            //warn user if data files need to be downloaded
+            int missingCount = Helper.UntickedDayDataEntries("listBoxInhalt");
+            if (missingCount > 0)
+            {
+                var msg = $"Not all data files have been downloaded for the required period.\nProceed anyway?";
+                if ((MessageBox.Show(msg, $"Downloads needed!",
+                     MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.No))
+                {
+                    return;
+                }
+            }
+
             DateTime endDate, startDate;
             startDate = calendarFrom.SelectionStart;
             endDate = calendarTo.SelectionStart;
@@ -402,8 +423,8 @@ namespace ShareViewer
                 //LocalStore.GetDayDataRange(out newestDate, out oldestDate);
                 if (startDate <= endDate) {
                     var msg = $"Generate new tables for the {tradingSpan} trading days up to {endDate.ToShortDateString()} (inclusive)?";
-                        if ((MessageBox.Show(msg, $"New All-Tables", 
-                            MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes))
+                    if ((MessageBox.Show(msg, $"New All-Tables", 
+                         MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes))
                     {
                         //put some buttons on hold, make progress bar visible etc..
                         Helper.HoldWhileGeneratingNewAllTables(true);
@@ -433,7 +454,7 @@ namespace ShareViewer
                 string allTableFilename = appUserSettings.AllTablesFolder + $"\\alltable_{shareNum}.at";
                 if (File.Exists(allTableFilename))
                 {
-                    var AtShareForm = new SingleAllTableForm(allTableFilename);
+                    var AtShareForm = new SingleAllTableForm(allTableFilename,shareName);
                     AtShareForm.Text = $"[{shareNum}] {shareName}";
                     AtShareForm.Show();
                 }
@@ -465,6 +486,43 @@ namespace ShareViewer
             {
                 e.Handled = true;
             }
+
+        }
+
+        //Allow user to abort the run
+        private void buttonBusyAllTables_Click(object sender, EventArgs e)
+        {
+            var dlgResult = MessageBox.Show("Stop generating All-Tables?\nWarning: this will delete all existing All-Table files",
+                "Abort", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (dlgResult == DialogResult.Yes)
+            {
+                ((Button)sender).Text = "Stopping... please allow time to fully stop";
+                //cancel all running tasks
+                while (TaskMaster.CtsStack.Count > 0)
+                {
+                    var cts = TaskMaster.CtsStack.Pop();
+                    cts.Cancel();
+                }
+            }
+
+        }
+
+        //user has typed in some text but has not hit enter, rather has hit this button
+        private void buttonDays_Click(object sender, EventArgs e)
+        {
+
+            int tradingDays = Convert.ToInt16(daysBack.Value);
+            int actualDays = Helper.ActualDaysBackToEncompassTradingDays(calendarTo.SelectionStart, tradingDays);
+            try
+            {
+                SuppressFromDateChangeHandling = true;
+                calendarFrom.SetDate(calendarTo.SelectionStart.AddDays(-actualDays));
+            }
+            catch (ArgumentException exc)
+            {
+                MessageBox.Show(exc.Message, "Calendar");
+            }
+            ShowDataOnHand(true);
 
         }
     }

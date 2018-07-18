@@ -33,7 +33,6 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.labelGenNewAllTables = new System.Windows.Forms.Label();
             this.progressBarGenNewAllTables = new System.Windows.Forms.ProgressBar();
-            this.buttonNewAllTables = new System.Windows.Forms.Button();
             this.labelBusyDownload = new System.Windows.Forms.Label();
             this.buttonNewShareList = new System.Windows.Forms.Button();
             this.buttonLogfile = new System.Windows.Forms.Button();
@@ -48,6 +47,7 @@
             this.labelDatafilesCount = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.textBoxShareNumSearch = new System.Windows.Forms.TextBox();
+            this.buttonNewAllTables = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBoxSource = new System.Windows.Forms.GroupBox();
             this.buttonLogin = new System.Windows.Forms.Button();
@@ -64,9 +64,9 @@
             this.labelBackFrom = new System.Windows.Forms.Label();
             this.calendarTo = new System.Windows.Forms.MonthCalendar();
             this.calendarFrom = new System.Windows.Forms.MonthCalendar();
-            this.tabPageSettings = new System.Windows.Forms.TabPage();
-            this.labelBusyAllTables = new System.Windows.Forms.Label();
+            this.buttonBusyAllTables = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
+            this.buttonDays = new System.Windows.Forms.Button();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -80,7 +80,6 @@
             // tabControlMain
             // 
             this.tabControlMain.Controls.Add(this.tabPageImportation);
-            this.tabControlMain.Controls.Add(this.tabPageSettings);
             this.tabControlMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlMain.Location = new System.Drawing.Point(0, 0);
             this.tabControlMain.Name = "tabControlMain";
@@ -99,12 +98,12 @@
             this.tabPageImportation.Padding = new System.Windows.Forms.Padding(3);
             this.tabPageImportation.Size = new System.Drawing.Size(976, 735);
             this.tabPageImportation.TabIndex = 0;
-            this.tabPageImportation.Text = "Importation";
+            this.tabPageImportation.Text = "Downloading & Filling";
             // 
             // panel2
             // 
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel2.Controls.Add(this.labelBusyAllTables);
+            this.panel2.Controls.Add(this.buttonBusyAllTables);
             this.panel2.Controls.Add(this.labelGenNewAllTables);
             this.panel2.Controls.Add(this.progressBarGenNewAllTables);
             this.panel2.Controls.Add(this.labelBusyDownload);
@@ -141,20 +140,6 @@
             this.progressBarGenNewAllTables.Size = new System.Drawing.Size(395, 23);
             this.progressBarGenNewAllTables.TabIndex = 16;
             this.progressBarGenNewAllTables.Visible = false;
-            // 
-            // buttonNewAllTables
-            // 
-            this.buttonNewAllTables.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.buttonNewAllTables.Enabled = false;
-            this.buttonNewAllTables.FlatAppearance.BorderSize = 2;
-            this.buttonNewAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonNewAllTables.Location = new System.Drawing.Point(794, 57);
-            this.buttonNewAllTables.Name = "buttonNewAllTables";
-            this.buttonNewAllTables.Size = new System.Drawing.Size(151, 97);
-            this.buttonNewAllTables.TabIndex = 15;
-            this.buttonNewAllTables.Text = "New All-Tables";
-            this.buttonNewAllTables.UseVisualStyleBackColor = true;
-            this.buttonNewAllTables.Click += new System.EventHandler(this.OnMakeNewAllTables);
             // 
             // labelBusyDownload
             // 
@@ -273,6 +258,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.buttonDays);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.labelDatafilesCount);
             this.panel1.Controls.Add(this.label8);
@@ -297,7 +283,7 @@
             // 
             this.labelDatafilesCount.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelDatafilesCount.AutoSize = true;
-            this.labelDatafilesCount.Location = new System.Drawing.Point(240, 201);
+            this.labelDatafilesCount.Location = new System.Drawing.Point(101, 201);
             this.labelDatafilesCount.Name = "labelDatafilesCount";
             this.labelDatafilesCount.Size = new System.Drawing.Size(63, 13);
             this.labelDatafilesCount.TabIndex = 15;
@@ -325,15 +311,29 @@
             this.textBoxShareNumSearch.TextChanged += new System.EventHandler(this.OnSearchForShare);
             this.textBoxShareNumSearch.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxShareNumSearch_KeyPress);
             // 
+            // buttonNewAllTables
+            // 
+            this.buttonNewAllTables.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.buttonNewAllTables.Enabled = false;
+            this.buttonNewAllTables.FlatAppearance.BorderSize = 2;
+            this.buttonNewAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonNewAllTables.Location = new System.Drawing.Point(843, 57);
+            this.buttonNewAllTables.Name = "buttonNewAllTables";
+            this.buttonNewAllTables.Size = new System.Drawing.Size(110, 97);
+            this.buttonNewAllTables.TabIndex = 15;
+            this.buttonNewAllTables.Text = "New All-Tables";
+            this.buttonNewAllTables.UseVisualStyleBackColor = true;
+            this.buttonNewAllTables.Click += new System.EventHandler(this.OnMakeNewAllTables);
+            // 
             // label2
             // 
             this.label2.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(1, 199);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(136, 13);
+            this.label2.Size = new System.Drawing.Size(47, 13);
             this.label2.TabIndex = 12;
-            this.label2.Text = "✔= file already downloaded";
+            this.label2.Text = "✔= local";
             // 
             // groupBoxSource
             // 
@@ -355,7 +355,7 @@
             this.buttonLogin.Name = "buttonLogin";
             this.buttonLogin.Size = new System.Drawing.Size(248, 27);
             this.buttonLogin.TabIndex = 5;
-            this.buttonLogin.Text = "Show Inhalt for Date range";
+            this.buttonLogin.Text = "Show Datafiles on hand";
             this.buttonLogin.UseVisualStyleBackColor = true;
             this.buttonLogin.Click += new System.EventHandler(this.OnLogin);
             // 
@@ -435,7 +435,7 @@
             this.label7.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(696, 192);
+            this.label7.Location = new System.Drawing.Point(696, 193);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(81, 20);
             this.label7.TabIndex = 9;
@@ -444,7 +444,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(675, 7);
+            this.label1.Location = new System.Drawing.Point(523, 123);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(64, 13);
             this.label1.TabIndex = 5;
@@ -452,14 +452,15 @@
             // 
             // daysBack
             // 
-            this.daysBack.Location = new System.Drawing.Point(621, 3);
+            this.daysBack.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.daysBack.Location = new System.Drawing.Point(524, 88);
             this.daysBack.Maximum = new decimal(new int[] {
             300,
             0,
             0,
             0});
             this.daysBack.Name = "daysBack";
-            this.daysBack.Size = new System.Drawing.Size(47, 20);
+            this.daysBack.Size = new System.Drawing.Size(61, 29);
             this.daysBack.TabIndex = 7;
             this.daysBack.Value = new decimal(new int[] {
             100,
@@ -471,15 +472,15 @@
             // labelBackFrom
             // 
             this.labelBackFrom.AutoSize = true;
-            this.labelBackFrom.Location = new System.Drawing.Point(298, 8);
+            this.labelBackFrom.Location = new System.Drawing.Point(594, 8);
             this.labelBackFrom.Name = "labelBackFrom";
-            this.labelBackFrom.Size = new System.Drawing.Size(59, 13);
+            this.labelBackFrom.Size = new System.Drawing.Size(69, 13);
             this.labelBackFrom.TabIndex = 3;
-            this.labelBackFrom.Text = "From today";
+            this.labelBackFrom.Text = "Ending today";
             // 
             // calendarTo
             // 
-            this.calendarTo.Location = new System.Drawing.Point(297, 24);
+            this.calendarTo.Location = new System.Drawing.Point(597, 24);
             this.calendarTo.MaxSelectionCount = 1;
             this.calendarTo.Name = "calendarTo";
             this.calendarTo.ShowToday = false;
@@ -488,7 +489,7 @@
             // 
             // calendarFrom
             // 
-            this.calendarFrom.Location = new System.Drawing.Point(542, 24);
+            this.calendarFrom.Location = new System.Drawing.Point(285, 27);
             this.calendarFrom.MaxSelectionCount = 1;
             this.calendarFrom.Name = "calendarFrom";
             this.calendarFrom.ShowToday = false;
@@ -496,36 +497,39 @@
             this.calendarFrom.TabIndex = 6;
             this.calendarFrom.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.FromDateChanged);
             // 
-            // tabPageSettings
+            // buttonBusyAllTables
             // 
-            this.tabPageSettings.BackColor = System.Drawing.SystemColors.Control;
-            this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
-            this.tabPageSettings.Name = "tabPageSettings";
-            this.tabPageSettings.Size = new System.Drawing.Size(976, 735);
-            this.tabPageSettings.TabIndex = 2;
-            this.tabPageSettings.Text = "Settings";
-            // 
-            // labelBusyAllTables
-            // 
-            this.labelBusyAllTables.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelBusyAllTables.AutoSize = true;
-            this.labelBusyAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelBusyAllTables.ForeColor = System.Drawing.Color.Green;
-            this.labelBusyAllTables.Location = new System.Drawing.Point(334, 193);
-            this.labelBusyAllTables.Name = "labelBusyAllTables";
-            this.labelBusyAllTables.Size = new System.Drawing.Size(353, 37);
-            this.labelBusyAllTables.TabIndex = 18;
-            this.labelBusyAllTables.Text = "Generating All-Tables...";
-            this.labelBusyAllTables.Visible = false;
+            this.buttonBusyAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonBusyAllTables.ForeColor = System.Drawing.Color.Green;
+            this.buttonBusyAllTables.Location = new System.Drawing.Point(339, 197);
+            this.buttonBusyAllTables.Name = "buttonBusyAllTables";
+            this.buttonBusyAllTables.Size = new System.Drawing.Size(298, 71);
+            this.buttonBusyAllTables.TabIndex = 18;
+            this.buttonBusyAllTables.Text = "Busy generating All-Tables...Click to Abort";
+            this.buttonBusyAllTables.UseVisualStyleBackColor = true;
+            this.buttonBusyAllTables.Visible = false;
+            this.buttonBusyAllTables.Click += new System.EventHandler(this.buttonBusyAllTables_Click);
             // 
             // label3
             // 
+            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(543, 7);
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(203, 193);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(74, 13);
+            this.label3.Size = new System.Drawing.Size(101, 20);
             this.label3.TabIndex = 16;
-            this.label3.Text = "backwards for";
+            this.label3.Text = "Datafiles List";
+            // 
+            // buttonDays
+            // 
+            this.buttonDays.Location = new System.Drawing.Point(536, 143);
+            this.buttonDays.Name = "buttonDays";
+            this.buttonDays.Size = new System.Drawing.Size(37, 32);
+            this.buttonDays.TabIndex = 17;
+            this.buttonDays.Text = "set";
+            this.buttonDays.UseVisualStyleBackColor = true;
+            this.buttonDays.Click += new System.EventHandler(this.buttonDays_Click);
             // 
             // MainForm
             // 
@@ -587,15 +591,15 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label labelBusyDownload;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TabPage tabPageSettings;
         private System.Windows.Forms.Button buttonNewAllTables;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox textBoxShareNumSearch;
         internal System.Windows.Forms.ProgressBar progressBarGenNewAllTables;
         internal System.Windows.Forms.Label labelGenNewAllTables;
         private System.Windows.Forms.Label labelDatafilesCount;
-        private System.Windows.Forms.Label labelBusyAllTables;
+        private System.Windows.Forms.Button buttonBusyAllTables;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button buttonDays;
     }
 }
 

@@ -19,6 +19,11 @@ namespace ShareViewer
             return (MainForm)Application.OpenForms["MainForm"];
         }
 
+        internal static Control  GetMainFormControl(string controlName)
+        {
+            return GetMainForm().Controls.Find(controlName, true)[0];
+        }
+
         internal static AppUserSettings GetAppUserSettings()
         {
             var form = GetMainForm();
@@ -89,14 +94,26 @@ namespace ShareViewer
         //also returns totalItems as an out parameter
         internal static int MarkListboxItem(string listBoxName, string item, out int totalItems)
         {
-            var form = GetMainForm();
-
-            var lb = (ListBox)form.Controls.Find(listBoxName, true).FirstOrDefault();
+            //var form = GetMainForm();
+            //var lb = (ListBox)form.Controls.Find(listBoxName, true).FirstOrDefault();
+            var lb = (ListBox)GetMainFormControl(listBoxName);
             //note: '\x2714' = ✔
             //note: item may have a leading ✔
             lb.SelectedIndex = lb.Items.IndexOf(item);
             totalItems = lb.Items.Count;
             return totalItems - lb.SelectedItems.Count;
+        }
+
+        //counts number of data files which need to be downloaded
+        internal static int UntickedDayDataEntries(string listBoxName)
+        {
+            var lb = (ListBox)GetMainFormControl(listBoxName);
+            int unTicked = 0;
+            foreach (string item in lb.Items)
+            {
+                if (!item.StartsWith("\x2714"))  unTicked++;
+            }
+            return unTicked;
         }
 
         internal static void SetProgressBarVisibility(string progressBarName, bool visible)
@@ -204,9 +221,22 @@ namespace ShareViewer
             //make progressBar and paired label visible/not
             ((ProgressBar)form.Controls.Find("progressBarGenNewAllTables", true)[0]).Visible = hold;
             ((Label)form.Controls.Find("labelGenNewAllTables", true)[0]).Visible = hold;
-            ((Label)form.Controls.Find("labelBusyAllTables", true)[0]).Visible = hold;
+            ((Button)form.Controls.Find("buttonBusyAllTables", true)[0]).Visible = hold;
 
+        }
 
+        internal static bool UserAbortsAllTableGeneration()
+        {
+            var form = GetMainForm();
+            Button btn = ((Button)form.Controls.Find("buttonBusyAllTables", true)[0]);
+            return (btn.Text.StartsWith("Stopping"));
+        }
+
+        internal static void ContinueEnableAllTableGeneration()
+        {
+            var form = GetMainForm();
+            Button btn = ((Button)form.Controls.Find("buttonBusyAllTables", true)[0]);
+            btn.Text = "Busy generating All-Tables...Click to Abort";
         }
 
         internal static void SerializeAllTableRecord(FileStream fs, AllTable atRec)

@@ -19,11 +19,13 @@ namespace ShareViewer
     {
         private string _allTableFilename;
         private VerticalMode verticalMode = VerticalMode.FiveMinly;
+        private string _shareDescriptor;
 
-        public SingleAllTableForm(string allTableFilename)
+        public SingleAllTableForm(string allTableFilename, string shareDesc)
         {
             InitializeComponent();
             _allTableFilename = allTableFilename;
+            _shareDescriptor = shareDesc;
         }
 
         private void AddInitialColumnsToView()
@@ -55,6 +57,8 @@ namespace ShareViewer
                 buttonInitialView.Enabled = true;
             }
 
+            //put sharename prominent
+            labelShareDesc.Text = _shareDescriptor;
 
             //load up the all-Table 'columns' listbox
             var columnNames = new List<String>();
