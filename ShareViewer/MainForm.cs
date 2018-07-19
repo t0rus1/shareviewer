@@ -39,11 +39,22 @@ namespace ShareViewer
 
             CheckExtraFolderSettings();
             CheckAllTableFolderSettings();
+            CheckAllTableViewsSettings();
 
             BindFormProperties();
             InitializeShareViewer();
             initializing = false;
             Helper.LogStatus("Info", "Ready");
+        }
+
+        private void CheckAllTableViewsSettings()
+        {
+            if (appUserSettings.AllTableViews.Equals(""))
+            {
+                //not been set yet. set it to default and save.
+                appUserSettings.AllTableViews = new List<string>();
+                appUserSettings.Save();
+            }
         }
 
         //instantiate, load and bind app user settings

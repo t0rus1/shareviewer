@@ -34,6 +34,7 @@
             this.listBoxCols = new System.Windows.Forms.ListBox();
             this.dgView = new System.Windows.Forms.DataGridView();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.labelShareDesc = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.radioWeekly = new System.Windows.Forms.RadioButton();
             this.radioDays = new System.Windows.Forms.RadioButton();
@@ -41,8 +42,7 @@
             this.radio5mins = new System.Windows.Forms.RadioButton();
             this.buttonSaveView = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.buttonInitialView = new System.Windows.Forms.Button();
-            this.labelShareDesc = new System.Windows.Forms.Label();
+            this.comboBoxViews = new System.Windows.Forms.ComboBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgView)).BeginInit();
             this.panel2.SuspendLayout();
@@ -94,16 +94,28 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.comboBoxViews);
             this.panel2.Controls.Add(this.labelShareDesc);
             this.panel2.Controls.Add(this.groupBox2);
             this.panel2.Controls.Add(this.buttonSaveView);
             this.panel2.Controls.Add(this.label1);
-            this.panel2.Controls.Add(this.buttonInitialView);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(130, 0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(670, 106);
             this.panel2.TabIndex = 2;
+            // 
+            // labelShareDesc
+            // 
+            this.labelShareDesc.AutoSize = true;
+            this.labelShareDesc.Dock = System.Windows.Forms.DockStyle.Left;
+            this.labelShareDesc.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelShareDesc.ForeColor = System.Drawing.Color.SteelBlue;
+            this.labelShareDesc.Location = new System.Drawing.Point(0, 0);
+            this.labelShareDesc.Name = "labelShareDesc";
+            this.labelShareDesc.Size = new System.Drawing.Size(66, 26);
+            this.labelShareDesc.TabIndex = 6;
+            this.labelShareDesc.Text = "share";
             // 
             // groupBox2
             // 
@@ -170,7 +182,7 @@
             // 
             // buttonSaveView
             // 
-            this.buttonSaveView.Location = new System.Drawing.Point(113, 10);
+            this.buttonSaveView.Location = new System.Drawing.Point(222, 76);
             this.buttonSaveView.Name = "buttonSaveView";
             this.buttonSaveView.Size = new System.Drawing.Size(96, 23);
             this.buttonSaveView.TabIndex = 4;
@@ -181,33 +193,23 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 61);
+            this.label1.Location = new System.Drawing.Point(7, 46);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(176, 13);
             this.label1.TabIndex = 2;
             this.label1.Text = "<-- ctrl-click to add/remove columns";
             // 
-            // buttonInitialView
+            // comboBoxViews
             // 
-            this.buttonInitialView.Location = new System.Drawing.Point(11, 10);
-            this.buttonInitialView.Name = "buttonInitialView";
-            this.buttonInitialView.Size = new System.Drawing.Size(75, 28);
-            this.buttonInitialView.TabIndex = 0;
-            this.buttonInitialView.Text = "Initial View";
-            this.buttonInitialView.UseVisualStyleBackColor = true;
-            this.buttonInitialView.Click += new System.EventHandler(this.buttonInitialView_Click);
-            // 
-            // labelShareDesc
-            // 
-            this.labelShareDesc.AutoSize = true;
-            this.labelShareDesc.Dock = System.Windows.Forms.DockStyle.Right;
-            this.labelShareDesc.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelShareDesc.ForeColor = System.Drawing.Color.SteelBlue;
-            this.labelShareDesc.Location = new System.Drawing.Point(501, 0);
-            this.labelShareDesc.Name = "labelShareDesc";
-            this.labelShareDesc.Size = new System.Drawing.Size(66, 26);
-            this.labelShareDesc.TabIndex = 6;
-            this.labelShareDesc.Text = "share";
+            this.comboBoxViews.FormattingEnabled = true;
+            this.comboBoxViews.Items.AddRange(new object[] {
+            "Initial"});
+            this.comboBoxViews.Location = new System.Drawing.Point(6, 78);
+            this.comboBoxViews.Name = "comboBoxViews";
+            this.comboBoxViews.Size = new System.Drawing.Size(203, 21);
+            this.comboBoxViews.TabIndex = 7;
+            this.comboBoxViews.Text = "Views";
+            this.comboBoxViews.SelectedIndexChanged += new System.EventHandler(this.comboBoxViews_SelectedIndexChanged);
             // 
             // SingleAllTableForm
             // 
@@ -237,7 +239,6 @@
         private System.Windows.Forms.ListBox listBoxCols;
         private System.Windows.Forms.DataGridView dgView;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Button buttonInitialView;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button buttonSaveView;
         private System.Windows.Forms.GroupBox groupBox2;
@@ -246,5 +247,6 @@
         private System.Windows.Forms.RadioButton radioDays;
         private System.Windows.Forms.RadioButton radioWeekly;
         private System.Windows.Forms.Label labelShareDesc;
+        private System.Windows.Forms.ComboBox comboBoxViews;
     }
 }

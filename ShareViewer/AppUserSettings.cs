@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Drawing;
 
@@ -101,6 +102,21 @@ namespace ShareViewer
 
         [UserScopedSetting()]
         [DefaultSettingValue("")]
+        public String AllTableDataEnd
+        {
+            get
+            {
+                return ((String)this["AllTableDataEnd"]);
+            }
+            set
+            {
+                this["AllTableDataEnd"] = (String)value;
+            }
+
+        }
+
+        [UserScopedSetting()]
+        [DefaultSettingValue("")]
         public String AllTableTradingSpan
         {
             get
@@ -114,6 +130,35 @@ namespace ShareViewer
 
         }
 
+        [UserScopedSetting()]
+        [DefaultSettingValue("Row,Date,Day,TimeFrom,TimeTo,F,FP,FV")]
+        public String InitialAllTableView
+        {
+            get
+            {
+                return ((String)this["InitialAllTableView"]);
+            }
+            set
+            {
+                this["InitialAllTableView"] = (String)value;
+            }
+
+        }
+
+        [DefaultSettingValue("")]
+        [UserScopedSetting()]
+        public List<String> AllTableViews
+        {
+            get
+            {
+                return (List<String>)this["AllTableViews"];
+            }
+            set
+            {
+                this["AllTableViews"] = (List<String>)value;
+            }
+
+        }
 
     }
 }

@@ -28,18 +28,56 @@ namespace ShareViewer
             _shareDescriptor = shareDesc;
         }
 
-        private void AddInitialColumnsToView()
+        //finds the index number of the named column currently in the grid if possible
+        //NOTE, assumes the grid columns already present
+        private int DetermineColumnIndex(string colName)
         {
+            int colIndex = 0;
+            bool rowFound = false;
+            foreach (var col in dgView.Columns)
+            {
+                if (col is DataGridViewTextBoxColumn)
+                {
+                    if (((DataGridViewTextBoxColumn)col).DataPropertyName == colName)
+                    {
+                        rowFound = true;
+                        break;
+                    }
+                }
+                colIndex++;
+            }
+            if (rowFound)
+            {
+                return colIndex;
+            }
+            else
+            {
+                return -1;
+            }
+        }
 
-            var initCols = new List<String>() { "Row", "Date", "Day", "TimeFrom", "TimeTo", "F", "FP", "FV" };
-            var initIndices = new List<int>() { 0, 2, 4, 6, 7, 8, 10, 48 };
-
+        //selects listbox items which are listed in the passed comma separated list
+        //note: 1st segment assumed to be a viewname! the rest are the column indices
+        private void SelectColumnsToView(string viewDefinition)
+        {
+            var columns = viewDefinition.Split(',').Skip(1);
             listBoxCols.SelectedIndices.Clear();
-            foreach (var col in initIndices)
+            foreach (string colIndex in columns)
+            {
+                var selIndex = Convert.ToInt16(colIndex);
+                if (selIndex != -1) listBoxCols.SelectedIndex = selIndex;
+            }
+
+        }
+
+        //used before DatagridView has columns
+        private void SelectInitialColumnsToView()
+        {
+            listBoxCols.SelectedIndices.Clear();
+            foreach (var col in AllTable.InitialViewIndices())
             {
                 listBoxCols.SelectedIndex = col;
             }
-
         }
 
         private void SingleAllTableForm_Load(object sender, EventArgs e)
@@ -49,16 +87,21 @@ namespace ShareViewer
             if (periodStart == "")
             {
                 this.Text += "Date Range unknown - Please close form & re-generate!";
-                buttonInitialView.Enabled = false;
             }
             else
             {
                 this.Text += $"from {periodStart} for {tradingSpan} trading days";
-                buttonInitialView.Enabled = true;
             }
 
             //put sharename prominent
             labelShareDesc.Text = _shareDescriptor;
+
+            //load up combobox for views from user settings
+            foreach (string item in Helper.GetAppUserSettings().AllTableViews)
+            {
+                string viewName = item.Split(',')[0];
+                comboBoxViews.Items.Add(viewName);
+            }
 
             //load up the all-Table 'columns' listbox
             var columnNames = new List<String>();
@@ -75,7 +118,7 @@ namespace ShareViewer
 
             BindDatagridView(VerticalMode.FiveMinly);
 
-            AddInitialColumnsToView();
+            SelectInitialColumnsToView();
             HighightMondayRows();
 
             dgView.Focus();
@@ -127,8 +170,10 @@ namespace ShareViewer
                 }
             }
 
+            //set the datasource
             verticalMode = vertMode;
             dgView.DataSource = bindingSource1;
+
             dgView.Focus();
 
         }
@@ -139,8 +184,14 @@ namespace ShareViewer
             foreach (string item in listBoxCols.SelectedItems)
             {
                 //column name includes a column number prefix, so strip it for the DataPropertyName
-                dgView.Columns.Add(new DataGridViewTextBoxColumn() { Name = item, DataPropertyName = item.Substring(3) });
+                dgView.Columns.Add(
+                    new DataGridViewTextBoxColumn() {
+                        Name = item,
+                        DataPropertyName = item.Substring(3),
+                        ToolTipText = AllTable.PropNameToHint(item.Substring(3))
+                    });
             }
+
         }
 
         //user wants to fill the All-Table with trading data
@@ -152,42 +203,15 @@ namespace ShareViewer
 
         private void buttonInitialView_Click(object sender, EventArgs e)
         {
-            AddInitialColumnsToView();
+            SelectInitialColumnsToView();
             HighightMondayRows();
-        }
-
-        //finds the index number of the named column currently in the grid if possible
-        private int DetermineColumn(string colName)
-        {
-            int colIndex = 0;
-            bool rowFound = false;
-            foreach (var col in dgView.Columns)
-            {
-                if (col is DataGridViewTextBoxColumn)
-                {
-                    if (((DataGridViewTextBoxColumn)col).DataPropertyName == colName)
-                    {
-                        rowFound = true;
-                        break;
-                    }
-                }
-                colIndex++;
-            }
-            if (rowFound)
-            {
-                return colIndex;
-            }
-            else
-            {
-                return -1;
-            }
         }
 
         private void HighightMondayRows()
         {
             if (verticalMode != VerticalMode.FiveMinly) return;
 
-            int indexOfRow = DetermineColumn("Row");
+            int indexOfRow = DetermineColumnIndex("Row");
             if (indexOfRow == -1) return;
 
             foreach (DataGridViewRow row in dgView.Rows)
@@ -203,7 +227,25 @@ namespace ShareViewer
 
         private void buttonSaveView_Click(object sender, EventArgs e)
         {
-            //save currently selected colums to Usersettings under a name
+            var form = new InputBox("Save column arrangement as a view", "Name this view");
+            var dlgResult = form.ShowDialog();
+            var viewName = form.returnValue;
+            if (dlgResult == DialogResult.OK)
+            {
+                // first the view name
+                string viewStr = $"{viewName},"; 
+                //then the columns
+                foreach (int index in listBoxCols.SelectedIndices)
+                {
+                    viewStr += $"{index},";
+                }
+                viewStr = viewStr.TrimEnd(',');
+
+                //save currently selected colums to Usersettings under a name
+                var aus = Helper.GetAppUserSettings();
+                aus.AllTableViews.Add(viewStr);
+                aus.Save();
+            }
 
         }
 
@@ -226,6 +268,22 @@ namespace ShareViewer
         private void radioWeekly_CheckedChanged(object sender, EventArgs e)
         {
             BindDatagridView(VerticalMode.Weekly);
+        }
+
+        private void comboBoxViews_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string viewName = ((ComboBox)sender).Text;
+            if ( viewName == "Initial")
+            {
+                SelectInitialColumnsToView();
+            }
+            else
+            {
+                //get definition from User settings - its name is the first value in the csv list
+                var viewDefinition = Helper.GetAppUserSettings().AllTableViews.Find(v => v.StartsWith(viewName));
+                SelectColumnsToView(viewDefinition);
+
+            }
         }
     }
 }
