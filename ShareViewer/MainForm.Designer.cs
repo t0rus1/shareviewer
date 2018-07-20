@@ -31,6 +31,7 @@
             this.tabControlMain = new System.Windows.Forms.TabControl();
             this.tabPageImportation = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.buttonBusyAllTables = new System.Windows.Forms.Button();
             this.labelGenNewAllTables = new System.Windows.Forms.Label();
             this.progressBarGenNewAllTables = new System.Windows.Forms.ProgressBar();
             this.labelBusyDownload = new System.Windows.Forms.Label();
@@ -44,6 +45,8 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.buttonDays = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
             this.labelDatafilesCount = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.textBoxShareNumSearch = new System.Windows.Forms.TextBox();
@@ -64,9 +67,6 @@
             this.labelBackFrom = new System.Windows.Forms.Label();
             this.calendarTo = new System.Windows.Forms.MonthCalendar();
             this.calendarFrom = new System.Windows.Forms.MonthCalendar();
-            this.buttonBusyAllTables = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.buttonDays = new System.Windows.Forms.Button();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -119,6 +119,19 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(970, 492);
             this.panel2.TabIndex = 4;
+            // 
+            // buttonBusyAllTables
+            // 
+            this.buttonBusyAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonBusyAllTables.ForeColor = System.Drawing.Color.Green;
+            this.buttonBusyAllTables.Location = new System.Drawing.Point(339, 197);
+            this.buttonBusyAllTables.Name = "buttonBusyAllTables";
+            this.buttonBusyAllTables.Size = new System.Drawing.Size(298, 71);
+            this.buttonBusyAllTables.TabIndex = 18;
+            this.buttonBusyAllTables.Text = "Busy generating All-Tables...Click to Abort";
+            this.buttonBusyAllTables.UseVisualStyleBackColor = true;
+            this.buttonBusyAllTables.Visible = false;
+            this.buttonBusyAllTables.Click += new System.EventHandler(this.buttonBusyAllTables_Click);
             // 
             // labelGenNewAllTables
             // 
@@ -278,6 +291,27 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(970, 215);
             this.panel1.TabIndex = 0;
+            // 
+            // buttonDays
+            // 
+            this.buttonDays.Location = new System.Drawing.Point(536, 143);
+            this.buttonDays.Name = "buttonDays";
+            this.buttonDays.Size = new System.Drawing.Size(37, 32);
+            this.buttonDays.TabIndex = 17;
+            this.buttonDays.Text = "set";
+            this.buttonDays.UseVisualStyleBackColor = true;
+            this.buttonDays.Click += new System.EventHandler(this.buttonDays_Click);
+            // 
+            // label3
+            // 
+            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(203, 193);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(101, 20);
+            this.label3.TabIndex = 16;
+            this.label3.Text = "Datafiles List";
             // 
             // labelDatafilesCount
             // 
@@ -496,40 +530,6 @@
             this.calendarFrom.ShowTodayCircle = false;
             this.calendarFrom.TabIndex = 6;
             this.calendarFrom.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.FromDateChanged);
-            // 
-            // buttonBusyAllTables
-            // 
-            this.buttonBusyAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonBusyAllTables.ForeColor = System.Drawing.Color.Green;
-            this.buttonBusyAllTables.Location = new System.Drawing.Point(339, 197);
-            this.buttonBusyAllTables.Name = "buttonBusyAllTables";
-            this.buttonBusyAllTables.Size = new System.Drawing.Size(298, 71);
-            this.buttonBusyAllTables.TabIndex = 18;
-            this.buttonBusyAllTables.Text = "Busy generating All-Tables...Click to Abort";
-            this.buttonBusyAllTables.UseVisualStyleBackColor = true;
-            this.buttonBusyAllTables.Visible = false;
-            this.buttonBusyAllTables.Click += new System.EventHandler(this.buttonBusyAllTables_Click);
-            // 
-            // label3
-            // 
-            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(203, 193);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(101, 20);
-            this.label3.TabIndex = 16;
-            this.label3.Text = "Datafiles List";
-            // 
-            // buttonDays
-            // 
-            this.buttonDays.Location = new System.Drawing.Point(536, 143);
-            this.buttonDays.Name = "buttonDays";
-            this.buttonDays.Size = new System.Drawing.Size(37, 32);
-            this.buttonDays.TabIndex = 17;
-            this.buttonDays.Text = "set";
-            this.buttonDays.UseVisualStyleBackColor = true;
-            this.buttonDays.Click += new System.EventHandler(this.buttonDays_Click);
             // 
             // MainForm
             // 

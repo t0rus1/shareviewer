@@ -225,30 +225,6 @@ namespace ShareViewer
         }
 
 
-        private void buttonSaveView_Click(object sender, EventArgs e)
-        {
-            var form = new InputBox("Save column arrangement as a view", "Name this view");
-            var dlgResult = form.ShowDialog();
-            var viewName = form.returnValue;
-            if (dlgResult == DialogResult.OK)
-            {
-                // first the view name
-                string viewStr = $"{viewName},"; 
-                //then the columns
-                foreach (int index in listBoxCols.SelectedIndices)
-                {
-                    viewStr += $"{index},";
-                }
-                viewStr = viewStr.TrimEnd(',');
-
-                //save currently selected colums to Usersettings under a name
-                var aus = Helper.GetAppUserSettings();
-                aus.AllTableViews.Add(viewStr);
-                aus.Save();
-            }
-
-        }
-
         private void radio5mins_CheckedChanged(object sender, EventArgs e)
         {
             //revert the databinding to initial full set of rows
@@ -284,6 +260,30 @@ namespace ShareViewer
                 SelectColumnsToView(viewDefinition);
 
             }
+        }
+
+        private void linkLabelSaveView_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var form = new InputBox("Save column arrangement as a view", "Name this view");
+            var dlgResult = form.ShowDialog();
+            var viewName = form.returnValue;
+            if (dlgResult == DialogResult.OK)
+            {
+                // first the view name
+                string viewStr = $"{viewName},";
+                //then the columns
+                foreach (int index in listBoxCols.SelectedIndices)
+                {
+                    viewStr += $"{index},";
+                }
+                viewStr = viewStr.TrimEnd(',');
+
+                //save currently selected colums to Usersettings under a name
+                var aus = Helper.GetAppUserSettings();
+                aus.AllTableViews.Add(viewStr);
+                aus.Save();
+            }
+
         }
     }
 }
