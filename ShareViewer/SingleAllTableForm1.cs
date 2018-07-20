@@ -285,5 +285,11 @@ namespace ShareViewer
             }
 
         }
+
+        private void linkLabelLock_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            linkLabelLock.Text = linkLabelLock.Text == "lock view" ? "unlock view" : "lock view";
+            listBoxCols.Enabled = !listBoxCols.Enabled;
+        }
     }
 }

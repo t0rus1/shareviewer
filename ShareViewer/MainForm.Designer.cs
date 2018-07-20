@@ -103,7 +103,6 @@
             // panel2
             // 
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel2.Controls.Add(this.buttonBusyAllTables);
             this.panel2.Controls.Add(this.labelGenNewAllTables);
             this.panel2.Controls.Add(this.progressBarGenNewAllTables);
             this.panel2.Controls.Add(this.labelBusyDownload);
@@ -122,13 +121,13 @@
             // 
             // buttonBusyAllTables
             // 
-            this.buttonBusyAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonBusyAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonBusyAllTables.ForeColor = System.Drawing.Color.Green;
-            this.buttonBusyAllTables.Location = new System.Drawing.Point(339, 197);
+            this.buttonBusyAllTables.Location = new System.Drawing.Point(846, 83);
             this.buttonBusyAllTables.Name = "buttonBusyAllTables";
-            this.buttonBusyAllTables.Size = new System.Drawing.Size(298, 71);
+            this.buttonBusyAllTables.Size = new System.Drawing.Size(110, 97);
             this.buttonBusyAllTables.TabIndex = 18;
-            this.buttonBusyAllTables.Text = "Busy generating All-Tables...Click to Abort";
+            this.buttonBusyAllTables.Text = "All-Table generation... Click to Abort";
             this.buttonBusyAllTables.UseVisualStyleBackColor = true;
             this.buttonBusyAllTables.Visible = false;
             this.buttonBusyAllTables.Click += new System.EventHandler(this.buttonBusyAllTables_Click);
@@ -159,7 +158,7 @@
             this.labelBusyDownload.AutoSize = true;
             this.labelBusyDownload.Dock = System.Windows.Forms.DockStyle.Top;
             this.labelBusyDownload.ForeColor = System.Drawing.Color.ForestGreen;
-            this.labelBusyDownload.Location = new System.Drawing.Point(299, 66);
+            this.labelBusyDownload.Location = new System.Drawing.Point(299, 23);
             this.labelBusyDownload.Name = "labelBusyDownload";
             this.labelBusyDownload.Size = new System.Drawing.Size(115, 13);
             this.labelBusyDownload.TabIndex = 11;
@@ -168,15 +167,15 @@
             // 
             // buttonNewShareList
             // 
-            this.buttonNewShareList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonNewShareList.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.buttonNewShareList.Enabled = false;
             this.buttonNewShareList.FlatAppearance.BorderSize = 2;
             this.buttonNewShareList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonNewShareList.Location = new System.Drawing.Point(304, 93);
+            this.buttonNewShareList.Location = new System.Drawing.Point(523, 137);
             this.buttonNewShareList.Name = "buttonNewShareList";
-            this.buttonNewShareList.Size = new System.Drawing.Size(383, 30);
+            this.buttonNewShareList.Size = new System.Drawing.Size(164, 43);
             this.buttonNewShareList.TabIndex = 11;
-            this.buttonNewShareList.Text = "New Share List";
+            this.buttonNewShareList.Text = "New Share List -->";
             this.buttonNewShareList.UseVisualStyleBackColor = true;
             this.buttonNewShareList.Click += new System.EventHandler(this.onNewShareListBtn);
             // 
@@ -205,7 +204,7 @@
             // progressBarDownload
             // 
             this.progressBarDownload.Dock = System.Windows.Forms.DockStyle.Top;
-            this.progressBarDownload.Location = new System.Drawing.Point(299, 43);
+            this.progressBarDownload.Location = new System.Drawing.Point(299, 0);
             this.progressBarDownload.Name = "progressBarDownload";
             this.progressBarDownload.Size = new System.Drawing.Size(395, 23);
             this.progressBarDownload.TabIndex = 3;
@@ -213,15 +212,15 @@
             // 
             // buttonDayDataDownload
             // 
-            this.buttonDayDataDownload.Dock = System.Windows.Forms.DockStyle.Top;
+            this.buttonDayDataDownload.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.buttonDayDataDownload.Enabled = false;
             this.buttonDayDataDownload.FlatAppearance.BorderSize = 2;
             this.buttonDayDataDownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonDayDataDownload.Location = new System.Drawing.Point(299, 0);
+            this.buttonDayDataDownload.Location = new System.Drawing.Point(305, 45);
             this.buttonDayDataDownload.Name = "buttonDayDataDownload";
-            this.buttonDayDataDownload.Size = new System.Drawing.Size(395, 43);
+            this.buttonDayDataDownload.Size = new System.Drawing.Size(206, 43);
             this.buttonDayDataDownload.TabIndex = 10;
-            this.buttonDayDataDownload.Text = "Download data files";
+            this.buttonDayDataDownload.Text = "<-- Download data files";
             this.buttonDayDataDownload.UseVisualStyleBackColor = true;
             this.buttonDayDataDownload.Click += new System.EventHandler(this.DownloadDayDataBtnClicked);
             // 
@@ -271,6 +270,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.buttonBusyAllTables);
             this.panel1.Controls.Add(this.buttonDays);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.labelDatafilesCount);
@@ -351,9 +351,9 @@
             this.buttonNewAllTables.Enabled = false;
             this.buttonNewAllTables.FlatAppearance.BorderSize = 2;
             this.buttonNewAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonNewAllTables.Location = new System.Drawing.Point(843, 57);
+            this.buttonNewAllTables.Location = new System.Drawing.Point(846, 8);
             this.buttonNewAllTables.Name = "buttonNewAllTables";
-            this.buttonNewAllTables.Size = new System.Drawing.Size(110, 97);
+            this.buttonNewAllTables.Size = new System.Drawing.Size(110, 65);
             this.buttonNewAllTables.TabIndex = 15;
             this.buttonNewAllTables.Text = "New All-Tables";
             this.buttonNewAllTables.UseVisualStyleBackColor = true;

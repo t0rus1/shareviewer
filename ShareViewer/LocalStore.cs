@@ -213,7 +213,7 @@ namespace ShareViewer
                 {
                     var shareName = m.Groups[1].Value.TrimEnd();
                     var shareNum = Convert.ToInt16(m.Groups[2].Value);
-                    var allTableFile = atPath + @"\" + $"at_{shareNum}.at";
+                    var allTableFile = atPath + @"\" + $"alltable_{shareNum}.at";
                     File.Delete(allTableFile);
                     var auditFile = atPath + @"\Audit\" + $"{shareNum.ToString("000")}.txt";
                     File.Delete(auditFile);
@@ -434,8 +434,9 @@ namespace ShareViewer
 
                     var tokenSource = new CancellationTokenSource();
                     TaskMaster.CtsStack.Push(tokenSource);
-                    CancellationToken ct = tokenSource.Token;                    
+                    CancellationToken ct = tokenSource.Token;
 
+                    Helper.Log("Info", $"Queuing All-Table job for share {shareNum}...");
                     var genTask = Task.Run(() =>
                     {
                         //build the dictionary which helps us in filling the alltables with price and volume info
