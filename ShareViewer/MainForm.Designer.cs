@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.tabControlMain = new System.Windows.Forms.TabControl();
             this.tabPageImportation = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -36,6 +38,7 @@
             this.progressBarGenNewAllTables = new System.Windows.Forms.ProgressBar();
             this.labelBusyDownload = new System.Windows.Forms.Label();
             this.buttonNewShareList = new System.Windows.Forms.Button();
+            this.buttonNewAllTables = new System.Windows.Forms.Button();
             this.buttonLogfile = new System.Windows.Forms.Button();
             this.buttonExplorer = new System.Windows.Forms.Button();
             this.progressBarDownload = new System.Windows.Forms.ProgressBar();
@@ -50,7 +53,6 @@
             this.labelDatafilesCount = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.textBoxShareNumSearch = new System.Windows.Forms.TextBox();
-            this.buttonNewAllTables = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBoxSource = new System.Windows.Forms.GroupBox();
             this.buttonLogin = new System.Windows.Forms.Button();
@@ -67,6 +69,8 @@
             this.labelBackFrom = new System.Windows.Forms.Label();
             this.calendarTo = new System.Windows.Forms.MonthCalendar();
             this.calendarFrom = new System.Windows.Forms.MonthCalendar();
+            this.toolTipShareList = new System.Windows.Forms.ToolTip(this.components);
+            this.label4 = new System.Windows.Forms.Label();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -103,10 +107,12 @@
             // panel2
             // 
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.buttonBusyAllTables);
             this.panel2.Controls.Add(this.labelGenNewAllTables);
             this.panel2.Controls.Add(this.progressBarGenNewAllTables);
             this.panel2.Controls.Add(this.labelBusyDownload);
             this.panel2.Controls.Add(this.buttonNewShareList);
+            this.panel2.Controls.Add(this.buttonNewAllTables);
             this.panel2.Controls.Add(this.buttonLogfile);
             this.panel2.Controls.Add(this.buttonExplorer);
             this.panel2.Controls.Add(this.progressBarDownload);
@@ -121,14 +127,20 @@
             // 
             // buttonBusyAllTables
             // 
+            this.buttonBusyAllTables.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonBusyAllTables.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.buttonBusyAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonBusyAllTables.ForeColor = System.Drawing.Color.Green;
-            this.buttonBusyAllTables.Location = new System.Drawing.Point(846, 83);
+            this.buttonBusyAllTables.Image = ((System.Drawing.Image)(resources.GetObject("buttonBusyAllTables.Image")));
+            this.buttonBusyAllTables.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.buttonBusyAllTables.Location = new System.Drawing.Point(352, 246);
             this.buttonBusyAllTables.Name = "buttonBusyAllTables";
-            this.buttonBusyAllTables.Size = new System.Drawing.Size(110, 97);
+            this.buttonBusyAllTables.Size = new System.Drawing.Size(296, 121);
             this.buttonBusyAllTables.TabIndex = 18;
             this.buttonBusyAllTables.Text = "All-Table generation... Click to Abort";
-            this.buttonBusyAllTables.UseVisualStyleBackColor = true;
+            this.buttonBusyAllTables.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.buttonBusyAllTables.UseVisualStyleBackColor = false;
             this.buttonBusyAllTables.Visible = false;
             this.buttonBusyAllTables.Click += new System.EventHandler(this.buttonBusyAllTables_Click);
             // 
@@ -171,17 +183,38 @@
             this.buttonNewShareList.Enabled = false;
             this.buttonNewShareList.FlatAppearance.BorderSize = 2;
             this.buttonNewShareList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonNewShareList.Location = new System.Drawing.Point(523, 137);
+            this.buttonNewShareList.Image = ((System.Drawing.Image)(resources.GetObject("buttonNewShareList.Image")));
+            this.buttonNewShareList.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.buttonNewShareList.Location = new System.Drawing.Point(527, 45);
             this.buttonNewShareList.Name = "buttonNewShareList";
             this.buttonNewShareList.Size = new System.Drawing.Size(164, 43);
             this.buttonNewShareList.TabIndex = 11;
-            this.buttonNewShareList.Text = "New Share List -->";
+            this.buttonNewShareList.Text = "New Share List";
+            this.buttonNewShareList.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonNewShareList.UseVisualStyleBackColor = true;
             this.buttonNewShareList.Click += new System.EventHandler(this.onNewShareListBtn);
+            // 
+            // buttonNewAllTables
+            // 
+            this.buttonNewAllTables.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonNewAllTables.Enabled = false;
+            this.buttonNewAllTables.FlatAppearance.BorderSize = 2;
+            this.buttonNewAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonNewAllTables.Image = ((System.Drawing.Image)(resources.GetObject("buttonNewAllTables.Image")));
+            this.buttonNewAllTables.Location = new System.Drawing.Point(380, 114);
+            this.buttonNewAllTables.Name = "buttonNewAllTables";
+            this.buttonNewAllTables.Size = new System.Drawing.Size(254, 107);
+            this.buttonNewAllTables.TabIndex = 15;
+            this.buttonNewAllTables.Text = "Generate New All-Tables";
+            this.buttonNewAllTables.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.buttonNewAllTables.UseVisualStyleBackColor = true;
+            this.buttonNewAllTables.Click += new System.EventHandler(this.OnMakeNewAllTables);
             // 
             // buttonLogfile
             // 
             this.buttonLogfile.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.buttonLogfile.Image = ((System.Drawing.Image)(resources.GetObject("buttonLogfile.Image")));
+            this.buttonLogfile.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonLogfile.Location = new System.Drawing.Point(299, 444);
             this.buttonLogfile.Name = "buttonLogfile";
             this.buttonLogfile.Size = new System.Drawing.Size(395, 23);
@@ -193,6 +226,8 @@
             // buttonExplorer
             // 
             this.buttonExplorer.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.buttonExplorer.Image = ((System.Drawing.Image)(resources.GetObject("buttonExplorer.Image")));
+            this.buttonExplorer.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonExplorer.Location = new System.Drawing.Point(299, 467);
             this.buttonExplorer.Name = "buttonExplorer";
             this.buttonExplorer.Size = new System.Drawing.Size(395, 23);
@@ -216,11 +251,14 @@
             this.buttonDayDataDownload.Enabled = false;
             this.buttonDayDataDownload.FlatAppearance.BorderSize = 2;
             this.buttonDayDataDownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonDayDataDownload.Location = new System.Drawing.Point(305, 45);
+            this.buttonDayDataDownload.Image = ((System.Drawing.Image)(resources.GetObject("buttonDayDataDownload.Image")));
+            this.buttonDayDataDownload.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonDayDataDownload.Location = new System.Drawing.Point(303, 45);
             this.buttonDayDataDownload.Name = "buttonDayDataDownload";
-            this.buttonDayDataDownload.Size = new System.Drawing.Size(206, 43);
+            this.buttonDayDataDownload.Size = new System.Drawing.Size(189, 43);
             this.buttonDayDataDownload.TabIndex = 10;
-            this.buttonDayDataDownload.Text = "<-- Download data files";
+            this.buttonDayDataDownload.Text = "Download data files";
+            this.buttonDayDataDownload.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.buttonDayDataDownload.UseVisualStyleBackColor = true;
             this.buttonDayDataDownload.Click += new System.EventHandler(this.DownloadDayDataBtnClicked);
             // 
@@ -237,6 +275,7 @@
             this.listBoxShareList.Size = new System.Drawing.Size(274, 490);
             this.listBoxShareList.Sorted = true;
             this.listBoxShareList.TabIndex = 14;
+            this.toolTipShareList.SetToolTip(this.listBoxShareList, "Double-Click for All-Table");
             this.listBoxShareList.ValueMember = "Number";
             this.listBoxShareList.DoubleClick += new System.EventHandler(this.OnShareDoubleClicked);
             // 
@@ -270,13 +309,12 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.buttonBusyAllTables);
+            this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.buttonDays);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.labelDatafilesCount);
             this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.textBoxShareNumSearch);
-            this.panel1.Controls.Add(this.buttonNewAllTables);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.groupBoxSource);
             this.panel1.Controls.Add(this.groupBox2);
@@ -294,17 +332,18 @@
             // 
             // buttonDays
             // 
-            this.buttonDays.Location = new System.Drawing.Point(536, 143);
+            this.buttonDays.FlatAppearance.BorderSize = 0;
+            this.buttonDays.Image = ((System.Drawing.Image)(resources.GetObject("buttonDays.Image")));
+            this.buttonDays.Location = new System.Drawing.Point(533, 139);
             this.buttonDays.Name = "buttonDays";
             this.buttonDays.Size = new System.Drawing.Size(37, 32);
             this.buttonDays.TabIndex = 17;
-            this.buttonDays.Text = "set";
             this.buttonDays.UseVisualStyleBackColor = true;
             this.buttonDays.Click += new System.EventHandler(this.buttonDays_Click);
             // 
             // label3
             // 
-            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.Location = new System.Drawing.Point(203, 193);
@@ -342,22 +381,9 @@
             this.textBoxShareNumSearch.Name = "textBoxShareNumSearch";
             this.textBoxShareNumSearch.Size = new System.Drawing.Size(50, 20);
             this.textBoxShareNumSearch.TabIndex = 13;
+            this.toolTipShareList.SetToolTip(this.textBoxShareNumSearch, "search for share by number");
             this.textBoxShareNumSearch.TextChanged += new System.EventHandler(this.OnSearchForShare);
             this.textBoxShareNumSearch.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxShareNumSearch_KeyPress);
-            // 
-            // buttonNewAllTables
-            // 
-            this.buttonNewAllTables.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.buttonNewAllTables.Enabled = false;
-            this.buttonNewAllTables.FlatAppearance.BorderSize = 2;
-            this.buttonNewAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonNewAllTables.Location = new System.Drawing.Point(846, 8);
-            this.buttonNewAllTables.Name = "buttonNewAllTables";
-            this.buttonNewAllTables.Size = new System.Drawing.Size(110, 65);
-            this.buttonNewAllTables.TabIndex = 15;
-            this.buttonNewAllTables.Text = "New All-Tables";
-            this.buttonNewAllTables.UseVisualStyleBackColor = true;
-            this.buttonNewAllTables.Click += new System.EventHandler(this.OnMakeNewAllTables);
             // 
             // label2
             // 
@@ -374,9 +400,9 @@
             this.groupBoxSource.Controls.Add(this.buttonLogin);
             this.groupBoxSource.Controls.Add(this.radioButton2);
             this.groupBoxSource.Controls.Add(this.radioButtonSource);
-            this.groupBoxSource.Location = new System.Drawing.Point(15, 102);
+            this.groupBoxSource.Location = new System.Drawing.Point(15, 88);
             this.groupBoxSource.Name = "groupBoxSource";
-            this.groupBoxSource.Size = new System.Drawing.Size(249, 87);
+            this.groupBoxSource.Size = new System.Drawing.Size(249, 102);
             this.groupBoxSource.TabIndex = 10;
             this.groupBoxSource.TabStop = false;
             this.groupBoxSource.Text = "Inhalt Source";
@@ -385,18 +411,20 @@
             // 
             this.buttonLogin.FlatAppearance.BorderSize = 2;
             this.buttonLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonLogin.Location = new System.Drawing.Point(1, 46);
+            this.buttonLogin.Image = ((System.Drawing.Image)(resources.GetObject("buttonLogin.Image")));
+            this.buttonLogin.Location = new System.Drawing.Point(32, 50);
             this.buttonLogin.Name = "buttonLogin";
-            this.buttonLogin.Size = new System.Drawing.Size(248, 27);
+            this.buttonLogin.Size = new System.Drawing.Size(170, 42);
             this.buttonLogin.TabIndex = 5;
             this.buttonLogin.Text = "Show Datafiles on hand";
+            this.buttonLogin.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.buttonLogin.UseVisualStyleBackColor = true;
             this.buttonLogin.Click += new System.EventHandler(this.OnLogin);
             // 
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(106, 24);
+            this.radioButton2.Location = new System.Drawing.Point(106, 22);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(47, 17);
             this.radioButton2.TabIndex = 4;
@@ -409,7 +437,7 @@
             // 
             this.radioButtonSource.AutoSize = true;
             this.radioButtonSource.Checked = true;
-            this.radioButtonSource.Location = new System.Drawing.Point(15, 24);
+            this.radioButtonSource.Location = new System.Drawing.Point(15, 22);
             this.radioButtonSource.Name = "radioButtonSource";
             this.radioButtonSource.Size = new System.Drawing.Size(60, 17);
             this.radioButtonSource.TabIndex = 3;
@@ -478,7 +506,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(523, 123);
+            this.label1.Location = new System.Drawing.Point(523, 121);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(64, 13);
             this.label1.TabIndex = 5;
@@ -530,6 +558,15 @@
             this.calendarFrom.ShowTodayCircle = false;
             this.calendarFrom.TabIndex = 6;
             this.calendarFrom.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.FromDateChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(540, 71);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(21, 13);
+            this.label4.TabIndex = 18;
+            this.label4.Text = "set";
             // 
             // MainForm
             // 
@@ -600,6 +637,8 @@
         private System.Windows.Forms.Button buttonBusyAllTables;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button buttonDays;
+        private System.Windows.Forms.ToolTip toolTipShareList;
+        private System.Windows.Forms.Label label4;
     }
 }
 

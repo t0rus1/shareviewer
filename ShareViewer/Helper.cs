@@ -192,6 +192,7 @@ namespace ShareViewer
             var form = GetMainForm();
             ((Button)form.Controls.Find("buttonDayDataDownload", true)[0]).Enabled = !hold;
             ((Button)form.Controls.Find("buttonNewShareList", true)[0]).Enabled = !hold;
+            ((Button)form.Controls.Find("buttonDays", true)[0]).Enabled = !hold;
             ((GroupBox)form.Controls.Find("groupBoxSource", true)[0]).Enabled = !hold;
             ((Button)form.Controls.Find("buttonNewAllTables", true)[0]).Enabled = !hold;
             ((TextBox)form.Controls.Find("textBoxShareNumSearch", true)[0]).Enabled = !hold;
@@ -207,6 +208,7 @@ namespace ShareViewer
         {
             var form = GetMainForm();
             ((Button)form.Controls.Find("buttonDayDataDownload", true)[0]).Enabled = !hold;
+            ((Button)form.Controls.Find("buttonDays", true)[0]).Enabled = !hold;
             ((Button)form.Controls.Find("buttonNewShareList", true)[0]).Enabled = !hold;
             ((ListBox)form.Controls.Find("listBoxShareList", true)[0]).Enabled = !hold;
             ((TextBox)form.Controls.Find("textBoxShareNumSearch", true)[0]).Enabled = !hold;

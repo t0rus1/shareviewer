@@ -433,8 +433,9 @@ namespace ShareViewer
             {
                 //LocalStore.GetDayDataRange(out newestDate, out oldestDate);
                 if (startDate <= endDate) {
-                    var msg = $"Generate new tables for the {tradingSpan} trading days up to {endDate.ToShortDateString()} (inclusive)?";
-                    if ((MessageBox.Show(msg, $"New All-Tables", 
+                    var msg = $"Generate new All-tables for the {tradingSpan} trading days up to {endDate.ToShortDateString()} (inclusive)?";
+                    var warnMsg = "\n\nWarning: This will take time!";
+                    if ((MessageBox.Show(msg+warnMsg, $"New All-Tables", 
                          MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes))
                     {
                         //put some buttons on hold, make progress bar visible etc..
