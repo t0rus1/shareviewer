@@ -22,14 +22,16 @@ namespace ShareViewer
 
         [Category("Parameter")]
         [Description("Minimum Value")]
+        [ReadOnly(true)]
         public double From { get => from; set => from = value; }
 
         [Category("Parameter")]
+        [ReadOnly(true)]
         [Description("Maximum Value")]
         public double To { get => to; set => to = value; }
 
         [Category("Parameter")]
-        [Description("Z (Threshold)")]
+        [Description("(Z) adjust to suit")]
         public double Setting { get => setting; set => setting = value; }
 
     }

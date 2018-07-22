@@ -28,12 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panelLeft = new System.Windows.Forms.Panel();
             this.listBoxCols = new System.Windows.Forms.ListBox();
             this.dgView = new System.Windows.Forms.DataGridView();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.labelLazy = new System.Windows.Forms.Label();
             this.linkLabelLock = new System.Windows.Forms.LinkLabel();
             this.linkLabelSaveView = new System.Windows.Forms.LinkLabel();
             this.comboBoxViews = new System.Windows.Forms.ComboBox();
@@ -86,16 +87,16 @@
             // 
             this.dgView.AllowUserToDeleteRows = false;
             this.dgView.AllowUserToResizeRows = false;
-            dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            this.dgView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle5;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.dgView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dgView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgView.EnableHeadersVisualStyles = false;
@@ -107,6 +108,7 @@
             // 
             // panelTop
             // 
+            this.panelTop.Controls.Add(this.labelLazy);
             this.panelTop.Controls.Add(this.linkLabelLock);
             this.panelTop.Controls.Add(this.linkLabelSaveView);
             this.panelTop.Controls.Add(this.comboBoxViews);
@@ -120,10 +122,22 @@
             this.panelTop.Size = new System.Drawing.Size(971, 211);
             this.panelTop.TabIndex = 2;
             // 
+            // labelLazy
+            // 
+            this.labelLazy.AutoSize = true;
+            this.labelLazy.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelLazy.ForeColor = System.Drawing.Color.IndianRed;
+            this.labelLazy.Location = new System.Drawing.Point(7, 44);
+            this.labelLazy.Name = "labelLazy";
+            this.labelLazy.Size = new System.Drawing.Size(157, 26);
+            this.labelLazy.TabIndex = 17;
+            this.labelLazy.Text = "currently LAZY";
+            this.labelLazy.Visible = false;
+            // 
             // linkLabelLock
             // 
             this.linkLabelLock.AutoSize = true;
-            this.linkLabelLock.Location = new System.Drawing.Point(7, 38);
+            this.linkLabelLock.Location = new System.Drawing.Point(7, 131);
             this.linkLabelLock.Name = "linkLabelLock";
             this.linkLabelLock.Size = new System.Drawing.Size(52, 13);
             this.linkLabelLock.TabIndex = 16;
@@ -238,7 +252,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 115);
+            this.label1.Location = new System.Drawing.Point(7, 145);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(176, 13);
             this.label1.TabIndex = 2;
@@ -338,16 +352,6 @@
             // listBoxVariables
             // 
             this.listBoxVariables.FormattingEnabled = true;
-            this.listBoxVariables.Items.AddRange(new object[] {
-            "Delete Lazy shares",
-            "Make Slow (Five minutes) Prices SP",
-            "Find direction and Turning",
-            "Find Five minutes Gradients Figure PGF",
-            "Make High Line HL",
-            "Make Low Line LL",
-            "Make Slow Volumes SV",
-            "Slow Volume Figure SVFac",
-            "Slow Volume Figure SVFbd"});
             this.listBoxVariables.Location = new System.Drawing.Point(13, 15);
             this.listBoxVariables.Name = "listBoxVariables";
             this.listBoxVariables.Size = new System.Drawing.Size(207, 160);
@@ -406,5 +410,6 @@
         private System.Windows.Forms.CheckBox checkBoxOverwriteAPs;
         private System.Windows.Forms.GroupBox groupBoxCalculations;
         private System.Windows.Forms.LinkLabel linkLabelLock;
+        private System.Windows.Forms.Label labelLazy;
     }
 }

@@ -40,6 +40,7 @@ namespace ShareViewer
             CheckExtraFolderSettings();
             CheckAllTableFolderSettings();
             CheckAllTableViewsSettings();
+            Calculations.InitializeAllShareCalculationParameters(appUserSettings);
 
             BindFormProperties();
             InitializeShareViewer();

@@ -160,5 +160,22 @@ namespace ShareViewer
 
         }
 
+        [DefaultSettingValue("")]
+        [UserScopedSetting()]
+        public Param ParamsLazyShare
+        {
+            get
+            {
+                return (Param)this["ParamsLazyShare"];
+            }
+            set
+            {
+                this["ParamsLazyShare"] = (Param)value;
+            }
+
+        }
+
+
+
     }
 }

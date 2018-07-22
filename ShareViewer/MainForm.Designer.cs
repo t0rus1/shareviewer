@@ -48,6 +48,7 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label4 = new System.Windows.Forms.Label();
             this.buttonDays = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.labelDatafilesCount = new System.Windows.Forms.Label();
@@ -70,7 +71,6 @@
             this.calendarTo = new System.Windows.Forms.MonthCalendar();
             this.calendarFrom = new System.Windows.Forms.MonthCalendar();
             this.toolTipShareList = new System.Windows.Forms.ToolTip(this.components);
-            this.label4 = new System.Windows.Forms.Label();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -330,6 +330,15 @@
             this.panel1.Size = new System.Drawing.Size(970, 215);
             this.panel1.TabIndex = 0;
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(540, 71);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(21, 13);
+            this.label4.TabIndex = 18;
+            this.label4.Text = "set";
+            // 
             // buttonDays
             // 
             this.buttonDays.FlatAppearance.BorderSize = 0;
@@ -558,15 +567,6 @@
             this.calendarFrom.ShowTodayCircle = false;
             this.calendarFrom.TabIndex = 6;
             this.calendarFrom.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.FromDateChanged);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(540, 71);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(21, 13);
-            this.label4.TabIndex = 18;
-            this.label4.Text = "set";
             // 
             // MainForm
             // 

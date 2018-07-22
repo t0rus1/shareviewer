@@ -28,10 +28,16 @@ namespace ShareViewer
         private bool _loadingCols = false;
         private bool _changingColumns = false;
 
-        //Calculations
-        Param lazyShareParams;
+        // CALCULATION RESULTS
+        // we need these to be form-scoped
+        internal TextBox calcAuditTextBox;
+        internal Param calcLazyShareParams;
 
-        internal Param LazyShareParams { get => lazyShareParams; set => lazyShareParams = value; }
+        //CALCULATIONS properties (so that we can bind to a Property grid)
+        //get our initial calculation parameters from user settings
+        private Param currentLazyShareParams = Helper.GetAppUserSettings().ParamsLazyShare;
+        internal Param CurrentLazyShareParams { get => currentLazyShareParams; set => currentLazyShareParams = value; }
+
 
         public SingleAllTableForm(string allTableFilename, string shareDesc)
         {
@@ -138,7 +144,13 @@ namespace ShareViewer
 
             InstallDataGridViewColumns();
 
+            listBoxVariables.DataSource = Calculations.CalculationNames;
+
             dgView.Focus();
+
+            //show initial take on whether share is currently considered lazy
+            var auditLines = new string[] { "" };
+            labelLazy.Visible = Calculations.LazyShare(atRows.ToArray(), 9362, 10401, CurrentLazyShareParams.Setting, out auditLines);
 
             _loaded = true;
         }
@@ -299,9 +311,14 @@ namespace ShareViewer
 
         private void comboBoxViews_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _changingColumns = true;
             string viewName = ((ComboBox)sender).Text;
-            if ( viewName == "Initial")
+            setAllTableView(viewName);
+        }
+
+        private void setAllTableView(string viewName)
+        {
+            _changingColumns = true;
+            if (viewName == "Initial")
             {
                 SelectInitialColumnsToView();
             }
@@ -345,43 +362,145 @@ namespace ShareViewer
             listBoxCols.Enabled = !listBoxCols.Enabled;
         }
 
-        // CALCULATION HANDLING
+        private void HandleCalculationClick(object sender, EventArgs e)
+        {
+            string calculation = (string)((Button)sender).Tag;
+            var auditLines = new string[] { "" };
+            switch (calculation)
+            {
+                case "Identify Lazy Shares":
+                    Calculations.LazyShare(atRows.ToArray(), 9362, 10401, calcLazyShareParams.Setting, out auditLines);
+                    calcAuditTextBox.Lines = auditLines;
+                    break;
+                case "Make Slow (Five minutes Prices) SP":
+                    break;
+                case "Make Five minutes Price Gradients":
+                    break;
+                case "Find direction and Turning":
+                    break;
+                case "Find Five minutes Gradients Figure PGF":
+                    break;
+                case "Related volume Figure (RPGFV) of biggest PGF)":
+                    break;
+                case "Make High Line HL":
+                    break;
+                case "Make Low Line":
+                    break;
+                case "Make Slow Volumes":
+                    break;
+                case "Slow Volume Figure SVFac":
+                    break;
+                case "Slow Volume Figure SVFbd":
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void HandleParameterSaveClick(object sender, EventArgs e)
+        {
+        }
+
+            // CALCULATION HANDLING
+            private PropertyGrid BuildPropertyGridParams(Param param)
+        {
+            var pg = new PropertyGrid();
+            pg.Size = new Size(150, groupBoxParams.Height - 20);
+            pg.Location = new Point(20, 12);
+            pg.SelectedObject = param;
+            return pg;
+        }
+
+        private Button[] BuildCalculateAndSaveButtons(string calculation)
+        {
+            var buttons = new Button[2];
+
+            var btnCalc = new Button();
+            btnCalc.Size = new Size(60, 100);
+            btnCalc.Location = new Point(170 + 20, 36);
+            btnCalc.Text = "Calculate";
+            btnCalc.Tag = calculation;
+            btnCalc.Click += HandleCalculationClick;
+            buttons[0] = btnCalc;
+
+            var btnSave = new Button();
+            btnSave.Size = new Size(60, 50);
+            btnSave.Location = new Point(170 + 20, 140);
+            btnSave.Text = "Save Setting";
+            btnSave.Tag = calculation;
+            btnSave.Click += HandleParameterSaveClick;
+            buttons[1] = btnSave;
+
+            return buttons;
+        }
+
+        private TextBox BuildAuditTextBox(string[] auditOutcome)
+        {
+            var auditBox = new TextBox();
+            auditBox.Location = new Point(270, 12);
+            auditBox.Size = new Size(400, groupBoxParams.Height - 20);
+            //auditBox.AutoSize = true;
+            auditBox.Multiline = true;
+            auditBox.WordWrap = true;
+            auditBox.ReadOnly = true;
+            auditBox.Lines = auditOutcome;
+            auditBox.Font = new Font("Lucida Console", 8, FontStyle.Regular);
+            //auditBox.ForeColor = Color.IndianRed;
+            auditBox.Visible = true;
+            return auditBox;
+        }
+
         private void listBoxVariables_SelectedIndexChanged(object sender, EventArgs e)
         {
+            string calculation = ((ListBox)sender).Text;
             groupBoxParams.Controls.Clear();
-
-            groupBoxParams.Text = ((ListBox)sender).Text;
-            string calculation = groupBoxParams.Text.ToLower();
-
-            var ds = dgView.DataSource;
+            groupBoxParams.Text = calculation;
 
             switch (calculation)
             {
-                case "delete lazy shares":
-
+                case "Identify Lazy Shares":
+                    setAllTableView("Initial");
+                    //show a bound params property grid
+                    calcLazyShareParams = new Param(
+                        currentLazyShareParams.From, currentLazyShareParams.To, currentLazyShareParams.Setting);
+                    var propGridParams = BuildPropertyGridParams(calcLazyShareParams);
+                    var btnPair = BuildCalculateAndSaveButtons(calculation);
+                    calcAuditTextBox = BuildAuditTextBox(new string[] { "Adjust setting Z then press 'Calculate' to re-evaluate" } );
+                    //add params property grid and calc button to groupBox panel
+                    groupBoxParams.Controls.Add(propGridParams);
+                    groupBoxParams.Controls.Add(btnPair[0]);
+                    groupBoxParams.Controls.Add(btnPair[1]);
+                    groupBoxParams.Controls.Add(calcAuditTextBox);
                     //move to row 9362 (10 days from end of range)
                     dgViewBindingSource.Position = 9362;
                     dgView.FirstDisplayedScrollingRowIndex = 9362;
-                    //show params property grid
-                    LazyShareParams = new Param(1000, 1000000, 50000);
-                    groupBoxParams.Controls.Add(PreparePropertyGridForParams(LazyShareParams));
-                    //populate calculation and results
-                    var isLazy = Calculations.LazyShare(atRows.ToArray(), 9362, 10401, LazyShareParams.Setting);
                     break;
 
+                case "Make Slow (Five minutes Prices) SP":
+                    break;
+                case "Make Five minutes Price Gradients":
+                    break;
+                case "Find direction and Turning":
+                    break;
+                case "Find Five minutes Gradients Figure PGF":
+                    break;
+                case "Related volume Figure (RPGFV) of biggest PGF)":
+                    break;
+                case "Make High Line HL":
+                    break;
+                case "Make Low Line":
+                    break;
+                case "Make Slow Volumes":
+                    break;
+                case "Slow Volume Figure SVFac":
+                    break;
+                case "Slow Volume Figure SVFbd":
+                    break;
                 default:
                     break;
             }
 
         }
 
-        private PropertyGrid PreparePropertyGridForParams(Param param)
-        {
-            var pg = new PropertyGrid();
-            pg.Size = new Size(300, groupBoxParams.Height - 20);
-            pg.Location = new Point(5, 12);
-            pg.SelectedObject = param;
-            return pg;
-        }
     }
 }
