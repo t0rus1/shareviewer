@@ -46,6 +46,8 @@
             this.radio5mins = new System.Windows.Forms.RadioButton();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBoxCalculations = new System.Windows.Forms.GroupBox();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBoxParams = new System.Windows.Forms.GroupBox();
             this.groupBoxMisc = new System.Windows.Forms.GroupBox();
             this.checkBoxLastDay = new System.Windows.Forms.CheckBox();
@@ -59,6 +61,7 @@
             this.panelTop.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBoxCalculations.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.groupBoxMisc.SuspendLayout();
             this.groupBoxScope.SuspendLayout();
             this.SuspendLayout();
@@ -262,6 +265,7 @@
             // 
             this.groupBoxCalculations.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxCalculations.Controls.Add(this.statusStrip1);
             this.groupBoxCalculations.Controls.Add(this.groupBoxParams);
             this.groupBoxCalculations.Controls.Add(this.groupBoxMisc);
             this.groupBoxCalculations.Controls.Add(this.groupBoxScope);
@@ -273,12 +277,27 @@
             this.groupBoxCalculations.TabStop = false;
             this.groupBoxCalculations.Text = "Calculations";
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.stripText});
+            this.statusStrip1.Location = new System.Drawing.Point(3, 183);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(562, 22);
+            this.statusStrip1.TabIndex = 15;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // stripText
+            // 
+            this.stripText.Name = "stripText";
+            this.stripText.Size = new System.Drawing.Size(0, 17);
+            // 
             // groupBoxParams
             // 
             this.groupBoxParams.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxParams.Location = new System.Drawing.Point(349, 0);
+            this.groupBoxParams.Location = new System.Drawing.Point(349, 1);
             this.groupBoxParams.Name = "groupBoxParams";
-            this.groupBoxParams.Size = new System.Drawing.Size(209, 206);
+            this.groupBoxParams.Size = new System.Drawing.Size(209, 180);
             this.groupBoxParams.TabIndex = 13;
             this.groupBoxParams.TabStop = false;
             // 
@@ -377,6 +396,9 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBoxCalculations.ResumeLayout(false);
+            this.groupBoxCalculations.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.groupBoxMisc.ResumeLayout(false);
             this.groupBoxMisc.PerformLayout();
             this.groupBoxScope.ResumeLayout(false);
@@ -411,5 +433,7 @@
         private System.Windows.Forms.GroupBox groupBoxCalculations;
         private System.Windows.Forms.LinkLabel linkLabelLock;
         private System.Windows.Forms.Label labelLazy;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel stripText;
     }
 }

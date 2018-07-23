@@ -21,7 +21,7 @@ namespace ShareViewer
         //and converts to list of strings
         internal static List<String> GetDataDaysListing()
         {
-            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
+            Properties.Settings appUserSettings = Helper.GetAppUserSettings();
 
             var localFilename = appUserSettings.ExtraFolder + @"\" + appUserSettings.DataDaysListingFilename;
 
@@ -83,7 +83,7 @@ namespace ShareViewer
         //generate a new ShareList file
         internal static List<ShareListItem> GenerateShareList(string sourceName)
         {
-            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
+            var appUserSettings = Helper.GetAppUserSettings();
             var shareList = new List<ShareListItem>();
 
             var sourceFilename = appUserSettings.ExtraFolder + @"\" + sourceName;
@@ -133,7 +133,7 @@ namespace ShareViewer
 
         internal static List<String> WriteShareList(List<ShareListItem> shareList, string basedOnDate)
         {
-            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
+            var appUserSettings = Helper.GetAppUserSettings();
 
             var shares = from s in shareList
                          select s.ToString();
@@ -148,7 +148,7 @@ namespace ShareViewer
 
         internal static String[] ReadShareList()
         {
-            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
+            var appUserSettings = Helper.GetAppUserSettings();
             var shareListFilename = appUserSettings.ExtraFolder + @"\ShareList.txt";
             if (File.Exists(shareListFilename)) {
                 return File.ReadAllLines(shareListFilename);
@@ -159,7 +159,7 @@ namespace ShareViewer
 
         internal static void GetDayDataRange(out DateTime newest, out DateTime oldest)
         {
-            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
+            var appUserSettings = Helper.GetAppUserSettings();
             var directory = new DirectoryInfo(appUserSettings.ExtraFolder);
 
             var fileInfos = directory.GetFiles("????_??_??.TXT");
@@ -418,7 +418,7 @@ namespace ShareViewer
         //which individually create an AllTable file for each share
         private static void GenerateAllTables(DateTime startDate, int tradingSpan, string atPath, string[] allShares)
         {
-            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
+            var appUserSettings = Helper.GetAppUserSettings();
             //skip 1st informational line of sharelist and sweep thru the rest of the shares
             //building new All-table files
             int numShares = allShares.Count() - 1;
@@ -488,7 +488,7 @@ namespace ShareViewer
 
         private static void SaveTradehashAudit(Dictionary<String, Trade> tradeHash, string shareName, short shareNum)
         {
-            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
+            var appUserSettings = Helper.GetAppUserSettings();
             var auditPath = appUserSettings.AllTablesFolder + @"\Audit";
             Directory.CreateDirectory(auditPath);
 
@@ -509,7 +509,7 @@ namespace ShareViewer
         //based on the ShareList, creating one AllTable for each share, populated with initial values.
         internal static void GenerateNewAllTables(DateTime startDate, int tradingSpan)
         {
-            AppUserSettings appUserSettings = Helper.GetAppUserSettings();
+            var appUserSettings = Helper.GetAppUserSettings();
             var sharelistPath = appUserSettings.ExtraFolder;
             var alltablesPath = appUserSettings.AllTablesFolder;
 

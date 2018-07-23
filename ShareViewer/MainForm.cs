@@ -16,7 +16,8 @@ namespace ShareViewer
     public partial class MainForm : Form
     {
         public const String Version = "0.0.3";
-        internal AppUserSettings appUserSettings;
+        //internal AppUserSettings appUserSettings;
+        internal Properties.Settings appUserSettings;
         bool initializing = true;
         bool SuppressDaysBackChangeHandling = false; // when true, suppresses OnChangehandling
         bool SuppressFromDateChangeHandling = false;
@@ -35,7 +36,9 @@ namespace ShareViewer
             //in which case default values will be gotten from attributes on the class
             //An example location of the settings file, 'user.config' (after appUserSetting.Save() has been called) is:
             //C:\Users\User\AppData\Local\ShareViewer\ShareViewer.exe_Url_03nbdbcxshupknkk45nsaba23z5qq403\1.0.0.0\user.config
-            appUserSettings = new AppUserSettings();
+
+            //appUserSettings = new AppUserSettings();
+            appUserSettings = Properties.Settings.Default;
 
             CheckExtraFolderSettings();
             CheckAllTableFolderSettings();
@@ -50,10 +53,11 @@ namespace ShareViewer
 
         private void CheckAllTableViewsSettings()
         {
-            if (appUserSettings.AllTableViews.Equals(""))
+            if (appUserSettings.AllTableViews == null) // || appUserSettings.AllTableViews.Count == 0)
             {
                 //not been set yet. set it to default and save.
-                appUserSettings.AllTableViews = new List<string>();
+                //appUserSettings.AllTableViews = new List<string>();
+                appUserSettings.AllTableViews = new System.Collections.Specialized.StringCollection();
                 appUserSettings.Save();
             }
         }
@@ -478,30 +482,6 @@ namespace ShareViewer
             }
         }
 
-        private void OnSearchForShare(object sender, EventArgs e)
-        {
-            string quest = ((TextBox)sender).Text;
-            for (int i = 0; i < listBoxShareList.Items.Count; i++)
-            {
-                if (listBoxShareList.Items[i].ToString().EndsWith(" " + quest))
-                {
-                    listBoxShareList.SelectedIndex = i;
-                    break;
-                }
-            }
-        }
-
-        //ensure only digits are typed into share search textbox
-        private void textBoxShareNumSearch_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            // Verify that the pressed key isn't CTRL or any non-numeric digit
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
-            {
-                e.Handled = true;
-            }
-
-        }
-
         //Allow user to abort the run
         private void buttonBusyAllTables_Click(object sender, EventArgs e)
         {
@@ -538,5 +518,35 @@ namespace ShareViewer
             ShowDataOnHand(true);
 
         }
+
+        //fires on text changed
+        private void OnSearchForShare(object sender, EventArgs e)
+        {
+            string quest = ((TextBox)sender).Text;
+            for (int i = 0; i < listBoxShareList.Items.Count; i++)
+            {
+                if (listBoxShareList.Items[i].ToString().EndsWith(" " + quest))
+                {
+                    listBoxShareList.SelectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        //ensure only digits are typed into share search textbox
+        private void textBoxShareNumSearch_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Verify that the pressed key isn't CTRL or any non-numeric digit
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
+            {
+                e.Handled = true;
+            }
+            if (e.KeyChar == '\r')
+            {
+                OnShareDoubleClicked(listBoxShareList, new EventArgs());
+            }
+
+        }
+
     }
 }

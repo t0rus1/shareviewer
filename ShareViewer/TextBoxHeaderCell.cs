@@ -22,7 +22,6 @@ namespace ShareViewer
 
             _gotoRowText.MouseClick += new MouseEventHandler(MouseClick);
             _gotoRowText.TextChanged += valueChanged;
-            // TODO - Wireup necessary events
         }
 
         private void MouseClick(object sender, MouseEventArgs e)

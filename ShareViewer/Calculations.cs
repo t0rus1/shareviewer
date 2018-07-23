@@ -10,11 +10,11 @@ namespace ShareViewer
     internal static class Calculations
     {
 
-        internal static void InitializeAllShareCalculationParameters(AppUserSettings aus)
+        internal static void InitializeAllShareCalculationParameters(Properties.Settings aus)
         {
             if (aus.ParamsLazyShare == null || aus.ParamsLazyShare.Equals(""))
             {
-                //not been set yet. set it to default and save.
+                //not been set yet. set it to some defaults and save.
                 aus.ParamsLazyShare = new Param(1000, 1000000, 50000);
                 aus.Save();
             }
@@ -24,14 +24,14 @@ namespace ShareViewer
         internal static List<String> CalculationNames = new List<String> {
             "*** Choose a Calculation ***",
             "Identify Lazy Shares",
-            "Make Slow (Five minutes Prices) SP",
-            "Make Five minutes Price Gradients",
+            "Make Slow (Five minutes) Prices SP",
+            "Make Five minutes Price Gradients PG",
             "Find direction and Turning",
             "Find Five minutes Gradients Figure PGF",
-            "Related volume Figure (RPGFV) of biggest PGF)",
+            "Related volume Figure (RPGFV) of biggest PGF",
             "Make High Line HL",
-            "Make Low Line",
-            "Make Slow Volumes",
+            "Make Low Line LL",
+            "Make Slow Volumes SV",
             "Slow Volume Figure SVFac",
             "Slow Volume Figure SVFbd",
             };
@@ -68,15 +68,14 @@ namespace ShareViewer
 $@"
 CALCULATION AUDIT
 
-Total Five-Minutes Volume FV = {totalFV}
-Number of Days               = {numDays}
+Period                       = {numDays} last days
+Total Five-Minutes-Volume FV = {totalFV}
 Average Daily Volume         = {avgDailyVolume}
-Last price                   = {effectivePrice}
-VP                           = {VP} 
+Last price (FP1041)          = {effectivePrice}
+VP (Avg Daily Vol x Price)   = {VP} 
 Z                            = {Z_threshold}
-
 Result:
-(V < Z)?                LAZY = {isLazy}".Split('\n');
+(VP < Z)?               LAZY = {isLazy}".Split('\n');
             }
             else
             {

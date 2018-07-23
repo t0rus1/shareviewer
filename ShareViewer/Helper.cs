@@ -24,7 +24,7 @@ namespace ShareViewer
             return GetMainForm().Controls.Find(controlName, true)[0];
         }
 
-        internal static AppUserSettings GetAppUserSettings()
+        internal static Properties.Settings GetAppUserSettings()
         {
             var form = GetMainForm();
             return ((MainForm)form).appUserSettings;

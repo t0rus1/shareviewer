@@ -7,11 +7,19 @@ using System.Threading.Tasks;
 
 namespace ShareViewer
 {
+    [Serializable]
     public class Param
     {
         private double from;
         private double to;
         private double setting;
+
+        public Param()
+        {
+            this.from = 0;
+            this.to = 0;
+            this.setting = 0;
+        }
 
         public Param(double from, double to, double initial)
         {

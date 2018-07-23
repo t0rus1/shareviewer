@@ -49,7 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllTable.cs" />
-    <Compile Include="AppUserSettings.cs" />
+    <Content Include="AppUserSettings.cs.txt" />
     <Compile Include="Calculations.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="InputBox.cs">
@@ -66,6 +66,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Param.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="TextBoxHeaderCell.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

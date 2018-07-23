@@ -119,11 +119,7 @@ namespace ShareViewer
             labelShareDesc.Text = _shareDescriptor;
 
             //load up combobox for views from user settings
-            foreach (string item in Helper.GetAppUserSettings().AllTableViews)
-            {
-                string viewName = item.Split(',')[0];
-                comboBoxViews.Items.Add(viewName);
-            }
+            LoadViewsComboBox("");
 
             //load up the all-Table 'columns' listbox
             var columnNames = new List<String>();
@@ -137,13 +133,9 @@ namespace ShareViewer
             listBoxCols.DataSource = columnNames;
 
             dgView.AutoGenerateColumns = false;
-
             BindDatagridView(VerticalMode.FiveMinly);
-
             SelectInitialColumnsToView();
-
             InstallDataGridViewColumns();
-
             listBoxVariables.DataSource = Calculations.CalculationNames;
 
             dgView.Focus();
@@ -153,6 +145,21 @@ namespace ShareViewer
             labelLazy.Visible = Calculations.LazyShare(atRows.ToArray(), 9362, 10401, CurrentLazyShareParams.Setting, out auditLines);
 
             _loaded = true;
+        }
+
+        //Retrieve views from User settings and load the Views Combobox
+        private void LoadViewsComboBox(string selectItem)
+        {
+            comboBoxViews.Items.Clear();
+            foreach (string item in Helper.GetAppUserSettings().AllTableViews)
+            {
+                string viewName = item.Split(',')[0];
+                int viewIndex = comboBoxViews.Items.Add(viewName);
+                if (viewName == selectItem)
+                {
+                    comboBoxViews.SelectedIndex = viewIndex;
+                }
+            }
         }
 
         private void BindDatagridView(VerticalMode vertMode)
@@ -309,26 +316,51 @@ namespace ShareViewer
             BindDatagridView(VerticalMode.Weekly);
         }
 
+        //User chooses a new view
         private void comboBoxViews_SelectedIndexChanged(object sender, EventArgs e)
         {
             string viewName = ((ComboBox)sender).Text;
-            setAllTableView(viewName);
+            SetView(viewName);
         }
 
-        private void setAllTableView(string viewName)
+        //Gets invoked when either user has chosen a View, or a Calculation which requires a view.
+        //Select columns in listBoxCols per the view-definitions saved in User settings
+        //under the passed in viewName. Therafter, actually ensures those columns are reflected
+        //in the DataGridView. 
+        private void SetView(string viewName)
         {
+            if (viewName.StartsWith("*** Choose a Calculation ***".Substring(0,3))) return;
+
             _changingColumns = true;
             if (viewName == "Initial")
             {
-                SelectInitialColumnsToView();
+                SelectInitialColumnsToView(); // selects listBocCols items, not comboBoxViews items
             }
             else
             {
                 //get definition from User settings - its name is the first value in the csv list
-                var viewDefinition = Helper.GetAppUserSettings().AllTableViews.Find(v => v.StartsWith(viewName));
-                SelectColumnsToView(viewDefinition);
+                //var viewDefinition = Helper.GetAppUserSettings().AllTableViews.Find(v => v.StartsWith(viewName));
+                string viewDefinition = null;
+                foreach (var item in Helper.GetAppUserSettings().AllTableViews)
+                {
+                    if (item.StartsWith(viewName))
+                    {
+                        viewDefinition = item;
+                        break;
+                    }
+                } 
+                if (viewDefinition != null)
+                {
+                    SelectColumnsToView(viewDefinition); // selects listBoxCols items, not comboBoxViews items
+                }
+                else
+                {
+                    MessageBox.Show($"The required view\n\n'{viewName}'\n\nis not in the Views collection.\n(Please set one up and save as per the name above)",
+                        "View not Found",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                }
             }
             _changingColumns = false;
+            //get the right columns into the grid
             InstallDataGridViewColumns();
         }
 
@@ -336,7 +368,7 @@ namespace ShareViewer
         {
             var form = new InputBox("Save column arrangement as a view", "Name this view");
             var dlgResult = form.ShowDialog();
-            var viewName = form.returnValue;
+            var viewName = form.returnValue.Replace(",", ""); // no commas allowed in view name!
             if (dlgResult == DialogResult.OK)
             {
                 // first the view name
@@ -352,6 +384,8 @@ namespace ShareViewer
                 var aus = Helper.GetAppUserSettings();
                 aus.AllTableViews.Add(viewStr);
                 aus.Save();
+                //rebind comboBoxViews in order to have the new view in the drop down
+                LoadViewsComboBox(viewStr);
             }
 
         }
@@ -397,18 +431,48 @@ namespace ShareViewer
             }
         }
 
+        // User saves newly edited parameters
+        // TODO: The Sharelist.txt file which hold names of Shares needs to be expanded
+        // such that newly calculated share properties (e.g. share is Lazy) can be attached.
+        // Perhaps instead of being a plain text file it can be a serialized list of Share objects
         private void HandleParameterSaveClick(object sender, EventArgs e)
         {
+            var aus = Helper.GetAppUserSettings();
+            aus.ParamsLazyShare = calcLazyShareParams;
+            aus.Save();
+            stripText.Text = "Parameter saved";
         }
 
-            // CALCULATION HANDLING
-            private PropertyGrid BuildPropertyGridParams(Param param)
+        // CALCULATION HANDLING
+        private PropertyGrid BuildPropertyGridParams(Param param)
         {
             var pg = new PropertyGrid();
             pg.Size = new Size(150, groupBoxParams.Height - 20);
             pg.Location = new Point(20, 12);
             pg.SelectedObject = param;
+            pg.PropertyValueChanged += OnParamSettingChange;
             return pg;
+        }
+
+        // Check that new param setting remains within allowed bounds
+        private void OnParamSettingChange(object sender, EventArgs e)
+        {
+            var pg = (PropertyGrid)sender;
+            var param = ((Param)pg.SelectedObject);
+            var newVal = param.Setting;
+            var lowerLimit = param.From;
+            var upperLimit = param.To;
+            stripText.Text = "";
+            if (newVal < lowerLimit)
+            {
+                param.Setting = lowerLimit;
+                stripText.Text = $"No lower than {lowerLimit} !!!";
+            }
+            else if (newVal > upperLimit)
+            {
+                param.Setting = upperLimit;
+                stripText.Text = $"No higher than {upperLimit} !!!";
+            }
         }
 
         private Button[] BuildCalculateAndSaveButtons(string calculation)
@@ -417,7 +481,7 @@ namespace ShareViewer
 
             var btnCalc = new Button();
             btnCalc.Size = new Size(60, 100);
-            btnCalc.Location = new Point(170 + 20, 36);
+            btnCalc.Location = new Point(170 + 20, 16);
             btnCalc.Text = "Calculate";
             btnCalc.Tag = calculation;
             btnCalc.Click += HandleCalculationClick;
@@ -425,8 +489,8 @@ namespace ShareViewer
 
             var btnSave = new Button();
             btnSave.Size = new Size(60, 50);
-            btnSave.Location = new Point(170 + 20, 140);
-            btnSave.Text = "Save Setting";
+            btnSave.Location = new Point(170 + 20, 120);
+            btnSave.Text = "Apply and Save";
             btnSave.Tag = calculation;
             btnSave.Click += HandleParameterSaveClick;
             buttons[1] = btnSave;
@@ -450,16 +514,28 @@ namespace ShareViewer
             return auditBox;
         }
 
+        //User has chosen a Calculation. Show Parameters apprpriate for the calculation
+        //and invoke a View by the same name as that of the Calculation
         private void listBoxVariables_SelectedIndexChanged(object sender, EventArgs e)
         {
             string calculation = ((ListBox)sender).Text;
             groupBoxParams.Controls.Clear();
             groupBoxParams.Text = calculation;
 
+            //NB: the string comparands in the switch statement below must allign with 
+            //    Calculations.CalculationNames in Calculations.cs
+
+            //SetView(calculation);
+            //Invoke view by same name
+            int wantedViewIndex = comboBoxViews.Items.IndexOf(calculation);
+            if (wantedViewIndex != -1)
+            {
+                comboBoxViews.SelectedIndex = wantedViewIndex;
+            }
+
             switch (calculation)
             {
                 case "Identify Lazy Shares":
-                    setAllTableView("Initial");
                     //show a bound params property grid
                     calcLazyShareParams = new Param(
                         currentLazyShareParams.From, currentLazyShareParams.To, currentLazyShareParams.Setting);
@@ -476,7 +552,7 @@ namespace ShareViewer
                     dgView.FirstDisplayedScrollingRowIndex = 9362;
                     break;
 
-                case "Make Slow (Five minutes Prices) SP":
+                case "Make Slow (Five minutes) Prices SP":
                     break;
                 case "Make Five minutes Price Gradients":
                     break;
@@ -484,13 +560,13 @@ namespace ShareViewer
                     break;
                 case "Find Five minutes Gradients Figure PGF":
                     break;
-                case "Related volume Figure (RPGFV) of biggest PGF)":
+                case "Related volume Figure (RPGFV) of biggest PGF":
                     break;
                 case "Make High Line HL":
                     break;
-                case "Make Low Line":
+                case "Make Low Line LL":
                     break;
-                case "Make Slow Volumes":
+                case "Make Slow Volumes SV":
                     break;
                 case "Slow Volume Figure SVFac":
                     break;

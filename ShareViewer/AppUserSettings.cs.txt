@@ -7,7 +7,7 @@ namespace ShareViewer
 {
     public class AppUserSettings : ApplicationSettingsBase
     {
-        [UserScopedSetting()]
+        [ApplicationScopedSetting]
         [DefaultSettingValue("Control")]
         public Color BackgroundColor
         {
@@ -21,7 +21,7 @@ namespace ShareViewer
             }
         }
 
-        [UserScopedSetting()]
+        [ApplicationScopedSetting]
         [DefaultSettingValue("Default")]
         public String ExtraFolder
         {
@@ -38,7 +38,7 @@ namespace ShareViewer
 
         }
 
-        [UserScopedSetting()]
+        [ApplicationScopedSetting]
         [DefaultSettingValue("Default")]
         public String AllTablesFolder
         {
@@ -56,7 +56,7 @@ namespace ShareViewer
         }
 
 
-        [UserScopedSetting()]
+        [ApplicationScopedSetting]
         [DefaultSettingValue("http://www.bsb-software.de/rese/")]
         public string SharesUrl
         {
@@ -70,7 +70,7 @@ namespace ShareViewer
             }
         }
 
-        [UserScopedSetting()]
+        [ApplicationScopedSetting]
         [DefaultSettingValue("Inhalt.txt")]
         public String DataDaysListingFilename
         {
@@ -85,52 +85,7 @@ namespace ShareViewer
 
         }
 
-        [UserScopedSetting()]
-        [DefaultSettingValue("")]
-        public String AllTableDataStart
-        {
-            get
-            {
-                return ((String)this["AllTableDataStart"]);
-            }
-            set
-            {
-                this["AllTableDataStart"] = (String)value;
-            }
-
-        }
-
-        [UserScopedSetting()]
-        [DefaultSettingValue("")]
-        public String AllTableDataEnd
-        {
-            get
-            {
-                return ((String)this["AllTableDataEnd"]);
-            }
-            set
-            {
-                this["AllTableDataEnd"] = (String)value;
-            }
-
-        }
-
-        [UserScopedSetting()]
-        [DefaultSettingValue("")]
-        public String AllTableTradingSpan
-        {
-            get
-            {
-                return ((String)this["AllTableTradingSpan"]);
-            }
-            set
-            {
-                this["AllTableTradingSpan"] = (String)value;
-            }
-
-        }
-
-        [UserScopedSetting()]
+        [ApplicationScopedSetting]
         [DefaultSettingValue("Row,Date,Day,TimeFrom,TimeTo,F,FP,FV")]
         public String InitialAllTableView
         {
@@ -145,8 +100,61 @@ namespace ShareViewer
 
         }
 
+
+
+
+
+
+
+
+        [UserScopedSetting]
         [DefaultSettingValue("")]
-        [UserScopedSetting()]
+        public String AllTableDataStart
+        {
+            get
+            {
+                return ((String)this["AllTableDataStart"]);
+            }
+            set
+            {
+                this["AllTableDataStart"] = (String)value;
+            }
+
+        }
+
+        [UserScopedSetting]
+        [DefaultSettingValue("")]
+        public String AllTableDataEnd
+        {
+            get
+            {
+                return ((String)this["AllTableDataEnd"]);
+            }
+            set
+            {
+                this["AllTableDataEnd"] = (String)value;
+            }
+
+        }
+
+        [UserScopedSetting]
+        [DefaultSettingValue("")]
+        public String AllTableTradingSpan
+        {
+            get
+            {
+                return ((String)this["AllTableTradingSpan"]);
+            }
+            set
+            {
+                this["AllTableTradingSpan"] = (String)value;
+            }
+
+        }
+
+
+        [UserScopedSetting]
+        [DefaultSettingValue("")]
         public List<String> AllTableViews
         {
             get
@@ -160,8 +168,8 @@ namespace ShareViewer
 
         }
 
-        [DefaultSettingValue("")]
-        [UserScopedSetting()]
+        [UserScopedSetting]
+        [SettingsSerializeAs(SettingsSerializeAs.Xml)]
         public Param ParamsLazyShare
         {
             get
