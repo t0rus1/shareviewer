@@ -133,6 +133,20 @@ namespace ShareViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+  <string>Make Slow (Five minutes) Prices SP,0,2,4,6,7,8,10,11,18,21,24</string>
+  <string>Make Five minutes Price Gradients PG,0,2,4,6,7,8,10,11,12,18,19,21,22,24,25</string>
+  <string>Find direction and Turning,0,2,4,6,7,8,10,48</string>
+  <string>Find Five minutes Gradients Figure PGF,0,2,4,6,7,8,10,48</string>
+  <string>Related volume Figure (RPGFV) of biggest PGF,0,2,4,6,7,8,10,48</string>
+  <string>Make High Line HL,0,2,4,6,7,8,10,48</string>
+  <string>Make Low Line LL,0,2,4,6,7,8,10,48</string>
+  <string>Make Slow Volumes SV,0,2,4,6,7,8,10,48</string>
+  <string>Slow Volume Figure SVFac,0,2,4,6,7,8,10,48</string>
+  <string>Slow Volume Figure SVFbd,0,2,4,6,7,8,10,48</string>
+  <string>Identify Lazy Shares,0,2,4,6,7,8,10,48</string>
+</ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection AllTableViews {
             get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["AllTableViews"]));
@@ -144,12 +158,23 @@ namespace ShareViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::ShareViewer.Param ParamsLazyShare {
+        public global::ShareViewer.LazyShareParam ParamsLazyShare {
             get {
-                return ((global::ShareViewer.Param)(this["ParamsLazyShare"]));
+                return ((global::ShareViewer.LazyShareParam)(this["ParamsLazyShare"]));
             }
             set {
                 this["ParamsLazyShare"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::ShareViewer.SlowPriceParam ParamsSlowPrice {
+            get {
+                return ((global::ShareViewer.SlowPriceParam)(this["ParamsSlowPrice"]));
+            }
+            set {
+                this["ParamsSlowPrice"] = value;
             }
         }
     }

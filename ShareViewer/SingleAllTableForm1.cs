@@ -18,7 +18,9 @@ namespace ShareViewer
     public partial class SingleAllTableForm : Form
     {
         private string _allTableFilename;
-        private ICollection<AllTable> atRows;
+        //private ICollection<AllTable> atRows;
+        //private List<AllTable> atRows;
+        private AllTable[] atRows;
 
         private VerticalMode _verticalMode = VerticalMode.FiveMinly;
         private string _shareDescriptor;
@@ -31,12 +33,18 @@ namespace ShareViewer
         // CALCULATION RESULTS
         // we need these to be form-scoped
         internal TextBox calcAuditTextBox;
-        internal Param calcLazyShareParams;
+        internal LazyShareParam calcLazyShareParam;
+        internal SlowPriceParam calcSlowPriceParam;
 
         //CALCULATIONS properties (so that we can bind to a Property grid)
-        //get our initial calculation parameters from user settings
-        private Param currentLazyShareParams = Helper.GetAppUserSettings().ParamsLazyShare;
-        internal Param CurrentLazyShareParams { get => currentLazyShareParams; set => currentLazyShareParams = value; }
+
+        //get our current LazyShare parameters from user settings
+        private LazyShareParam currLazyShareParam = Helper.GetAppUserSettings().ParamsLazyShare;
+        internal LazyShareParam CurrLazyShareParam { get => currLazyShareParam; set => currLazyShareParam = value; }
+
+        //get our current SlowPrice parameters from user settings
+        private SlowPriceParam currSlowPriceParam = Helper.GetAppUserSettings().ParamsSlowPrice;
+        internal SlowPriceParam CurrSlowPriceParam { get => currSlowPriceParam; set => currSlowPriceParam = value; }
 
 
         public SingleAllTableForm(string allTableFilename, string shareDesc)
@@ -108,7 +116,7 @@ namespace ShareViewer
             var tradingSpan = Helper.GetAppUserSettings().AllTableTradingSpan;
             if (periodStart == "")
             {
-                this.Text += "Date Range unknown - Please close form & re-generate!";
+                //this.Text += "Date Range unknown! (this can occur after an App update)";
             }
             else
             {
@@ -142,7 +150,7 @@ namespace ShareViewer
 
             //show initial take on whether share is currently considered lazy
             var auditLines = new string[] { "" };
-            labelLazy.Visible = Calculations.LazyShare(atRows.ToArray(), 9362, 10401, CurrentLazyShareParams.Setting, out auditLines);
+            labelLazy.Visible = Calculations.LazyShare(atRows.ToArray(), CurrLazyShareParam, 9362, 10401, out auditLines);
 
             _loaded = true;
         }
@@ -162,12 +170,65 @@ namespace ShareViewer
             }
         }
 
+        //(Re)bind DataGridView to possibly new data in the AllTable array of rows
+        private void BindDataGridViewToResults(VerticalMode vertMode)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            dgViewBindingSource.Clear();
+            if (vertMode == VerticalMode.FiveMinly)
+            {
+                foreach (AllTable item in atRows)
+                {
+                    dgViewBindingSource.Add(item);
+                }
+            }
+            else if (vertMode == VerticalMode.Hourly)
+            {
+                foreach (AllTable item in atRows)
+                {
+                    if (item.TimeFrom.EndsWith("00:00"))
+                    {
+                        dgViewBindingSource.Add(item);
+                    }
+                }
+            }
+            else if (vertMode == VerticalMode.Daily)
+            {
+                foreach (AllTable item in atRows)
+                {
+                    if (item.TimeTo.EndsWith("17:39:59"))
+                    {
+                        dgViewBindingSource.Add(item);
+                    }
+                }
+            }
+            else if (vertMode == VerticalMode.Weekly)
+            {
+                foreach (AllTable item in atRows.Skip(2))
+                {
+                    if (item.Day == "Fri" && item.TimeTo.EndsWith("17:39:59"))
+                    {
+                        dgViewBindingSource.Add(item);
+                    }
+                }
+            }
+            //set the datasource
+            _verticalMode = vertMode;
+            dgView.DataSource = null;
+            dgView.DataSource = dgViewBindingSource;
+            Cursor.Current = Cursors.Default;
+            dgView.Focus();
+
+        }
+
         private void BindDatagridView(VerticalMode vertMode)
         {
-            //var bindingSource1 = new BindingSource();
+            Cursor.Current = Cursors.WaitCursor;
+            dgViewBindingSource.Clear();
+
             using (FileStream fs = new FileStream(_allTableFilename, FileMode.Open))
             {
-                atRows = Helper.DeserializeList<AllTable>(fs);
+                atRows = Helper.DeserializeList<AllTable>(fs).ToArray();
                 if (vertMode == VerticalMode.FiveMinly)
                 {
                     foreach (AllTable item in atRows)
@@ -209,8 +270,10 @@ namespace ShareViewer
 
             //set the datasource
             _verticalMode = vertMode;
+            dgView.DataSource = null;
             dgView.DataSource = dgViewBindingSource;
 
+            Cursor.Current = Cursors.Default;
             dgView.Focus();
 
         }
@@ -219,6 +282,9 @@ namespace ShareViewer
         //whereby he wants to add or remove the corresponding datagridview column
         private void listBoxCols_SelectedIndexChanged(object sender, EventArgs e)
         {
+            //don't react while shift key is being depressed
+            if ((Control.ModifierKeys & Keys.Shift) != 0) return;
+
             if (_loaded && !_changingColumns) InstallDataGridViewColumns();
         }
 
@@ -226,11 +292,30 @@ namespace ShareViewer
         //see ColumnWithNumericHeader being added in InstallDataGridViewColumns below
         private void onRowWanted(object sender, EventArgs e)
         {
+            var rowNumTextBox = (TextBox)sender;
+
+            stripText.Text = "";
+            if (determineVerticalMode() != VerticalMode.FiveMinly)
+            {
+                stripText.Text = "Row-Find works only for 5-minute bands";
+                rowNumTextBox.Text = "";
+                return;
+            }
+
             short rowNum = 0;
-            if (short.TryParse(((TextBox)sender).Text, out rowNum)) {
+            if (short.TryParse(rowNumTextBox.Text, out rowNum)) {
                 //Helper.Log("Debug", $"{dgViewBindingSource.Position}");
-                dgViewBindingSource.Position = rowNum;
-                dgView.FirstDisplayedScrollingRowIndex = rowNum;
+                if (rowNum < dgView.RowCount)
+                {
+                    try
+                    {
+                        dgViewBindingSource.Position = rowNum;
+                        dgView.FirstDisplayedScrollingRowIndex = rowNum;
+                    }
+                    catch (ArgumentOutOfRangeException)
+                    {
+                    }
+                }
             }
            
         }
@@ -316,6 +401,25 @@ namespace ShareViewer
             BindDatagridView(VerticalMode.Weekly);
         }
 
+        private VerticalMode determineVerticalMode()
+        {
+            if (radioHours.Checked)
+            {
+                return VerticalMode.Hourly;
+            }
+            else if (radioDays.Checked)
+            {
+                return VerticalMode.Daily;
+            }
+            else if (radioWeekly.Checked) {
+                return VerticalMode.Weekly;
+            }
+            else
+            {
+                return VerticalMode.FiveMinly;
+            }
+        }
+
         //User chooses a new view
         private void comboBoxViews_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -367,10 +471,11 @@ namespace ShareViewer
         private void linkLabelSaveView_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             var form = new InputBox("Save column arrangement as a view", "Name this view");
+            form.textBoxInput.Text = (String)comboBoxViews.SelectedItem;
             var dlgResult = form.ShowDialog();
-            var viewName = form.returnValue.Replace(",", ""); // no commas allowed in view name!
             if (dlgResult == DialogResult.OK)
             {
+                var viewName = form.returnValue.Replace(",", ""); // no commas allowed in view name!
                 // first the view name
                 string viewStr = $"{viewName},";
                 //then the columns
@@ -382,6 +487,14 @@ namespace ShareViewer
 
                 //save currently selected colums to Usersettings under a name
                 var aus = Helper.GetAppUserSettings();
+                //overwrite (silently) if view already present - treat as an edit
+                foreach (var item in aus.AllTableViews)
+                {
+                    if (item.StartsWith(viewName)) {
+                        aus.AllTableViews.Remove(item);
+                        break;
+                    }
+                }
                 aus.AllTableViews.Add(viewStr);
                 aus.Save();
                 //rebind comboBoxViews in order to have the new view in the drop down
@@ -396,17 +509,30 @@ namespace ShareViewer
             listBoxCols.Enabled = !listBoxCols.Enabled;
         }
 
-        private void HandleCalculationClick(object sender, EventArgs e)
+        internal void HandleParameterSaveClick(object sender, EventArgs e)
+        {
+            var aus = Helper.GetAppUserSettings();
+            aus.ParamsLazyShare = calcLazyShareParam;
+            aus.Save();
+            stripText.Text = "Parameter saved";
+        }
+
+        internal void HandleCalculationClick(object sender, EventArgs e)
         {
             string calculation = (string)((Button)sender).Tag;
             var auditLines = new string[] { "" };
+            Cursor.Current = Cursors.WaitCursor;
             switch (calculation)
             {
                 case "Identify Lazy Shares":
-                    Calculations.LazyShare(atRows.ToArray(), 9362, 10401, calcLazyShareParams.Setting, out auditLines);
+                    Calculations.LazyShare(atRows, calcLazyShareParam, 9362, 10401,  out auditLines);
                     calcAuditTextBox.Lines = auditLines;
                     break;
-                case "Make Slow (Five minutes Prices) SP":
+                case "Make Slow (Five minutes) Prices SP":
+                    Calculations.MakeSlowPrices(ref atRows, calcSlowPriceParam, 1, 10401, out auditLines);
+                    calcAuditTextBox.Lines = auditLines;
+                    // atRows must be re-bound to the DataGridView
+                    BindDataGridViewToResults(determineVerticalMode());
                     break;
                 case "Make Five minutes Price Gradients":
                     break;
@@ -429,76 +555,10 @@ namespace ShareViewer
                 default:
                     break;
             }
+            Cursor.Current = Cursors.Default;
         }
 
-        // User saves newly edited parameters
-        // TODO: The Sharelist.txt file which hold names of Shares needs to be expanded
-        // such that newly calculated share properties (e.g. share is Lazy) can be attached.
-        // Perhaps instead of being a plain text file it can be a serialized list of Share objects
-        private void HandleParameterSaveClick(object sender, EventArgs e)
-        {
-            var aus = Helper.GetAppUserSettings();
-            aus.ParamsLazyShare = calcLazyShareParams;
-            aus.Save();
-            stripText.Text = "Parameter saved";
-        }
-
-        // CALCULATION HANDLING
-        private PropertyGrid BuildPropertyGridParams(Param param)
-        {
-            var pg = new PropertyGrid();
-            pg.Size = new Size(150, groupBoxParams.Height - 20);
-            pg.Location = new Point(20, 12);
-            pg.SelectedObject = param;
-            pg.PropertyValueChanged += OnParamSettingChange;
-            return pg;
-        }
-
-        // Check that new param setting remains within allowed bounds
-        private void OnParamSettingChange(object sender, EventArgs e)
-        {
-            var pg = (PropertyGrid)sender;
-            var param = ((Param)pg.SelectedObject);
-            var newVal = param.Setting;
-            var lowerLimit = param.From;
-            var upperLimit = param.To;
-            stripText.Text = "";
-            if (newVal < lowerLimit)
-            {
-                param.Setting = lowerLimit;
-                stripText.Text = $"No lower than {lowerLimit} !!!";
-            }
-            else if (newVal > upperLimit)
-            {
-                param.Setting = upperLimit;
-                stripText.Text = $"No higher than {upperLimit} !!!";
-            }
-        }
-
-        private Button[] BuildCalculateAndSaveButtons(string calculation)
-        {
-            var buttons = new Button[2];
-
-            var btnCalc = new Button();
-            btnCalc.Size = new Size(60, 100);
-            btnCalc.Location = new Point(170 + 20, 16);
-            btnCalc.Text = "Calculate";
-            btnCalc.Tag = calculation;
-            btnCalc.Click += HandleCalculationClick;
-            buttons[0] = btnCalc;
-
-            var btnSave = new Button();
-            btnSave.Size = new Size(60, 50);
-            btnSave.Location = new Point(170 + 20, 120);
-            btnSave.Text = "Apply and Save";
-            btnSave.Tag = calculation;
-            btnSave.Click += HandleParameterSaveClick;
-            buttons[1] = btnSave;
-
-            return buttons;
-        }
-
-        private TextBox BuildAuditTextBox(string[] auditOutcome)
+        private TextBox AuditTextBox(string[] auditOutcome)
         {
             var auditBox = new TextBox();
             auditBox.Location = new Point(270, 12);
@@ -518,14 +578,14 @@ namespace ShareViewer
         //and invoke a View by the same name as that of the Calculation
         private void listBoxVariables_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string calculation = ((ListBox)sender).Text;
             groupBoxParams.Controls.Clear();
+            string calculation = ((ListBox)sender).Text;
             groupBoxParams.Text = calculation;
 
-            //NB: the string comparands in the switch statement below must allign with 
-            //    Calculations.CalculationNames in Calculations.cs
+            //(re)-enable the views combobox if user moves off the calculations
+            //Note: the Views combo-box is disabled while a user is doing a calculation
+            comboBoxViews.Enabled = calculation.StartsWith("*");
 
-            //SetView(calculation);
             //Invoke view by same name
             int wantedViewIndex = comboBoxViews.Items.IndexOf(calculation);
             if (wantedViewIndex != -1)
@@ -537,15 +597,14 @@ namespace ShareViewer
             {
                 case "Identify Lazy Shares":
                     //show a bound params property grid
-                    calcLazyShareParams = new Param(
-                        currentLazyShareParams.From, currentLazyShareParams.To, currentLazyShareParams.Setting);
-                    var propGridParams = BuildPropertyGridParams(calcLazyShareParams);
-                    var btnPair = BuildCalculateAndSaveButtons(calculation);
-                    calcAuditTextBox = BuildAuditTextBox(new string[] { "Adjust setting Z then press 'Calculate' to re-evaluate" } );
+                    calcLazyShareParam = new LazyShareParam( currLazyShareParam.From, currLazyShareParam.To, currLazyShareParam.Setting);
+                    var propGridLazy = LazyShareUI.PropertyGridParams(calcLazyShareParam, groupBoxParams.Height - 20);
+                    var btnPairLazy = LazyShareUI.CalcAndSaveBtns(calculation, HandleCalculationClick, HandleParameterSaveClick);
+                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust settings then press 'Calculate' to re-evaluate" } );
                     //add params property grid and calc button to groupBox panel
-                    groupBoxParams.Controls.Add(propGridParams);
-                    groupBoxParams.Controls.Add(btnPair[0]);
-                    groupBoxParams.Controls.Add(btnPair[1]);
+                    groupBoxParams.Controls.Add(propGridLazy);
+                    groupBoxParams.Controls.Add(btnPairLazy[0]);
+                    groupBoxParams.Controls.Add(btnPairLazy[1]);
                     groupBoxParams.Controls.Add(calcAuditTextBox);
                     //move to row 9362 (10 days from end of range)
                     dgViewBindingSource.Position = 9362;
@@ -553,7 +612,32 @@ namespace ShareViewer
                     break;
 
                 case "Make Slow (Five minutes) Prices SP":
+                    //show a bound params property grid
+                    calcSlowPriceParam = new SlowPriceParam(CurrSlowPriceParam.ZMin, CurrSlowPriceParam.ZMax, 
+                        CurrSlowPriceParam.YMin, CurrSlowPriceParam.YMax, CurrSlowPriceParam.Z);
+                    var propGridSlow = SlowPriceUI.PropertyGridParams(calcSlowPriceParam, groupBoxParams.Height - 20);
+                    var btnPairSlow = SlowPriceUI.CalcAndSaveBtns(calculation, HandleCalculationClick, HandleParameterSaveClick);
+                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust settings then press 'Calculate' to re-evaluate" });
+                    //add params property grid and calc button to groupBox panel
+                    groupBoxParams.Controls.Add(propGridSlow);
+                    groupBoxParams.Controls.Add(btnPairSlow[0]);
+                    groupBoxParams.Controls.Add(btnPairSlow[1]);
+                    groupBoxParams.Controls.Add(calcAuditTextBox);
+                    //move to row 9362 (10 days from end of range)
+                    dgViewBindingSource.Position = 9362;
+                    dgView.FirstDisplayedScrollingRowIndex = 9362;
                     break;
+
+
+
+
+
+
+
+
+
+
+
                 case "Make Five minutes Price Gradients":
                     break;
                 case "Find direction and Turning":

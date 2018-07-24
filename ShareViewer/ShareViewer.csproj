@@ -49,7 +49,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllTable.cs" />
-    <Content Include="AppUserSettings.cs.txt" />
     <Compile Include="Calculations.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="InputBox.cs">
@@ -58,6 +57,7 @@
     <Compile Include="InputBox.Designer.cs">
       <DependentUpon>InputBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="LazyShareUI.cs" />
     <Compile Include="LocalStore.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -65,8 +65,10 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Param.cs" />
+    <Compile Include="LazyShareParam.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="SlowPriceParam.cs" />
+    <Compile Include="SlowPriceUI.cs" />
     <Compile Include="TextBoxHeaderCell.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

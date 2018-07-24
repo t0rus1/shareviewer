@@ -78,9 +78,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(15, 180);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(123, 13);
+            this.label1.Size = new System.Drawing.Size(273, 13);
             this.label1.TabIndex = 4;
-            this.label1.Text = "* use a descriptive name";
+            this.label1.Text = "* new name = new view, else existing view is overwritten";
             // 
             // InputBox
             // 
@@ -102,9 +102,9 @@
         #endregion
 
         private System.Windows.Forms.Label labelInput;
-        private System.Windows.Forms.TextBox textBoxInput;
         private System.Windows.Forms.Button buttonOk;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Label label1;
+        internal System.Windows.Forms.TextBox textBoxInput;
     }
 }

@@ -30,9 +30,25 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="AllTableViews" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;Make Slow (Five minutes) Prices SP,0,2,4,6,7,8,10,11,18,21,24&lt;/string&gt;
+  &lt;string&gt;Make Five minutes Price Gradients PG,0,2,4,6,7,8,10,11,12,18,19,21,22,24,25&lt;/string&gt;
+  &lt;string&gt;Find direction and Turning,0,2,4,6,7,8,10,48&lt;/string&gt;
+  &lt;string&gt;Find Five minutes Gradients Figure PGF,0,2,4,6,7,8,10,48&lt;/string&gt;
+  &lt;string&gt;Related volume Figure (RPGFV) of biggest PGF,0,2,4,6,7,8,10,48&lt;/string&gt;
+  &lt;string&gt;Make High Line HL,0,2,4,6,7,8,10,48&lt;/string&gt;
+  &lt;string&gt;Make Low Line LL,0,2,4,6,7,8,10,48&lt;/string&gt;
+  &lt;string&gt;Make Slow Volumes SV,0,2,4,6,7,8,10,48&lt;/string&gt;
+  &lt;string&gt;Slow Volume Figure SVFac,0,2,4,6,7,8,10,48&lt;/string&gt;
+  &lt;string&gt;Slow Volume Figure SVFbd,0,2,4,6,7,8,10,48&lt;/string&gt;
+  &lt;string&gt;Identify Lazy Shares,0,2,4,6,7,8,10,48&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+    <Setting Name="ParamsLazyShare" Type="ShareViewer.LazyShareParam" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="ParamsLazyShare" Type="ShareViewer.Param" Scope="User">
+    <Setting Name="ParamsSlowPrice" Type="ShareViewer.SlowPriceParam" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

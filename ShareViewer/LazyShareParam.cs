@@ -8,20 +8,20 @@ using System.Threading.Tasks;
 namespace ShareViewer
 {
     [Serializable]
-    public class Param
+    public class LazyShareParam
     {
         private double from;
         private double to;
         private double setting;
 
-        public Param()
+        public LazyShareParam()
         {
             this.from = 0;
             this.to = 0;
             this.setting = 0;
         }
 
-        public Param(double from, double to, double initial)
+        public LazyShareParam(double from, double to, double initial)
         {
             this.from = from;
             this.to = to;
