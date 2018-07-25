@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="AllTable.cs" />
     <Compile Include="Calculations.cs" />
+    <Compile Include="FiveMinutesPriceGradientsUI.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="InputBox.cs">
       <SubType>Form</SubType>

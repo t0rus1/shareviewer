@@ -71,6 +71,17 @@
             this.calendarTo = new System.Windows.Forms.MonthCalendar();
             this.calendarFrom = new System.Windows.Forms.MonthCalendar();
             this.toolTipShareList = new System.Windows.Forms.ToolTip(this.components);
+            this.tabPageCalendar = new System.Windows.Forms.TabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.monthCalendarHolidays = new System.Windows.Forms.MonthCalendar();
+            this.buttonHolidayAdd = new System.Windows.Forms.Button();
+            this.textBoxHolidayName = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.buttonRemoveHoliday = new System.Windows.Forms.Button();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.labelAffirmDate = new System.Windows.Forms.Label();
+            this.listBoxHolidays = new System.Windows.Forms.ListBox();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -79,11 +90,14 @@
             this.groupBoxSource.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.daysBack)).BeginInit();
+            this.tabPageCalendar.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControlMain
             // 
             this.tabControlMain.Controls.Add(this.tabPageImportation);
+            this.tabControlMain.Controls.Add(this.tabPageCalendar);
             this.tabControlMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlMain.Location = new System.Drawing.Point(0, 0);
             this.tabControlMain.Name = "tabControlMain";
@@ -568,6 +582,122 @@
             this.calendarFrom.TabIndex = 6;
             this.calendarFrom.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.FromDateChanged);
             // 
+            // tabPageCalendar
+            // 
+            this.tabPageCalendar.Controls.Add(this.groupBox1);
+            this.tabPageCalendar.Location = new System.Drawing.Point(4, 22);
+            this.tabPageCalendar.Name = "tabPageCalendar";
+            this.tabPageCalendar.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageCalendar.Size = new System.Drawing.Size(976, 735);
+            this.tabPageCalendar.TabIndex = 1;
+            this.tabPageCalendar.Text = "Calendar";
+            this.tabPageCalendar.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.listBoxHolidays);
+            this.groupBox1.Controls.Add(this.labelAffirmDate);
+            this.groupBox1.Controls.Add(this.label11);
+            this.groupBox1.Controls.Add(this.label10);
+            this.groupBox1.Controls.Add(this.buttonRemoveHoliday);
+            this.groupBox1.Controls.Add(this.label9);
+            this.groupBox1.Controls.Add(this.textBoxHolidayName);
+            this.groupBox1.Controls.Add(this.buttonHolidayAdd);
+            this.groupBox1.Controls.Add(this.monthCalendarHolidays);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(3, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(970, 729);
+            this.groupBox1.TabIndex = 0;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Non-Trading Days (Public Holidays)";
+            // 
+            // monthCalendarHolidays
+            // 
+            this.monthCalendarHolidays.Location = new System.Drawing.Point(33, 43);
+            this.monthCalendarHolidays.MaxSelectionCount = 1;
+            this.monthCalendarHolidays.Name = "monthCalendarHolidays";
+            this.monthCalendarHolidays.TabIndex = 0;
+            this.monthCalendarHolidays.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.monthCalendarHolidays_DateSelected);
+            // 
+            // buttonHolidayAdd
+            // 
+            this.buttonHolidayAdd.Image = ((System.Drawing.Image)(resources.GetObject("buttonHolidayAdd.Image")));
+            this.buttonHolidayAdd.Location = new System.Drawing.Point(578, 46);
+            this.buttonHolidayAdd.Name = "buttonHolidayAdd";
+            this.buttonHolidayAdd.Size = new System.Drawing.Size(89, 43);
+            this.buttonHolidayAdd.TabIndex = 1;
+            this.buttonHolidayAdd.Text = "Add";
+            this.buttonHolidayAdd.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.buttonHolidayAdd.UseVisualStyleBackColor = true;
+            this.buttonHolidayAdd.Click += new System.EventHandler(this.buttonHolidayAdd_Click);
+            // 
+            // textBoxHolidayName
+            // 
+            this.textBoxHolidayName.Location = new System.Drawing.Point(286, 69);
+            this.textBoxHolidayName.Name = "textBoxHolidayName";
+            this.textBoxHolidayName.Size = new System.Drawing.Size(264, 20);
+            this.textBoxHolidayName.TabIndex = 3;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(286, 50);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(220, 13);
+            this.label9.TabIndex = 4;
+            this.label9.Text = "Name the selected holiday and Add to the list";
+            // 
+            // buttonRemoveHoliday
+            // 
+            this.buttonRemoveHoliday.Image = ((System.Drawing.Image)(resources.GetObject("buttonRemoveHoliday.Image")));
+            this.buttonRemoveHoliday.Location = new System.Drawing.Point(578, 113);
+            this.buttonRemoveHoliday.Name = "buttonRemoveHoliday";
+            this.buttonRemoveHoliday.Size = new System.Drawing.Size(89, 43);
+            this.buttonRemoveHoliday.TabIndex = 5;
+            this.buttonRemoveHoliday.Text = "Delete";
+            this.buttonRemoveHoliday.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.buttonRemoveHoliday.UseVisualStyleBackColor = true;
+            this.buttonRemoveHoliday.Click += new System.EventHandler(this.buttonRemoveHoliday_Click);
+            // 
+            // label10
+            // 
+            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(686, 10);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(47, 13);
+            this.label10.TabIndex = 6;
+            this.label10.Text = "Holidays";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(32, 231);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(505, 13);
+            this.label11.TabIndex = 7;
+            this.label11.Text = "Set up as many holidays as you want, both past and future. You may come back to e" +
+    "dit this list at any time";
+            // 
+            // labelAffirmDate
+            // 
+            this.labelAffirmDate.AutoSize = true;
+            this.labelAffirmDate.Location = new System.Drawing.Point(289, 96);
+            this.labelAffirmDate.Name = "labelAffirmDate";
+            this.labelAffirmDate.Size = new System.Drawing.Size(0, 13);
+            this.labelAffirmDate.TabIndex = 8;
+            // 
+            // listBoxHolidays
+            // 
+            this.listBoxHolidays.FormattingEnabled = true;
+            this.listBoxHolidays.Location = new System.Drawing.Point(689, 26);
+            this.listBoxHolidays.Name = "listBoxHolidays";
+            this.listBoxHolidays.ScrollAlwaysVisible = true;
+            this.listBoxHolidays.Size = new System.Drawing.Size(275, 225);
+            this.listBoxHolidays.Sorted = true;
+            this.listBoxHolidays.TabIndex = 9;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -592,6 +722,9 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.daysBack)).EndInit();
+            this.tabPageCalendar.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -639,6 +772,17 @@
         private System.Windows.Forms.Button buttonDays;
         private System.Windows.Forms.ToolTip toolTipShareList;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TabPage tabPageCalendar;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Button buttonRemoveHoliday;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox textBoxHolidayName;
+        private System.Windows.Forms.Button buttonHolidayAdd;
+        private System.Windows.Forms.MonthCalendar monthCalendarHolidays;
+        private System.Windows.Forms.Label labelAffirmDate;
+        private System.Windows.Forms.ListBox listBoxHolidays;
     }
 }
 

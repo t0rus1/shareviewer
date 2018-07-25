@@ -157,6 +157,42 @@ Result:
             }
 
         }
+
+
+        // Compute Slow prices per Gunther's notes
+        internal static void MakeFiveMinutesPriceGradients(ref AllTable[] bands, int startRow, int endRow, out string[] auditSummary)
+        {
+            auditSummary = new string[] { };
+            int numBands = endRow - startRow + 1;
+            if (numBands > 0)
+            {
+                for (int f = startRow; f <= endRow; f++)
+                {
+                    if (bands[f-1].SPa != 0)
+                    {
+                        bands[f].PGa = bands[f].SPa / bands[f - 1].SPa;
+                    }
+                    if (bands[f - 1].SPb != 0)
+                    {
+                        bands[f].PGb = bands[f].SPb / bands[f - 1].SPb;
+                    }
+                    if (bands[f - 1].SPc != 0)
+                    {
+                        bands[f].PGc = bands[f].SPc / bands[f - 1].SPc;
+                    }
+                    if (bands[f - 1].SPd != 0)
+                    {
+                        bands[f].PGd = bands[f].SPd / bands[f - 1].SPd;
+                    }
+                }
+                auditSummary = $@"{numBands} processed.\nPlease inspect the view for results.".Split('\n');
+            }
+            else
+            {
+                auditSummary = $@"No bands to work with".Split('\n');
+            }
+
+        }
     }
 
 }

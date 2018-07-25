@@ -414,6 +414,63 @@ namespace ShareViewer
             }
 
         }
+      
+        public static string NameToFormat(string colName)
+        {
+            switch (colName)
+            {
+                case "Row": return "N0";
+                case "F": return "N0";
+                case "FP": return "N3";
+                case "SPa": return "N4";
+                case "PGa": return "N5";
+                case "APpg": return "N6";
+                case "PGFrowx15": return "N5";
+                case "PGFrowx16": return "N5";
+                case "PGFrowx17": return "N5";
+                case "BigPGF": return "N5";
+                case "SPb": return "N4";
+                case "PGb": return "N5";
+                case "SPc": return "N4";
+                case "PGc": return "N5";
+                case "SPd": return "N4";
+                case "PGd": return "N5";
+                case "HLc": return "N3";
+                case "DHLFPc": return "N3";
+                case "HLd": return "N3";
+                case "DHLFPd": return "N3";
+                case "LLc": return "N3";
+                case "DLLFPc": return "N3";
+                case "LLd": return "N3";
+                case "DLLFPd": return "N3";
+                case "FV": return "N0";
+                case "SVa": return "N0";
+                case "APSVac": return "N1";
+                case "SVFac": return "N6";
+                case "SVb": return "N0";
+                case "APSVbd": return "N1";
+                case "SVFbd": return "N6";
+                case "SVc": return "N0";
+                case "RPGFV": return "N1";
+                case "SVd": return "N0";
+                case "PtsGradA": return "N1";
+                case "PtsGradB": return "N1";
+                case "PtsGradC": return "N1";
+                case "PtsHLc": return "N0";
+                case "PtsHLd": return "N0";
+                case "PtsLLc": return "N0";
+                case "PtsLLd": return "N0";
+                case "PtsVola": return "N1";
+                case "PtsVolb": return "N1";
+                case "SumRow1Only": return "N1";
+                case "SameAs83DiffTreatment": return "N1";
+
+                default: return "N3";
+                
+            }
+
+        }
+        
 
         // get the hint attribute from a property name
         public static string PropNameToHint(string colName)

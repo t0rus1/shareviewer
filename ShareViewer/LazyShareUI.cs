@@ -15,6 +15,8 @@ namespace ShareViewer
         internal static PropertyGrid PropertyGridParams(LazyShareParam param, int height)
         {
             var pg = new PropertyGrid();
+            pg.ToolbarVisible = false;
+            pg.PropertySort = PropertySort.NoSort;
             pg.Size = new Size(150, height);
             pg.Location = new Point(20, 12);
             pg.SelectedObject = param;

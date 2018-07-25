@@ -15,7 +15,7 @@ namespace ShareViewer
 {
     public partial class MainForm : Form
     {
-        public const String Version = "0.0.3";
+        public const String Version = "0.0.4";
         //internal AppUserSettings appUserSettings;
         internal Properties.Settings appUserSettings;
         bool initializing = true;
@@ -30,7 +30,7 @@ namespace ShareViewer
 
         private void OnLoad(object sender, EventArgs e)
         {
-            Text = "ShareViewer v 0.0.2";
+            Text = "ShareViewer v" + Version;
 
             //Get existing setting values from user.config file. These may not exist initially
             //in which case default values will be gotten from attributes on the class
@@ -548,5 +548,29 @@ namespace ShareViewer
 
         }
 
+        private void monthCalendarHolidays_DateSelected(object sender, DateRangeEventArgs e)
+        {
+            labelAffirmDate.Text = ((MonthCalendar)sender).SelectionStart.ToShortDateString();
+        }
+
+        private void buttonHolidayAdd_Click(object sender, EventArgs e)
+        {
+            string holidayDate = monthCalendarHolidays.SelectionStart.ToShortDateString();
+            string holidayName = textBoxHolidayName.Text;
+            if (holidayName.Trim().Length > 0)
+            {
+                var item = $"{holidayDate} = {holidayName}";
+                listBoxHolidays.Items.Add(item);
+            }
+        }
+
+        private void buttonRemoveHoliday_Click(object sender, EventArgs e)
+        {
+            int selectedHolIndex = listBoxHolidays.SelectedIndex;
+            if (selectedHolIndex != -1)
+            {
+                listBoxHolidays.Items.RemoveAt(selectedHolIndex);
+            }
+        }
     }
 }

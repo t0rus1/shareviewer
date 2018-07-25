@@ -39,7 +39,7 @@ namespace ShareViewer
         protected override void Paint(Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates dataGridViewElementState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
         {
             base.Paint(graphics, clipBounds, cellBounds, rowIndex, dataGridViewElementState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, paintParts);
-            _gotoRowText.Location = new Point(cellBounds.Left+ 36, cellBounds.Top + 5);
+            _gotoRowText.Location = new Point(cellBounds.Left+ 36, cellBounds.Top-1);
         }
 
     }
@@ -53,7 +53,8 @@ namespace ShareViewer
             //this.CellTemplate = new DataGridViewTextBoxCell();
             headerCell = new TextBoxHeaderCell(valueChanged);
             this.HeaderCell = headerCell;
-            //this.Width = 150;
+            this.DefaultCellStyle.Format = "N0";
+            this.MinimumWidth = 100;
         }
 
         protected override void OnDataGridViewChanged()
