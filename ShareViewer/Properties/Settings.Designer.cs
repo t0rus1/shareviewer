@@ -177,5 +177,16 @@ namespace ShareViewer.Properties {
                 this["ParamsSlowPrice"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection Holidays {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["Holidays"]));
+            }
+            set {
+                this["Holidays"] = value;
+            }
+        }
     }
 }

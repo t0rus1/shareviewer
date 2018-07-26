@@ -45,9 +45,9 @@
             this.buttonDayDataDownload = new System.Windows.Forms.Button();
             this.listBoxShareList = new System.Windows.Forms.ListBox();
             this.listBoxInhalt = new System.Windows.Forms.ListBox();
-            this.statusStrip = new System.Windows.Forms.StatusStrip();
-            this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.listBoxSpannedHolidays = new System.Windows.Forms.ListBox();
+            this.labelHolidays = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.buttonDays = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
@@ -70,51 +70,56 @@
             this.labelBackFrom = new System.Windows.Forms.Label();
             this.calendarTo = new System.Windows.Forms.MonthCalendar();
             this.calendarFrom = new System.Windows.Forms.MonthCalendar();
-            this.toolTipShareList = new System.Windows.Forms.ToolTip(this.components);
             this.tabPageCalendar = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.monthCalendarHolidays = new System.Windows.Forms.MonthCalendar();
-            this.buttonHolidayAdd = new System.Windows.Forms.Button();
-            this.textBoxHolidayName = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.buttonRemoveHoliday = new System.Windows.Forms.Button();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.labelAffirmDate = new System.Windows.Forms.Label();
+            this.buttonSaveHolidays = new System.Windows.Forms.Button();
             this.listBoxHolidays = new System.Windows.Forms.ListBox();
+            this.labelAffirmDate = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.buttonRemoveHoliday = new System.Windows.Forms.Button();
+            this.label9 = new System.Windows.Forms.Label();
+            this.textBoxHolidayName = new System.Windows.Forms.TextBox();
+            this.buttonHolidayAdd = new System.Windows.Forms.Button();
+            this.monthCalendarHolidays = new System.Windows.Forms.MonthCalendar();
+            this.toolTipShareList = new System.Windows.Forms.ToolTip(this.components);
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
-            this.statusStrip.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBoxSource.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.daysBack)).BeginInit();
             this.tabPageCalendar.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControlMain
             // 
+            this.tabControlMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControlMain.Controls.Add(this.tabPageImportation);
             this.tabControlMain.Controls.Add(this.tabPageCalendar);
-            this.tabControlMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlMain.Location = new System.Drawing.Point(0, 0);
             this.tabControlMain.Name = "tabControlMain";
             this.tabControlMain.SelectedIndex = 0;
-            this.tabControlMain.Size = new System.Drawing.Size(984, 761);
+            this.tabControlMain.Size = new System.Drawing.Size(1008, 737);
             this.tabControlMain.TabIndex = 0;
+            this.tabControlMain.SelectedIndexChanged += new System.EventHandler(this.tabControlMain_SelectedIndexChanged);
             // 
             // tabPageImportation
             // 
             this.tabPageImportation.BackColor = System.Drawing.SystemColors.Control;
             this.tabPageImportation.Controls.Add(this.panel2);
-            this.tabPageImportation.Controls.Add(this.statusStrip);
             this.tabPageImportation.Controls.Add(this.panel1);
             this.tabPageImportation.Location = new System.Drawing.Point(4, 22);
             this.tabPageImportation.Name = "tabPageImportation";
             this.tabPageImportation.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageImportation.Size = new System.Drawing.Size(976, 735);
+            this.tabPageImportation.Size = new System.Drawing.Size(1000, 711);
             this.tabPageImportation.TabIndex = 0;
             this.tabPageImportation.Text = "Downloading & Filling";
             // 
@@ -136,7 +141,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(3, 218);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(970, 492);
+            this.panel2.Size = new System.Drawing.Size(994, 490);
             this.panel2.TabIndex = 4;
             // 
             // buttonBusyAllTables
@@ -150,7 +155,7 @@
             this.buttonBusyAllTables.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.buttonBusyAllTables.Location = new System.Drawing.Point(352, 246);
             this.buttonBusyAllTables.Name = "buttonBusyAllTables";
-            this.buttonBusyAllTables.Size = new System.Drawing.Size(296, 121);
+            this.buttonBusyAllTables.Size = new System.Drawing.Size(320, 121);
             this.buttonBusyAllTables.TabIndex = 18;
             this.buttonBusyAllTables.Text = "All-Table generation... Click to Abort";
             this.buttonBusyAllTables.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -163,7 +168,7 @@
             this.labelGenNewAllTables.AutoSize = true;
             this.labelGenNewAllTables.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.labelGenNewAllTables.ForeColor = System.Drawing.Color.ForestGreen;
-            this.labelGenNewAllTables.Location = new System.Drawing.Point(299, 408);
+            this.labelGenNewAllTables.Location = new System.Drawing.Point(299, 406);
             this.labelGenNewAllTables.Name = "labelGenNewAllTables";
             this.labelGenNewAllTables.Size = new System.Drawing.Size(56, 13);
             this.labelGenNewAllTables.TabIndex = 17;
@@ -173,9 +178,9 @@
             // progressBarGenNewAllTables
             // 
             this.progressBarGenNewAllTables.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.progressBarGenNewAllTables.Location = new System.Drawing.Point(299, 421);
+            this.progressBarGenNewAllTables.Location = new System.Drawing.Point(299, 419);
             this.progressBarGenNewAllTables.Name = "progressBarGenNewAllTables";
-            this.progressBarGenNewAllTables.Size = new System.Drawing.Size(395, 23);
+            this.progressBarGenNewAllTables.Size = new System.Drawing.Size(419, 23);
             this.progressBarGenNewAllTables.TabIndex = 16;
             this.progressBarGenNewAllTables.Visible = false;
             // 
@@ -199,7 +204,7 @@
             this.buttonNewShareList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonNewShareList.Image = ((System.Drawing.Image)(resources.GetObject("buttonNewShareList.Image")));
             this.buttonNewShareList.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.buttonNewShareList.Location = new System.Drawing.Point(527, 45);
+            this.buttonNewShareList.Location = new System.Drawing.Point(551, 44);
             this.buttonNewShareList.Name = "buttonNewShareList";
             this.buttonNewShareList.Size = new System.Drawing.Size(164, 43);
             this.buttonNewShareList.TabIndex = 11;
@@ -215,9 +220,9 @@
             this.buttonNewAllTables.FlatAppearance.BorderSize = 2;
             this.buttonNewAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonNewAllTables.Image = ((System.Drawing.Image)(resources.GetObject("buttonNewAllTables.Image")));
-            this.buttonNewAllTables.Location = new System.Drawing.Point(380, 114);
+            this.buttonNewAllTables.Location = new System.Drawing.Point(380, 113);
             this.buttonNewAllTables.Name = "buttonNewAllTables";
-            this.buttonNewAllTables.Size = new System.Drawing.Size(254, 107);
+            this.buttonNewAllTables.Size = new System.Drawing.Size(278, 107);
             this.buttonNewAllTables.TabIndex = 15;
             this.buttonNewAllTables.Text = "Generate New All-Tables";
             this.buttonNewAllTables.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
@@ -229,9 +234,9 @@
             this.buttonLogfile.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.buttonLogfile.Image = ((System.Drawing.Image)(resources.GetObject("buttonLogfile.Image")));
             this.buttonLogfile.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonLogfile.Location = new System.Drawing.Point(299, 444);
+            this.buttonLogfile.Location = new System.Drawing.Point(299, 442);
             this.buttonLogfile.Name = "buttonLogfile";
-            this.buttonLogfile.Size = new System.Drawing.Size(395, 23);
+            this.buttonLogfile.Size = new System.Drawing.Size(419, 23);
             this.buttonLogfile.TabIndex = 12;
             this.buttonLogfile.Text = "Open Logfile Folder";
             this.buttonLogfile.UseVisualStyleBackColor = true;
@@ -242,9 +247,9 @@
             this.buttonExplorer.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.buttonExplorer.Image = ((System.Drawing.Image)(resources.GetObject("buttonExplorer.Image")));
             this.buttonExplorer.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonExplorer.Location = new System.Drawing.Point(299, 467);
+            this.buttonExplorer.Location = new System.Drawing.Point(299, 465);
             this.buttonExplorer.Name = "buttonExplorer";
-            this.buttonExplorer.Size = new System.Drawing.Size(395, 23);
+            this.buttonExplorer.Size = new System.Drawing.Size(419, 23);
             this.buttonExplorer.TabIndex = 13;
             this.buttonExplorer.Text = "Open Extra Folder";
             this.buttonExplorer.UseVisualStyleBackColor = true;
@@ -255,7 +260,7 @@
             this.progressBarDownload.Dock = System.Windows.Forms.DockStyle.Top;
             this.progressBarDownload.Location = new System.Drawing.Point(299, 0);
             this.progressBarDownload.Name = "progressBarDownload";
-            this.progressBarDownload.Size = new System.Drawing.Size(395, 23);
+            this.progressBarDownload.Size = new System.Drawing.Size(419, 23);
             this.progressBarDownload.TabIndex = 3;
             this.progressBarDownload.Visible = false;
             // 
@@ -267,7 +272,7 @@
             this.buttonDayDataDownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonDayDataDownload.Image = ((System.Drawing.Image)(resources.GetObject("buttonDayDataDownload.Image")));
             this.buttonDayDataDownload.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonDayDataDownload.Location = new System.Drawing.Point(303, 45);
+            this.buttonDayDataDownload.Location = new System.Drawing.Point(303, 44);
             this.buttonDayDataDownload.Name = "buttonDayDataDownload";
             this.buttonDayDataDownload.Size = new System.Drawing.Size(189, 43);
             this.buttonDayDataDownload.TabIndex = 10;
@@ -283,10 +288,10 @@
             this.listBoxShareList.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listBoxShareList.FormattingEnabled = true;
             this.listBoxShareList.ItemHeight = 11;
-            this.listBoxShareList.Location = new System.Drawing.Point(694, 0);
+            this.listBoxShareList.Location = new System.Drawing.Point(718, 0);
             this.listBoxShareList.Name = "listBoxShareList";
             this.listBoxShareList.ScrollAlwaysVisible = true;
-            this.listBoxShareList.Size = new System.Drawing.Size(274, 490);
+            this.listBoxShareList.Size = new System.Drawing.Size(274, 488);
             this.listBoxShareList.Sorted = true;
             this.listBoxShareList.TabIndex = 14;
             this.toolTipShareList.SetToolTip(this.listBoxShareList, "Double-Click for All-Table");
@@ -302,27 +307,14 @@
             this.listBoxInhalt.Name = "listBoxInhalt";
             this.listBoxInhalt.ScrollAlwaysVisible = true;
             this.listBoxInhalt.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
-            this.listBoxInhalt.Size = new System.Drawing.Size(299, 490);
+            this.listBoxInhalt.Size = new System.Drawing.Size(299, 488);
             this.listBoxInhalt.TabIndex = 9;
             this.listBoxInhalt.Click += new System.EventHandler(this.OnInhaltClicked);
             // 
-            // statusStrip
-            // 
-            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.stripText});
-            this.statusStrip.Location = new System.Drawing.Point(3, 710);
-            this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(970, 22);
-            this.statusStrip.TabIndex = 3;
-            // 
-            // stripText
-            // 
-            this.stripText.Name = "stripText";
-            this.stripText.Size = new System.Drawing.Size(22, 17);
-            this.stripText.Text = "Ok";
-            // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.listBoxSpannedHolidays);
+            this.panel1.Controls.Add(this.labelHolidays);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.buttonDays);
             this.panel1.Controls.Add(this.label3);
@@ -341,13 +333,31 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(970, 215);
+            this.panel1.Size = new System.Drawing.Size(994, 215);
             this.panel1.TabIndex = 0;
+            // 
+            // listBoxSpannedHolidays
+            // 
+            this.listBoxSpannedHolidays.FormattingEnabled = true;
+            this.listBoxSpannedHolidays.Location = new System.Drawing.Point(839, 26);
+            this.listBoxSpannedHolidays.Name = "listBoxSpannedHolidays";
+            this.listBoxSpannedHolidays.SelectionMode = System.Windows.Forms.SelectionMode.None;
+            this.listBoxSpannedHolidays.Size = new System.Drawing.Size(152, 121);
+            this.listBoxSpannedHolidays.TabIndex = 20;
+            // 
+            // labelHolidays
+            // 
+            this.labelHolidays.AutoSize = true;
+            this.labelHolidays.Location = new System.Drawing.Point(839, 9);
+            this.labelHolidays.Name = "labelHolidays";
+            this.labelHolidays.Size = new System.Drawing.Size(128, 13);
+            this.labelHolidays.TabIndex = 19;
+            this.labelHolidays.Text = "Known holidays spanned:";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(540, 71);
+            this.label4.Location = new System.Drawing.Point(540, 45);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(21, 13);
             this.label4.TabIndex = 18;
@@ -357,7 +367,7 @@
             // 
             this.buttonDays.FlatAppearance.BorderSize = 0;
             this.buttonDays.Image = ((System.Drawing.Image)(resources.GetObject("buttonDays.Image")));
-            this.buttonDays.Location = new System.Drawing.Point(533, 139);
+            this.buttonDays.Location = new System.Drawing.Point(533, 113);
             this.buttonDays.Name = "buttonDays";
             this.buttonDays.Size = new System.Drawing.Size(37, 32);
             this.buttonDays.TabIndex = 17;
@@ -379,7 +389,7 @@
             // 
             this.labelDatafilesCount.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelDatafilesCount.AutoSize = true;
-            this.labelDatafilesCount.Location = new System.Drawing.Point(101, 201);
+            this.labelDatafilesCount.Location = new System.Drawing.Point(125, 201);
             this.labelDatafilesCount.Name = "labelDatafilesCount";
             this.labelDatafilesCount.Size = new System.Drawing.Size(63, 13);
             this.labelDatafilesCount.TabIndex = 15;
@@ -390,7 +400,7 @@
             // 
             this.label8.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(832, 196);
+            this.label8.Location = new System.Drawing.Point(856, 196);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(78, 13);
             this.label8.TabIndex = 14;
@@ -400,7 +410,7 @@
             // textBoxShareNumSearch
             // 
             this.textBoxShareNumSearch.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.textBoxShareNumSearch.Location = new System.Drawing.Point(914, 193);
+            this.textBoxShareNumSearch.Location = new System.Drawing.Point(938, 193);
             this.textBoxShareNumSearch.Name = "textBoxShareNumSearch";
             this.textBoxShareNumSearch.Size = new System.Drawing.Size(50, 20);
             this.textBoxShareNumSearch.TabIndex = 13;
@@ -520,7 +530,7 @@
             this.label7.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(696, 193);
+            this.label7.Location = new System.Drawing.Point(720, 193);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(81, 20);
             this.label7.TabIndex = 9;
@@ -529,7 +539,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(523, 121);
+            this.label1.Location = new System.Drawing.Point(524, 95);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(64, 13);
             this.label1.TabIndex = 5;
@@ -538,7 +548,7 @@
             // daysBack
             // 
             this.daysBack.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.daysBack.Location = new System.Drawing.Point(524, 88);
+            this.daysBack.Location = new System.Drawing.Point(524, 62);
             this.daysBack.Maximum = new decimal(new int[] {
             300,
             0,
@@ -568,7 +578,6 @@
             this.calendarTo.Location = new System.Drawing.Point(597, 24);
             this.calendarTo.MaxSelectionCount = 1;
             this.calendarTo.Name = "calendarTo";
-            this.calendarTo.ShowToday = false;
             this.calendarTo.TabIndex = 8;
             this.calendarTo.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.ToDateChanged);
             // 
@@ -588,13 +597,14 @@
             this.tabPageCalendar.Location = new System.Drawing.Point(4, 22);
             this.tabPageCalendar.Name = "tabPageCalendar";
             this.tabPageCalendar.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCalendar.Size = new System.Drawing.Size(976, 735);
+            this.tabPageCalendar.Size = new System.Drawing.Size(1000, 711);
             this.tabPageCalendar.TabIndex = 1;
             this.tabPageCalendar.Text = "Calendar";
             this.tabPageCalendar.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.buttonSaveHolidays);
             this.groupBox1.Controls.Add(this.listBoxHolidays);
             this.groupBox1.Controls.Add(this.labelAffirmDate);
             this.groupBox1.Controls.Add(this.label11);
@@ -607,18 +617,90 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(970, 729);
+            this.groupBox1.Size = new System.Drawing.Size(994, 705);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Non-Trading Days (Public Holidays)";
             // 
-            // monthCalendarHolidays
+            // buttonSaveHolidays
             // 
-            this.monthCalendarHolidays.Location = new System.Drawing.Point(33, 43);
-            this.monthCalendarHolidays.MaxSelectionCount = 1;
-            this.monthCalendarHolidays.Name = "monthCalendarHolidays";
-            this.monthCalendarHolidays.TabIndex = 0;
-            this.monthCalendarHolidays.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.monthCalendarHolidays_DateSelected);
+            this.buttonSaveHolidays.Image = ((System.Drawing.Image)(resources.GetObject("buttonSaveHolidays.Image")));
+            this.buttonSaveHolidays.Location = new System.Drawing.Point(578, 200);
+            this.buttonSaveHolidays.Name = "buttonSaveHolidays";
+            this.buttonSaveHolidays.Size = new System.Drawing.Size(89, 43);
+            this.buttonSaveHolidays.TabIndex = 10;
+            this.buttonSaveHolidays.Text = "Save";
+            this.buttonSaveHolidays.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.buttonSaveHolidays.UseVisualStyleBackColor = true;
+            this.buttonSaveHolidays.Visible = false;
+            this.buttonSaveHolidays.Click += new System.EventHandler(this.buttonSaveHolidays_Click);
+            // 
+            // listBoxHolidays
+            // 
+            this.listBoxHolidays.FormattingEnabled = true;
+            this.listBoxHolidays.Location = new System.Drawing.Point(689, 26);
+            this.listBoxHolidays.Name = "listBoxHolidays";
+            this.listBoxHolidays.ScrollAlwaysVisible = true;
+            this.listBoxHolidays.Size = new System.Drawing.Size(275, 225);
+            this.listBoxHolidays.Sorted = true;
+            this.listBoxHolidays.TabIndex = 9;
+            // 
+            // labelAffirmDate
+            // 
+            this.labelAffirmDate.AutoSize = true;
+            this.labelAffirmDate.Location = new System.Drawing.Point(289, 96);
+            this.labelAffirmDate.Name = "labelAffirmDate";
+            this.labelAffirmDate.Size = new System.Drawing.Size(0, 13);
+            this.labelAffirmDate.TabIndex = 8;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(32, 231);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(505, 13);
+            this.label11.TabIndex = 7;
+            this.label11.Text = "Set up as many holidays as you want, both past and future. You may come back to e" +
+    "dit this list at any time";
+            // 
+            // label10
+            // 
+            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(686, 10);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(47, 13);
+            this.label10.TabIndex = 6;
+            this.label10.Text = "Holidays";
+            // 
+            // buttonRemoveHoliday
+            // 
+            this.buttonRemoveHoliday.Image = ((System.Drawing.Image)(resources.GetObject("buttonRemoveHoliday.Image")));
+            this.buttonRemoveHoliday.Location = new System.Drawing.Point(578, 123);
+            this.buttonRemoveHoliday.Name = "buttonRemoveHoliday";
+            this.buttonRemoveHoliday.Size = new System.Drawing.Size(89, 43);
+            this.buttonRemoveHoliday.TabIndex = 5;
+            this.buttonRemoveHoliday.Text = "Delete";
+            this.buttonRemoveHoliday.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.buttonRemoveHoliday.UseVisualStyleBackColor = true;
+            this.buttonRemoveHoliday.Click += new System.EventHandler(this.buttonRemoveHoliday_Click);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(286, 50);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(220, 13);
+            this.label9.TabIndex = 4;
+            this.label9.Text = "Name the selected holiday and Add to the list";
+            // 
+            // textBoxHolidayName
+            // 
+            this.textBoxHolidayName.Location = new System.Drawing.Point(286, 69);
+            this.textBoxHolidayName.Name = "textBoxHolidayName";
+            this.textBoxHolidayName.Size = new System.Drawing.Size(264, 20);
+            this.textBoxHolidayName.TabIndex = 3;
             // 
             // buttonHolidayAdd
             // 
@@ -632,89 +714,44 @@
             this.buttonHolidayAdd.UseVisualStyleBackColor = true;
             this.buttonHolidayAdd.Click += new System.EventHandler(this.buttonHolidayAdd_Click);
             // 
-            // textBoxHolidayName
+            // monthCalendarHolidays
             // 
-            this.textBoxHolidayName.Location = new System.Drawing.Point(286, 69);
-            this.textBoxHolidayName.Name = "textBoxHolidayName";
-            this.textBoxHolidayName.Size = new System.Drawing.Size(264, 20);
-            this.textBoxHolidayName.TabIndex = 3;
+            this.monthCalendarHolidays.Location = new System.Drawing.Point(33, 43);
+            this.monthCalendarHolidays.MaxSelectionCount = 1;
+            this.monthCalendarHolidays.Name = "monthCalendarHolidays";
+            this.monthCalendarHolidays.TabIndex = 0;
+            this.monthCalendarHolidays.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.monthCalendarHolidays_DateSelected);
             // 
-            // label9
+            // statusStrip
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(286, 50);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(220, 13);
-            this.label9.TabIndex = 4;
-            this.label9.Text = "Name the selected holiday and Add to the list";
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.stripText});
+            this.statusStrip.Location = new System.Drawing.Point(0, 739);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(1008, 22);
+            this.statusStrip.TabIndex = 4;
             // 
-            // buttonRemoveHoliday
+            // stripText
             // 
-            this.buttonRemoveHoliday.Image = ((System.Drawing.Image)(resources.GetObject("buttonRemoveHoliday.Image")));
-            this.buttonRemoveHoliday.Location = new System.Drawing.Point(578, 113);
-            this.buttonRemoveHoliday.Name = "buttonRemoveHoliday";
-            this.buttonRemoveHoliday.Size = new System.Drawing.Size(89, 43);
-            this.buttonRemoveHoliday.TabIndex = 5;
-            this.buttonRemoveHoliday.Text = "Delete";
-            this.buttonRemoveHoliday.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-            this.buttonRemoveHoliday.UseVisualStyleBackColor = true;
-            this.buttonRemoveHoliday.Click += new System.EventHandler(this.buttonRemoveHoliday_Click);
-            // 
-            // label10
-            // 
-            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(686, 10);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(47, 13);
-            this.label10.TabIndex = 6;
-            this.label10.Text = "Holidays";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(32, 231);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(505, 13);
-            this.label11.TabIndex = 7;
-            this.label11.Text = "Set up as many holidays as you want, both past and future. You may come back to e" +
-    "dit this list at any time";
-            // 
-            // labelAffirmDate
-            // 
-            this.labelAffirmDate.AutoSize = true;
-            this.labelAffirmDate.Location = new System.Drawing.Point(289, 96);
-            this.labelAffirmDate.Name = "labelAffirmDate";
-            this.labelAffirmDate.Size = new System.Drawing.Size(0, 13);
-            this.labelAffirmDate.TabIndex = 8;
-            // 
-            // listBoxHolidays
-            // 
-            this.listBoxHolidays.FormattingEnabled = true;
-            this.listBoxHolidays.Location = new System.Drawing.Point(689, 26);
-            this.listBoxHolidays.Name = "listBoxHolidays";
-            this.listBoxHolidays.ScrollAlwaysVisible = true;
-            this.listBoxHolidays.Size = new System.Drawing.Size(275, 225);
-            this.listBoxHolidays.Sorted = true;
-            this.listBoxHolidays.TabIndex = 9;
+            this.stripText.Name = "stripText";
+            this.stripText.Size = new System.Drawing.Size(22, 17);
+            this.stripText.Text = "Ok";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(984, 761);
+            this.ClientSize = new System.Drawing.Size(1008, 761);
+            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.tabControlMain);
             this.Name = "MainForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClose);
             this.Load += new System.EventHandler(this.OnLoad);
             this.tabControlMain.ResumeLayout(false);
             this.tabPageImportation.ResumeLayout(false);
-            this.tabPageImportation.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
-            this.statusStrip.ResumeLayout(false);
-            this.statusStrip.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.groupBoxSource.ResumeLayout(false);
@@ -725,7 +762,10 @@
             this.tabPageCalendar.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -739,8 +779,6 @@
         private System.Windows.Forms.MonthCalendar calendarFrom;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.NumericUpDown daysBack;
-        private System.Windows.Forms.ToolStripStatusLabel stripText;
-        public System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.ListBox listBoxInhalt;
         private System.Windows.Forms.ListBox listBoxShareList;
@@ -783,6 +821,11 @@
         private System.Windows.Forms.MonthCalendar monthCalendarHolidays;
         private System.Windows.Forms.Label labelAffirmDate;
         private System.Windows.Forms.ListBox listBoxHolidays;
+        private System.Windows.Forms.Button buttonSaveHolidays;
+        public System.Windows.Forms.StatusStrip statusStrip;
+        private System.Windows.Forms.ToolStripStatusLabel stripText;
+        private System.Windows.Forms.Label labelHolidays;
+        private System.Windows.Forms.ListBox listBoxSpannedHolidays;
     }
 }
 

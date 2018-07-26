@@ -16,12 +16,12 @@ namespace ShareViewer
     public partial class MainForm : Form
     {
         public const String Version = "0.0.4";
-        //internal AppUserSettings appUserSettings;
         internal Properties.Settings appUserSettings;
         bool initializing = true;
         bool SuppressDaysBackChangeHandling = false; // when true, suppresses OnChangehandling
         bool SuppressFromDateChangeHandling = false;
         bool SuppressToDateChangeHandling = false;
+        internal Dictionary<String, String> HolidayHash = new Dictionary<string, string>() { };
 
         public MainForm()
         {
@@ -32,17 +32,12 @@ namespace ShareViewer
         {
             Text = "ShareViewer v" + Version;
 
-            //Get existing setting values from user.config file. These may not exist initially
-            //in which case default values will be gotten from attributes on the class
-            //An example location of the settings file, 'user.config' (after appUserSetting.Save() has been called) is:
-            //C:\Users\User\AppData\Local\ShareViewer\ShareViewer.exe_Url_03nbdbcxshupknkk45nsaba23z5qq403\1.0.0.0\user.config
-
-            //appUserSettings = new AppUserSettings();
             appUserSettings = Properties.Settings.Default;
 
             CheckExtraFolderSettings();
             CheckAllTableFolderSettings();
-            CheckAllTableViewsSettings();
+            CheckAllTableViewsSettings(); // these views not used on main form, but best done upfront
+            CheckHolidaysSettings(); // ditto
             Calculations.InitializeAllShareCalculationParameters(appUserSettings);
 
             BindFormProperties();
@@ -53,13 +48,24 @@ namespace ShareViewer
 
         private void CheckAllTableViewsSettings()
         {
-            if (appUserSettings.AllTableViews == null) // || appUserSettings.AllTableViews.Count == 0)
+            if (appUserSettings.AllTableViews == null) 
             {
                 //not been set yet. set it to default and save.
-                //appUserSettings.AllTableViews = new List<string>();
                 appUserSettings.AllTableViews = new System.Collections.Specialized.StringCollection();
                 appUserSettings.Save();
             }
+        }
+
+        private void CheckHolidaysSettings()
+        {
+            if (appUserSettings.Holidays == null)
+            {
+                //not been set yet. set it to default and save.
+                appUserSettings.Holidays = new System.Collections.Specialized.StringCollection();
+                appUserSettings.Save();
+            }
+            Helper.UpdateHolidayHash(ref HolidayHash);
+
         }
 
         //instantiate, load and bind app user settings
@@ -114,6 +120,17 @@ namespace ShareViewer
                 {
                     Helper.LogStatus("Info", $"AllTablesFolder {appUserSettings.AllTablesFolder} existing");
                 }
+                //ensure subfolder 'Audit' exists beneath AllTables folder (not settable!)
+                var auditPath = appUserSettings.AllTablesFolder + @"\Audit";
+                if (!Directory.Exists(auditPath))
+                {
+                    Directory.CreateDirectory(auditPath);
+                    Helper.LogStatus("Warn", $"Audit path {auditPath} created");
+                }
+                else
+                {
+                    Helper.LogStatus("Info", $"Audit path {auditPath} existing");
+                }
             }
             catch (Exception e)
             {
@@ -141,7 +158,7 @@ namespace ShareViewer
         private void InitializeShareViewer()
         {
             daysBack.Maximum = 300; // represents trading days!!
-            daysBack.Minimum = 1;
+            daysBack.Minimum = 0;
             daysBack.Value = 100; // represents trading days!! Change event wont fire at this stage (which is good)
             //don't allow future dates
             calendarFrom.MaxDate = DateTime.Today;
@@ -291,17 +308,17 @@ namespace ShareViewer
                 return;
             }
 
-
             buttonDayDataDownload.Enabled = false;
             listBoxInhalt.DataSource = null;
-
-            //recalc number of trading days back
-            //prevent daysBack change handler from doing anything
 
             SuppressDaysBackChangeHandling = true;
             daysBack.Value = Helper.ComputeTradingDays(calendarFrom.SelectionStart, calendarTo.SelectionStart);
             SuppressDaysBackChangeHandling = false;
+            ShowHolidaysSpanned();
             if (!initializing) ShowDataOnHand(true);
+
+            //adjust ToDate Minimum to be same days as currently selected FromDay
+            calendarTo.MinDate = calendarFrom.SelectionStart;
 
         }
 
@@ -312,8 +329,7 @@ namespace ShareViewer
                 SuppressToDateChangeHandling = false;
                 return;
             }
-
-
+      
             buttonDayDataDownload.Enabled = false;
             listBoxInhalt.DataSource = null;
             if (calendarTo.SelectionStart.ToShortDateString() == DateTime.Today.ToShortDateString())
@@ -329,7 +345,11 @@ namespace ShareViewer
             SuppressDaysBackChangeHandling = true;
             daysBack.Value = Helper.ComputeTradingDays(calendarFrom.SelectionStart, calendarTo.SelectionStart);
             SuppressDaysBackChangeHandling = false;
+            ShowHolidaysSpanned();
             if (!initializing) ShowDataOnHand(true);
+
+            //adjust calendarFrom such its Maximum date cannot exceed ToDate
+            calendarFrom.MaxDate = calendarTo.SelectionStart;
 
         }
 
@@ -349,12 +369,24 @@ namespace ShareViewer
             {
                 SuppressFromDateChangeHandling = true;
                 calendarFrom.SetDate(calendarTo.SelectionStart.AddDays(-actualDays));
+                ShowHolidaysSpanned();
             }
             catch (ArgumentException exc)
             {
                 MessageBox.Show(exc.Message, "Calendar");
             }
             if (!initializing) ShowDataOnHand(true);
+        }
+
+        //Populates right hand listbox with names and dates of Holidays spanned by the period.
+        //Also boldens these dates in both calendars
+        private void ShowHolidaysSpanned()
+        {
+            List<String> holsSpanned = new List<string>();
+            var numHolidays = Helper.ComputeNumberOfHolidays(calendarFrom.SelectionStart, calendarTo.SelectionStart,HolidayHash,ref holsSpanned);
+            Helper.MarkHolidaysInCalendars(ref calendarFrom, ref calendarTo, HolidayHash);
+            labelHolidays.Text = $"Holidays in the period: {numHolidays}";
+            listBoxSpannedHolidays.DataSource = holsSpanned;
         }
 
         private void OnOpenExplorer(object sender, MouseEventArgs e)
@@ -550,17 +582,42 @@ namespace ShareViewer
 
         private void monthCalendarHolidays_DateSelected(object sender, DateRangeEventArgs e)
         {
-            labelAffirmDate.Text = ((MonthCalendar)sender).SelectionStart.ToShortDateString();
+            string holidayDate = ((MonthCalendar)sender).SelectionStart.ToShortDateString();
+            //look for possible presence in holidays list already
+            foreach (string item in listBoxHolidays.Items)
+            {
+                if (item.StartsWith(holidayDate))
+                {
+                    listBoxHolidays.SelectedItem = item;
+                    stripText.Text = "Day already included!";
+                    return;
+                }
+            }
+            labelAffirmDate.Text = holidayDate;
         }
 
         private void buttonHolidayAdd_Click(object sender, EventArgs e)
         {
+            var selectedDate = monthCalendarHolidays.SelectionStart;
+            //ensure the day is not a week-end day
+            if (selectedDate.DayOfWeek == DayOfWeek.Saturday || selectedDate.DayOfWeek == DayOfWeek.Sunday)
+            {
+                stripText.Text = "Only trading days (week-days) may be added to the Holidays list!";
+                //textBoxHolidayName.Text = "";
+                //labelAffirmDate.Text = "";
+                return;
+            }
+
             string holidayDate = monthCalendarHolidays.SelectionStart.ToShortDateString();
+            
             string holidayName = textBoxHolidayName.Text;
             if (holidayName.Trim().Length > 0)
             {
                 var item = $"{holidayDate} = {holidayName}";
                 listBoxHolidays.Items.Add(item);
+                buttonSaveHolidays.Visible = true;
+                textBoxHolidayName.Text = "";
+                labelAffirmDate.Text = "";
             }
         }
 
@@ -570,6 +627,39 @@ namespace ShareViewer
             if (selectedHolIndex != -1)
             {
                 listBoxHolidays.Items.RemoveAt(selectedHolIndex);
+                buttonSaveHolidays.Visible = true;
+            }
+        }
+
+        private void buttonSaveHolidays_Click(object sender, EventArgs e)
+        {
+            var aus = Helper.GetAppUserSettings();
+            aus.Holidays.Clear();
+            foreach (string item in listBoxHolidays.Items)
+            {
+                aus.Holidays.Add(item);
+            }
+            aus.Save();
+            Helper.UpdateHolidayHash(ref HolidayHash);
+            buttonSaveHolidays.Visible = false;
+            textBoxHolidayName.Text = "";
+            labelAffirmDate.Text = "";
+            stripText.Text = "Holidays saved.";
+        }
+
+        //react to switching Mainform tabs
+        private void tabControlMain_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var aus = Helper.GetAppUserSettings();
+            if (((TabControl)sender).SelectedTab.Text=="Calendar")
+            {
+                //load the list box
+                listBoxHolidays.Items.Clear();
+                foreach (string item in aus.Holidays)
+                {
+                    listBoxHolidays.Items.Add(item);
+                }
+                buttonSaveHolidays.Visible = false;
             }
         }
     }

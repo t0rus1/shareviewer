@@ -214,9 +214,15 @@ namespace ShareViewer
                     var shareName = m.Groups[1].Value.TrimEnd();
                     var shareNum = Convert.ToInt16(m.Groups[2].Value);
                     var allTableFile = atPath + @"\" + $"alltable_{shareNum}.at";
-                    File.Delete(allTableFile);
+                    if (File.Exists(allTableFile))
+                    {
+                        File.Delete(allTableFile);
+                    }
                     var auditFile = atPath + @"\Audit\" + $"{shareNum.ToString("000")}.txt";
-                    File.Delete(auditFile);
+                    if (File.Exists(auditFile))
+                    {
+                        File.Delete(auditFile);
+                    }
                 }
             }
             Helper.Log("Info", $"{victims.Count()} '.at' files deleted");
@@ -330,24 +336,17 @@ namespace ShareViewer
             int dayOffset = 0; int tradingDayCounter = 0;
             while (!ct.IsCancellationRequested && tradingDayCounter < tradingSpan)
             {
-                //ASSUME all trades inside the daydata file are dated the same as indicated by the file name
-                var tradeDate = runDate.ToShortDateString().Replace("/", "").Substring(2); //YYMMDD
-                //does a data file exist for this day?
-                var dayFilename = Helper.BuildDayDataFilename(runDate);
-                var dayFile = Helper.GetAppUserSettings().ExtraFolder + $"\\{dayFilename}";
-                if (File.Exists(dayFile))
-                {
-                    AddUpdateTradeHash(shareName, shareNum, tradeHash, tradeDate, dayFile, dayOffset);
-                }
-                else
-                {
-                    if (Helper.IsTradingDay(runDate))
-                    {
-                        Helper.LogStatus("Warn", $"{dayFilename} not present !!!");
-                    }
-                }
                 if (Helper.IsTradingDay(runDate))
                 {
+                    //ASSUME all trades inside the daydata file are dated the same as indicated by the file name
+                    var tradeDate = runDate.ToShortDateString().Replace("/", "").Substring(2); //YYMMDD
+                                                                                               //does a data file exist for this day?
+                    var dayFilename = Helper.BuildDayDataFilename(runDate);
+                    var dayFile = Helper.GetAppUserSettings().ExtraFolder + $"\\{dayFilename}";
+                    if (File.Exists(dayFile))
+                    {
+                        AddUpdateTradeHash(shareName, shareNum, tradeHash, tradeDate, dayFile, dayOffset);
+                    }
                     tradingDayCounter++;
                 }
                 dayOffset++;

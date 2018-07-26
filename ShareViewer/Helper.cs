@@ -71,6 +71,18 @@ namespace ShareViewer
             busyLabel.Visible = true;
         }
 
+        internal static void UpdateHolidayHash(ref Dictionary<string, string> holidayHash)
+        {
+            holidayHash.Clear();
+            var aus = GetAppUserSettings();
+            foreach (string day in aus.Holidays)
+            {
+                var keyDay = day.Split('=')[0].Trim();
+                var valName = day.Split('=')[1].Trim();
+                holidayHash.Add(keyDay, valName);
+            }
+        }
+
         //decrement a progressbar and hide it when it hits zero
         internal static void DecrementProgressCountdown(string progressBarName, string partnerLabel)
         {
@@ -308,15 +320,68 @@ namespace ShareViewer
             while (runDate <= toDate)
             {
                 DayOfWeek dow = runDate.DayOfWeek;
-                runDate = runDate.AddDays(1);
-                if (dow == DayOfWeek.Saturday || dow == DayOfWeek.Sunday)
+                if (dow != DayOfWeek.Saturday && dow != DayOfWeek.Sunday && !IsHoliday(runDate) )
                 {
-                    continue;
+                    days++;
                 }
-                days++;
+                runDate = runDate.AddDays(1);
             }
-                
             return days;
+        }
+
+        internal static int ComputeNumberOfHolidays(DateTime fromDate, DateTime toDate, Dictionary<string,string> holidayHash, ref List<string> spannedHols)
+        {
+            int holiDays = 0;
+            DateTime runDate = fromDate;
+            while (runDate <= toDate)
+            {
+                DayOfWeek dow = runDate.DayOfWeek;
+                if (IsHoliday(runDate))
+                {
+                    holiDays++;
+                    var holidayKey = runDate.ToShortDateString();
+                    var holidayEntry = $"{holidayHash[holidayKey]} {holidayKey}";
+                    spannedHols.Add(holidayEntry);
+                }
+                runDate = runDate.AddDays(1);
+            }
+            return holiDays;
+        }
+
+        internal static void MarkHolidaysInCalendars(ref MonthCalendar fromCal, ref MonthCalendar toCal, Dictionary<string, string> holidayHash)
+        {
+            DateTime[] bolds = new DateTime[24];
+
+            DateTime runDate = fromCal.SelectionStart;
+            int holIndex = 0;
+            while (runDate <= toCal.SelectionStart)
+            {
+                DayOfWeek dow = runDate.DayOfWeek;
+                if (IsHoliday(runDate))
+                {
+                    if (holIndex < 24)
+                    {
+                        bolds[holIndex] = runDate;
+                        bolds[holIndex] = runDate;
+                        holIndex++;
+                    }
+                    else
+                    {
+                        LogStatus("Error", "Reached limit for number of holidays (24)");
+                        break;
+                    }
+                }
+                runDate = runDate.AddDays(1);
+            }
+            fromCal.BoldedDates = bolds;
+            toCal.BoldedDates = bolds;
+        }
+
+
+        private static bool IsHoliday(DateTime runDate)
+        {
+            string dateStr = runDate.ToShortDateString();
+            return GetMainForm().HolidayHash.ContainsKey(dateStr);
         }
 
         //given an endDate, compute how many actual days we need to go back such that we encompass
@@ -368,7 +433,7 @@ namespace ShareViewer
 
         internal static bool IsTradingDay(DateTime runDate)
         {
-            return runDate.DayOfWeek != DayOfWeek.Saturday && runDate.DayOfWeek != DayOfWeek.Sunday;
+            return (runDate.DayOfWeek != DayOfWeek.Saturday) && (runDate.DayOfWeek != DayOfWeek.Sunday) && !IsHoliday(runDate);
         }
 
 
