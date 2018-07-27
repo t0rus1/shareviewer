@@ -22,7 +22,7 @@ namespace ShareViewer
         bool SuppressFromDateChangeHandling = false;
         bool SuppressToDateChangeHandling = false;
         internal Dictionary<String, String> HolidayHash = new Dictionary<string, string>() { };
-
+        
         public MainForm()
         {
             InitializeComponent();
@@ -174,6 +174,7 @@ namespace ShareViewer
             listBoxShareList.DataSource = LocalStore.ReadShareList();
             //possibly enable the New AllTables button
             buttonNewAllTables.Enabled = listBoxShareList.Items.Count > 0;
+            buttonAddToAllTables.Enabled = listBoxShareList.Items.Count > 0; ;
             //
             labelDatafilesCount.Text = "";
 
@@ -312,7 +313,7 @@ namespace ShareViewer
             listBoxInhalt.DataSource = null;
 
             SuppressDaysBackChangeHandling = true;
-            daysBack.Value = Helper.ComputeTradingDays(calendarFrom.SelectionStart, calendarTo.SelectionStart);
+            daysBack.Value = Helper.ComputeTradingSpanDayCount(calendarFrom.SelectionStart, calendarTo.SelectionStart);
             SuppressDaysBackChangeHandling = false;
             ShowHolidaysSpanned();
             if (!initializing) ShowDataOnHand(true);
@@ -343,7 +344,7 @@ namespace ShareViewer
 
             //recalc number of trading days back
             SuppressDaysBackChangeHandling = true;
-            daysBack.Value = Helper.ComputeTradingDays(calendarFrom.SelectionStart, calendarTo.SelectionStart);
+            daysBack.Value = Helper.ComputeTradingSpanDayCount(calendarFrom.SelectionStart, calendarTo.SelectionStart);
             SuppressDaysBackChangeHandling = false;
             ShowHolidaysSpanned();
             if (!initializing) ShowDataOnHand(true);
@@ -417,6 +418,7 @@ namespace ShareViewer
 
                         listBoxShareList.DataSource = LocalStore.WriteShareList(sharesList, selectedDayFile);
                         buttonNewAllTables.Enabled = listBoxShareList.Items.Count > 0;
+                        buttonAddToAllTables.Enabled = listBoxShareList.Items.Count > 0; ;
                     }
                 }
                 else
@@ -432,61 +434,89 @@ namespace ShareViewer
 
         private void OnInhaltClicked(object sender, EventArgs e)
         {
-            //if (listBoxInhalt.Items.Count > 0 && listBoxShareList.Items.Count == 0)
-            //{
-            //    buttonNewShareList.Enabled = true;
-            //}
         }
 
-        private void OnMakeNewAllTables(object sender, EventArgs e)
+        private bool BleatForDataFilesListEmpty()
         {
-            //if datafiles List is empty, bleat
             if (listBoxInhalt.Items.Count == 0)
             {
                 string dataFilesBtnText = buttonLogin.Text;
-                MessageBox.Show($"The 'Datafiles List' is empty.\nPlease select the source (Internet or Local)\nthen click the '{dataFilesBtnText}' button\nin order to confirm that data is on hand.", 
+                MessageBox.Show($"The 'Datafiles List' is empty.\nPlease select the source (Internet or Local)\nthen click the '{dataFilesBtnText}' button\nin order to confirm that data is on hand.",
                     "Precaution", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                return true;
             }
+            else
+            {
+                return false;
+            }
+        }
 
+        private bool BleatForDataFilesNeeded()
+        {
             //warn user if data files need to be downloaded
             int missingCount = Helper.UntickedDayDataEntries("listBoxInhalt");
             if (missingCount > 0)
             {
-                var msg = $"Not all data files have been downloaded for the required period.\nProceed anyway?";
-                if ((MessageBox.Show(msg, $"Downloads needed!",
-                     MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.No))
-                {
-                    return;
-                }
+                var msg = $"Not all data files have been downloaded for the requested period";
+                MessageBox.Show(msg, $"Downloads needed!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return true;
+            }
+            else
+            {
+                return false;
             }
 
-            DateTime endDate, startDate;
-            startDate = calendarFrom.SelectionStart;
-            endDate = calendarTo.SelectionStart;
-            int tradingSpan = Helper.ComputeTradingDays(startDate, endDate);
-            var numShares = listBoxShareList.Items.Count;
-            if ( numShares > 0)
+        }
+
+        private void CreateOrTopupAllTables(bool topUp)
+        {
+            //prepare structures needed for the run
+            //ensure AlTables subfolder exists
+            var alltablesPath = Helper.GetAppUserSettings().AllTablesFolder;
+            if (!Directory.Exists(alltablesPath)) Directory.CreateDirectory(alltablesPath);
+            //get the All-Shares list into array form
+            var allShareArray = LocalStore.CreateShareArrayFromShareList();
+
+            if (allShareArray.Count() > 0)
             {
-                //LocalStore.GetDayDataRange(out newestDate, out oldestDate);
-                if (startDate <= endDate) {
-                    var msg = $"Generate new All-tables for the {tradingSpan} trading days up to {endDate.ToShortDateString()} (inclusive)?";
-                    var warnMsg = "\n\nWarning: This will take time!";
-                    if ((MessageBox.Show(msg+warnMsg, $"New All-Tables", 
-                         MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes))
-                    {
-                        //put some buttons on hold, make progress bar visible etc..
-                        Helper.HoldWhileGeneratingNewAllTables(true);
-                        Helper.Log("Info", Helper.Repeat("==========",8));
-                        Helper.Log("Info", msg);
-                        LocalStore.GenerateNewAllTables(startDate, tradingSpan); //will queue up a lot of tasks!
-                    }
-                }
-                else
+                DateTime startDate = calendarFrom.SelectionStart;
+                DateTime endDate = calendarTo.SelectionStart;
+                int tradingSpan = Helper.ComputeTradingSpanDayCount(startDate, endDate);
+
+                string createOrTopup = topUp ? "TOP-UP" : "CREATE";
+                var msg = $"{createOrTopup} All-tables for the {tradingSpan} trading days up to {endDate.ToShortDateString()} (inclusive)?";
+                string preserveOrNew = topUp ? "Existing All-Table data will be preserved, NEW data will be added" : "All-Table data will be created from scratch.";
+                var extraMsg = $"\n\n{preserveOrNew}\n\nWarning: This may take time!";
+                if ((MessageBox.Show(msg + extraMsg, "All-Tables",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes))
                 {
-                    MessageBox.Show("No suitable day-data files were found","Cannot proceed",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                    //put some buttons on hold, make progress bar visible etc..
+                    Helper.HoldWhileGeneratingNewAllTables(true);
+                    Helper.Log("Info", Helper.Repeat("==========", 8));
+                    Helper.Log("Info", msg);
+                    LocalStore.RefreshNewAllTables(startDate, tradingSpan, allShareArray, topUp); //will queue up a lot of tasks!
                 }
             }
+        }
+
+        // CREATE ALL NEW ALL_TABLES
+        private void OnMakeNewAllTables(object sender, EventArgs e)
+        {
+            if (BleatForDataFilesListEmpty()) return;
+            if (BleatForDataFilesNeeded()) return;
+
+            CreateOrTopupAllTables(false);
+
+        }
+
+        // TOP UP ALL-TABLES
+        private void OnTopupAllTables(object sender, EventArgs e)
+        {
+            if (BleatForDataFilesListEmpty()) return;
+            if (BleatForDataFilesNeeded()) return;
+
+            CreateOrTopupAllTables(true);
+
         }
 
         //user wants to look at a single share's All-Table in details
@@ -662,5 +692,6 @@ namespace ShareViewer
                 buttonSaveHolidays.Visible = false;
             }
         }
+
     }
 }

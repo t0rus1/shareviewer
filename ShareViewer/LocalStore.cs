@@ -201,12 +201,15 @@ namespace ShareViewer
         }
 
         //skip 1st informational line of sharelist and sweep thru the rest of the shares
-        //deleting existing All-Tables
-        private static void DeleteAllTablesPlusAudits(string atPath, string[] allShares)
+        //(partially) deleting existing All-Tables, depending on passed in topUp parameter
+        private static void ClearOutAllTablesPlusAudits(Dictionary<String,bool> tradingDatesWanted, DateTime startDate, 
+            int tradingSpan, string[] allShares, bool topUpOnly)
         {
+            var atPath = Helper.GetAppUserSettings().AllTablesFolder;
+
             Helper.Log("Info", $"deleting all *.at files");
-            var victims = allShares.Skip(1);
-            foreach (string share in victims)
+            var shares = allShares.Skip(1);
+            foreach (string share in shares)
             {
                 Match m = Regex.Match(share, @"(.+)\s(\d+)$");
                 if (m.Success)
@@ -214,21 +217,69 @@ namespace ShareViewer
                     var shareName = m.Groups[1].Value.TrimEnd();
                     var shareNum = Convert.ToInt16(m.Groups[2].Value);
                     var allTableFile = atPath + @"\" + $"alltable_{shareNum}.at";
+                    var tmpFile = allTableFile + ".tmp";
                     if (File.Exists(allTableFile))
                     {
-                        File.Delete(allTableFile);
+                        if (topUpOnly)
+                        {
+                            //prepare a 'new' all-table file by skipping over data in the existing all-table which has fallen 
+                            //out of range, retaining the run of records to the end (for subsequent appending to with new data)
+                            //essentially chopping off the first bit.
+                            using (FileStream fs1 = new FileStream(allTableFile, FileMode.Open))
+                            {
+                                //read entire existing alltable file into memory
+                                var oldRows = Helper.DeserializeList<AllTable>(fs1);
+
+                                //skip to first record holding the first wanted date, then start writing to a NEW version
+                                using (FileStream fs2 = new FileStream(tmpFile, FileMode.Create))
+                                {
+                                    //do the first 2 rows right away (they are special)
+                                    Helper.SerializeAllTableRecord(fs2, AllTableFactory.InitialRow(0, "YYMMDD", "Day", "TimeFrom", "TimeTo"));
+                                    Helper.SerializeAllTableRecord(fs2, AllTableFactory.InitialRow(1, "", "", "", ""));
+
+                                    int rowNum = 2;
+                                    foreach (AllTable at in oldRows)
+                                    {
+                                        if (tradingDatesWanted.ContainsKey(at.Date))
+                                        {
+                                            at.Row = rowNum;
+                                            at.F = rowNum - 1;
+                                            Helper.SerializeAllTableRecord(fs2, at);
+                                        }
+                                    }
+                                }
+                            }
+                            //delete old alltable and replace with smaller new one, to which new data will be appended
+                            if (File.Exists(tmpFile))
+                            {
+                                File.Delete(allTableFile);
+                                File.Move(tmpFile, allTableFile);
+                            }
+                        }
+                        else
+                        {
+                            File.Delete(allTableFile);
+                        }
                     }
                     var auditFile = atPath + @"\Audit\" + $"{shareNum.ToString("000")}.txt";
                     if (File.Exists(auditFile))
                     {
-                        File.Delete(auditFile);
+                        if (topUpOnly)
+                        {
+                            //TODO: decide if Audit file should be peserved and allowed to grow indefinitely
+                        }
+                        else
+                        {
+                            //File.Delete(auditFile);
+                        }
                     }
                 }
             }
-            Helper.Log("Info", $"{victims.Count()} '.at' files deleted");
+            Helper.Log("Info", $"{shares.Count()} '.at' files participating");
         }
 
-        private static void GenerateSingleShareAllTable(CancellationToken ct, string allTableFile, DateTime startDate, int tradingSpan, Dictionary<string, Trade> tradeHash)
+        private static void GenerateSingleShareAllTable(CancellationToken ct, string allTableFile, DateTime startDate, 
+            int tradingSpan, Dictionary<string, Trade> tradeHash)
         {
             Helper.Log("Info", $"creating all-table for:\n{allTableFile}");
 
@@ -415,9 +466,12 @@ namespace ShareViewer
 
         //Iterates over the allShares array passed in and instantiates queued async Tasks 
         //which individually create an AllTable file for each share
-        private static void GenerateAllTables(DateTime startDate, int tradingSpan, string atPath, string[] allShares)
+        //NOTE: if topUpOnly then existing allTable files must be preserved and simply appended to
+        private static void UpdateAllTables(DateTime startDate, int tradingSpan, string[] allShares, bool topUpOnly)
         {
             var appUserSettings = Helper.GetAppUserSettings();
+            var atPath = appUserSettings.AllTablesFolder;
+
             //skip 1st informational line of sharelist and sweep thru the rest of the shares
             //building new All-table files
             int numShares = allShares.Count() - 1;
@@ -439,9 +493,9 @@ namespace ShareViewer
                     var genTask = Task.Run(() =>
                     {
                         //build the dictionary which helps us in filling the alltables with price and volume info
-                        var tradeHash = BuildTradeHash(ct, shareName, shareNum, startDate, tradingSpan);
+                        var tradeHash = BuildTradeHash(ct, shareName, shareNum, startDate, tradingSpan, topUpOnly);
                         //save for audit purposes (TODO: perhaps rather leave up to user to generate singly, on demand?)
-                        SaveTradehashAudit(tradeHash,shareName, shareNum);
+                        SaveTradehashAudit(tradeHash, shareName, shareNum);
                         //generate an all-table
                         GenerateSingleShareAllTable(ct, allTableFile, startDate, tradingSpan,tradeHash);                         
                     }, tokenSource.Token);
@@ -485,6 +539,25 @@ namespace ShareViewer
             }
         }
 
+        //create a dictionary enabling a quick lookup of whether a date (YYMMDD, as stored in all-tables) is within the needed span
+        internal static Dictionary<string, bool> BuildTradingDatesHash(DateTime startDate, int tradingSpan)
+        {
+            var datesWanted = new Dictionary<string, bool>();
+            var runDate = startDate.AddDays(0); // start at startDate with a new runDate object
+            int tradingDayCounter = 0;
+            while (tradingDayCounter < tradingSpan)
+            {
+                if (Helper.IsTradingDay(runDate))
+                {
+                    string dateKey = runDate.ToShortDateString().Replace("/", "");
+                    datesWanted[dateKey] = true;
+                    tradingDayCounter++;
+                }
+                runDate = runDate.AddDays(1);
+            }
+            return datesWanted;
+        }
+
         private static void SaveTradehashAudit(Dictionary<String, Trade> tradeHash, string shareName, short shareNum)
         {
             var appUserSettings = Helper.GetAppUserSettings();
@@ -504,35 +577,33 @@ namespace ShareViewer
             };
         }
 
-        //Entrypoint for the generation of a complete batch of fresh new AllTables
-        //based on the ShareList, creating one AllTable for each share, populated with initial values.
-        internal static void GenerateNewAllTables(DateTime startDate, int tradingSpan)
+        internal static string[] CreateShareArrayFromShareList()
         {
+            string[] allSharesArray = new string[] { };
             var appUserSettings = Helper.GetAppUserSettings();
             var sharelistPath = appUserSettings.ExtraFolder;
-            var alltablesPath = appUserSettings.AllTablesFolder;
+            var shareListFilePath = sharelistPath + @"\ShareList.txt";
 
-            if (!Directory.Exists(alltablesPath))
-            {
-                Directory.CreateDirectory(alltablesPath);
-            }
-
-            string[] allSharesArray;
             try
             {
-                //load ShareList
-                allSharesArray = File.ReadAllLines(sharelistPath + @"\ShareList.txt");
+                allSharesArray = File.ReadAllLines(shareListFilePath);
             }
-            catch (Exception)
+            catch (FileNotFoundException exc)
             {
-                MessageBox.Show("ShareList not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                MessageBox.Show($"ShareList file {shareListFilePath} not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            DeleteAllTablesPlusAudits(alltablesPath, allSharesArray);
-            GenerateAllTables(startDate, tradingSpan, alltablesPath, allSharesArray);
+            return allSharesArray;
         }
 
+        //Entrypoint for the generation/update of a complete batch of fresh new AllTables
+        //based on the ShareList, creating one AllTable for each share, populated with initial values.
+        internal static void RefreshNewAllTables(DateTime startDate, int tradingSpan, string[] allSharesArray, bool topUpOnly)
+        {
+            var tradingDatesWanted = LocalStore.BuildTradingDatesHash(startDate, tradingSpan);
 
+            ClearOutAllTablesPlusAudits(tradingDatesWanted, startDate, tradingSpan, allSharesArray, topUpOnly);
+            UpdateAllTables(startDate, tradingSpan, allSharesArray, topUpOnly);
+        }
 
     }
 }

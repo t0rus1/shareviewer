@@ -313,7 +313,7 @@ namespace ShareViewer
             }
         }
 
-        internal static int ComputeTradingDays(DateTime fromDate, DateTime toDate)
+        internal static int ComputeTradingSpanDayCount(DateTime fromDate, DateTime toDate)
         {
             int days = 0;
             DateTime runDate = fromDate;
@@ -390,7 +390,7 @@ namespace ShareViewer
         {
             int estimatedDaysback = ((tradingDays * 7) / 5);
 
-            var computedTradingDays = ComputeTradingDays(endDate.AddDays(-estimatedDaysback), endDate);
+            var computedTradingDays = ComputeTradingSpanDayCount(endDate.AddDays(-estimatedDaysback), endDate);
             var diff = computedTradingDays - tradingDays;
             while (diff != 0)
             {
@@ -405,7 +405,7 @@ namespace ShareViewer
                     //computed Trading days too few, move start day back by 1
                     estimatedDaysback++;
                 }
-                computedTradingDays = ComputeTradingDays(endDate.AddDays(-estimatedDaysback), endDate);
+                computedTradingDays = ComputeTradingSpanDayCount(endDate.AddDays(-estimatedDaysback), endDate);
                 diff = computedTradingDays - tradingDays;
             }
 
