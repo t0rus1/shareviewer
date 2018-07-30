@@ -200,14 +200,21 @@ namespace ShareViewer
             }
         }
 
-        //skip 1st informational line of sharelist and sweep thru the rest of the shares
-        //(partially) deleting existing All-Tables, depending on passed in topUp parameter
-        private static void ClearOutAllTablesPlusAudits(Dictionary<String,bool> tradingDatesWanted, DateTime startDate, 
+        // Skip 1st informational line of sharelist and sweep thru the rest of the shares
+        // either deleting early part of existing All-Tables or the entire file (depending on passed in topUp parameter)
+        // If topUpOnly is true, data in the All-Tables is effectively 'shuffled up'.
+        // If topUpOnly is false, each All-Table is deleted.
+        // This will leave an All-Table to which data must be appended (or else which must be written anew,
+        // which is akin to appending to a zero size file)
+        // Also, once complete, there will in general be a tail bit of the toupInfo object for whose dates have
+        // values of 'alreadyHave' remaining false. 
+        // These will be the dates for which new All-Table records will need to be appended
+        private static void InitAllTablesAuditsAndTopupInfo(ref TopupInformation topupInfo, DateTime startDate, 
             int tradingSpan, string[] allShares, bool topUpOnly)
         {
             var atPath = Helper.GetAppUserSettings().AllTablesFolder;
 
-            Helper.Log("Info", $"deleting all *.at files");
+            Helper.Log("Info", $"deleting/preparing all *.at files");
             var shares = allShares.Skip(1);
             foreach (string share in shares)
             {
@@ -227,10 +234,10 @@ namespace ShareViewer
                             //essentially chopping off the first bit.
                             using (FileStream fs1 = new FileStream(allTableFile, FileMode.Open))
                             {
-                                //read entire existing alltable file into memory
-                                var oldRows = Helper.DeserializeList<AllTable>(fs1);
+                                //read entire existing alltable file into memory (can be 10400 records!)
+                                var oldRows = Helper.DeserializeList<AllTable>(fs1).Skip(2).ToList();
 
-                                //skip to first record holding the first wanted date, then start writing to a NEW version
+                                //skip to first record in oldRows holding the first wanted date, then start writing to a NEW version
                                 using (FileStream fs2 = new FileStream(tmpFile, FileMode.Create))
                                 {
                                     //do the first 2 rows right away (they are special)
@@ -240,11 +247,20 @@ namespace ShareViewer
                                     int rowNum = 2;
                                     foreach (AllTable at in oldRows)
                                     {
-                                        if (tradingDatesWanted.ContainsKey(at.Date))
+                                        // must this old row be kept?
+                                        var topupInfoKey = $"{at.Date},{shareNum}";
+                                        // key may not be found if previously the date was processed and subsequently was
+                                        // classified a public holiday. (it would have had no trading, all bands empty anyway)
+                                        if (topupInfo.DatesData.ContainsKey(topupInfoKey) &&  topupInfo.DatesData[topupInfoKey].Wanted)  
                                         {
+                                            //yes, so append it to tmp file
                                             at.Row = rowNum;
                                             at.F = rowNum - 1;
                                             Helper.SerializeAllTableRecord(fs2, at);
+                                            //note that we now have data for the date (will be repeatedly done for 104 such bands)
+                                            topupInfo.DatesData[topupInfoKey].AlreadyHave = true;
+                                            topupInfo.LastRow[shareNum] = at.Row;
+                                            rowNum++;
                                         }
                                     }
                                 }
@@ -267,10 +283,11 @@ namespace ShareViewer
                         if (topUpOnly)
                         {
                             //TODO: decide if Audit file should be peserved and allowed to grow indefinitely
+                            File.Delete(auditFile);
                         }
                         else
                         {
-                            //File.Delete(auditFile);
+                            File.Delete(auditFile);
                         }
                     }
                 }
@@ -278,52 +295,74 @@ namespace ShareViewer
             Helper.Log("Info", $"{shares.Count()} '.at' files participating");
         }
 
-        private static void GenerateSingleShareAllTable(CancellationToken ct, string allTableFile, DateTime startDate, 
-            int tradingSpan, Dictionary<string, Trade> tradeHash)
+        //Creates from scratch or 'tops up' an All-Table for a single share for a period spanning tradingSpan trading days 
+        //starting at startDate. If topupOnly, then a leading number of days get 'skipped' (since the AllTable is understood
+        //to already have the data in it). 
+        //The passed in tradeHash holds the raw trading information needed to create each AllTable record. 
+        //tradeHash: Key: 'YYMMDD,bandNum' e.g. "180722,1" band 1 is from 09:00:00 to 09:04:59 
+        //           Value: Trade object with properties shareNum,tradeDate,line
+        private static void GenerateSingleAllTable(CancellationToken ct, string allTableFile, int shareNum, DateTime startDate, 
+            int tradingSpan, Dictionary<string, Trade> tradeHash, bool topUpOnly, TopupInformation topupInfo)
         {
             Helper.Log("Info", $"creating all-table for:\n{allTableFile}");
 
-            //var oldestDate = newestDate.AddDays(-backSpan);
-            //var runDate = newestDate.AddDays(-backSpan);
+            AllTable atRec;
             var runDate = startDate.AddDays(0);
-            
-            using (FileStream fs = new FileStream(allTableFile,FileMode.Create)) 
-            {
-                //do the first 2 rows right away (they are special)
-                var atRec = AllTableFactory.InitialRow(0, "YYMMDD", "Day", "TimeFrom", "TimeTo");
-                Helper.SerializeAllTableRecord(fs, atRec);
-                atRec = AllTableFactory.InitialRow(1, "", "", "", "");
-                Helper.SerializeAllTableRecord(fs, atRec);
 
-                int rowNum = 2;
-                int tradingDays = 0;
-                double yesterPrice = 0;
-                double lastPrice = 0;
+            //create or append to AllTable file?
+            FileMode mode = topUpOnly ? FileMode.Append : FileMode.Create;
+            
+            using (FileStream fs = new FileStream(allTableFile, mode)) 
+            {
+                int rowNum = 0;
+                if (topUpOnly)
+                {
+                    //we're appending...
+                    //no need to write rows 1 and 2 if this is a topup
+                    //get starting RowNum to use from passed in TopupInformation
+                    rowNum = topupInfo.LastRow[shareNum] + 1;
+                }
+                else
+                {
+                    //we're creatng from scratch
+                    //do the first 2 rows right away (they are special)
+                    atRec = AllTableFactory.InitialRow(rowNum++, "YYMMDD", "Day", "TimeFrom", "TimeTo");
+                    Helper.SerializeAllTableRecord(fs, atRec);
+                    atRec = AllTableFactory.InitialRow(rowNum++, "", "", "", "");
+                    Helper.SerializeAllTableRecord(fs, atRec);
+                }
+
+                //now condider every day in the trading span, but if topUpOnly, skip over those we already have.
+                int tradingDays = 0; double yesterPrice = 0;  double lastPrice = 0;
                 while (!ct.IsCancellationRequested && tradingDays < tradingSpan)
                 {
                     if (Helper.IsTradingDay(runDate))
                     {
-                        //each day has 104 five-minute bands from 09h00 to 17h40 - save each one as an 'at' record to disk
                         var rowDate = runDate.ToShortDateString().Replace("/", "").Substring(2); //YYMMDD
-                        var rowDay = runDate.DayOfWeek.ToString().Substring(0, 3);
-                        lastPrice = yesterPrice;
-                        for (int timeBand = 0; timeBand < 104; timeBand++)
+                        var topupInfoKey = $"{rowDate},{shareNum}";
+                        if (!topUpOnly || !topupInfo.DatesData[topupInfoKey].AlreadyHave)
                         {
-                            int minsIntoDay = 9 * 60 + 5*timeBand;
-                            int hr = minsIntoDay / 60;
-                            int min = minsIntoDay % (60*hr);
+                            //each day has 104 five-minute bands from 09h00 to 17h40 - save each one as an 'at' record to disk
+                            var rowDay = runDate.DayOfWeek.ToString().Substring(0, 3);
+                            lastPrice = yesterPrice;
+                            for (int timeBand = 0; timeBand < 104; timeBand++)
+                            {
+                                int minsIntoDay = 9 * 60 + 5 * timeBand;
+                                int hr = minsIntoDay / 60;
+                                int min = minsIntoDay % (60 * hr);
 
-                            string timeFrom = hr.ToString("00") + ":" + min.ToString("00") + ":00";
-                            string timeTo = hr.ToString("00") + ":" + (min + 4).ToString("00") + ":59";
+                                string timeFrom = hr.ToString("00") + ":" + min.ToString("00") + ":00";
+                                string timeTo = hr.ToString("00") + ":" + (min + 4).ToString("00") + ":59";
 
-                            atRec = AllTableFactory.InitialRow(rowNum++, rowDate, rowDay, timeFrom, timeTo);
-                            atRec.FP = lastPrice;
-                            // now fill from passed in tradeHash
-                            lastPrice = FillAllTableRowFromTradehash(atRec,timeBand+1,tradeHash, lastPrice);
-                            //save AllTable row record to disk
-                            Helper.SerializeAllTableRecord(fs, atRec);
+                                atRec = AllTableFactory.InitialRow(rowNum++, rowDate, rowDay, timeFrom, timeTo);
+                                atRec.FP = lastPrice;
+                                // now fill from passed in tradeHash
+                                lastPrice = FillAllTableRowFromTradehash(atRec, timeBand + 1, tradeHash, lastPrice);
+                                //save AllTable row record to disk
+                                Helper.SerializeAllTableRecord(fs, atRec);
+                            }
+                            yesterPrice = lastPrice;
                         }
-                        yesterPrice = lastPrice;
                         tradingDays++;
                     }
                     runDate = runDate.AddDays(1);
@@ -360,8 +399,10 @@ namespace ShareViewer
             return carryInPrice;
         }
 
-        //build the dictionary which helps us in filling the alltables with price and volume info
-        private static Dictionary<string, Trade> BuildTradeHash(CancellationToken ct, string shareName, int shareNum, DateTime startDate, int tradingSpan)
+        //Build the dictionary for a particular share and date span which helps us in filling the alltables with price and volume info
+        //We must also take note of the dates for which we already hold computed all-table records
+        private static Dictionary<string, Trade> BuildTradeHash(CancellationToken ct, string shareName, int shareNum, 
+            DateTime startDate, int tradingSpan, TopupInformation tradingDatesInfo)
         {
             //traverse Extra folder opening each day-data file which falls into the date range.
             //read each line and skip over trades which do not belong to passed in share name
@@ -382,25 +423,29 @@ namespace ShareViewer
 
             Helper.Log("Info", $"Building Trade Hash for {shareName} ({shareNum})");
 
-            //we need to use all day-data trading files in the range
             var runDate = startDate.AddDays(0); // start at startDate with a new runDate object
-            int dayOffset = 0; int tradingDayCounter = 0;
+            int tradingDayCounter = 0;
+            //cover the entire span of days, but we skip forward if we already have data
             while (!ct.IsCancellationRequested && tradingDayCounter < tradingSpan)
             {
+                string dateTest = runDate.ToShortDateString().Replace("/", "");
                 if (Helper.IsTradingDay(runDate))
                 {
                     //ASSUME all trades inside the daydata file are dated the same as indicated by the file name
-                    var tradeDate = runDate.ToShortDateString().Replace("/", "").Substring(2); //YYMMDD
-                                                                                               //does a data file exist for this day?
+                    var tradeDate = dateTest.Substring(2); //YYMMDD
+                    //does a data file exist for this day?
                     var dayFilename = Helper.BuildDayDataFilename(runDate);
                     var dayFile = Helper.GetAppUserSettings().ExtraFolder + $"\\{dayFilename}";
                     if (File.Exists(dayFile))
                     {
-                        AddUpdateTradeHash(shareName, shareNum, tradeHash, tradeDate, dayFile, dayOffset);
+                        //skip opening up the datafile if we already have the data in the All-Table
+                        var topUpInfoKey = $"{tradeDate},{shareNum}";
+                        if (!tradingDatesInfo.DatesData[topUpInfoKey].AlreadyHave) {
+                            AddUpdateTradeHash(shareName, shareNum, tradeHash, tradeDate, dayFile);
+                        }
                     }
                     tradingDayCounter++;
                 }
-                dayOffset++;
                 runDate = runDate.AddDays(1);
             }
             if (ct.IsCancellationRequested)
@@ -416,7 +461,7 @@ namespace ShareViewer
 
         //updates/adds to tradehash for passed in shareName and a day's trades file
         private static void AddUpdateTradeHash(string shareName, int shareNum, Dictionary<string, Trade> tradeHash, 
-            string tradeDate, string dayFile, int dayOffset)
+            string tradeDate, string dayFile)
         {
             using (FileStream fs = File.Open(dayFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
@@ -441,7 +486,7 @@ namespace ShareViewer
                                 {
                                     //one of our trades, build/update a Trade object eg 13:29:55;4,7;1069;1884
                                     var newTrade = new Trade(shareNum, tradeDate, line);
-                                    var bandNum = Helper.ComputeTimeBand(line); // + 104*dayOffset;
+                                    var bandNum = Helper.ComputeTimeBand(line);
                                     var hashKey = $"{tradeDate},{bandNum}"; 
                                     if (tradeHash.ContainsKey(hashKey))
                                     {
@@ -467,7 +512,8 @@ namespace ShareViewer
         //Iterates over the allShares array passed in and instantiates queued async Tasks 
         //which individually create an AllTable file for each share
         //NOTE: if topUpOnly then existing allTable files must be preserved and simply appended to
-        private static void UpdateAllTables(DateTime startDate, int tradingSpan, string[] allShares, bool topUpOnly)
+        private static void UpdateAllTables(TopupInformation topUpInfo, DateTime startDate, int tradingSpan, 
+            string[] allShares, bool topUpOnly)
         {
             var appUserSettings = Helper.GetAppUserSettings();
             var atPath = appUserSettings.AllTablesFolder;
@@ -493,11 +539,13 @@ namespace ShareViewer
                     var genTask = Task.Run(() =>
                     {
                         //build the dictionary which helps us in filling the alltables with price and volume info
-                        var tradeHash = BuildTradeHash(ct, shareName, shareNum, startDate, tradingSpan, topUpOnly);
+                        var tradeHash = BuildTradeHash(ct, shareName, shareNum, startDate, tradingSpan, topUpInfo);
                         //save for audit purposes (TODO: perhaps rather leave up to user to generate singly, on demand?)
                         SaveTradehashAudit(tradeHash, shareName, shareNum);
+                        
                         //generate an all-table
-                        GenerateSingleShareAllTable(ct, allTableFile, startDate, tradingSpan,tradeHash);                         
+                        //GenerateSingleAllTable(ct, allTableFile, shareNum, startDate, tradingSpan,tradeHash,topUpOnly,topUpInfo);
+
                     }, tokenSource.Token);
                     
                     var awaiter = genTask.GetAwaiter();
@@ -539,23 +587,38 @@ namespace ShareViewer
             }
         }
 
-        //create a dictionary enabling a quick lookup of whether a date (YYMMDD, as stored in all-tables) is within the needed span
-        internal static Dictionary<string, bool> BuildTradingDatesHash(DateTime startDate, int tradingSpan)
+        //Create an object with a dictionary enabling a quick lookup of whether a date and share "YYMMDD,shareNum" as stored in all-tables) 
+        //is within the needed span. ('want')
+        //The dictionary will also be used to note whether we already 'have' the data for the date/share in the All-Tables
+        //Finally, also stores last row number as well as last date for each share
+        //Initially 'wants' the data for every trading day in the range, and sets 'have' to false
+        internal static TopupInformation InitializeTopupInfo(DateTime startDate, int tradingSpan, string[] allShares)
         {
-            var datesWanted = new Dictionary<string, bool>();
-            var runDate = startDate.AddDays(0); // start at startDate with a new runDate object
-            int tradingDayCounter = 0;
-            while (tradingDayCounter < tradingSpan)
+            var topupInfo = new TopupInformation();
+
+            foreach (string shareLine in allShares.Skip(1))
             {
-                if (Helper.IsTradingDay(runDate))
+                //extract share number from each shareLine (1st line is a heading, so skip it)
+                int shareNum = Helper.GetDigitsAtEnd(shareLine);
+
+                var runDate = startDate.AddDays(0); // start at startDate with a new runDate object
+                int tradingDayCounter = 0;
+                while (tradingDayCounter < tradingSpan)
                 {
-                    string dateKey = runDate.ToShortDateString().Replace("/", "");
-                    datesWanted[dateKey] = true;
-                    tradingDayCounter++;
+                    if (Helper.IsTradingDay(runDate))
+                    {
+                        string dateKeySeg = runDate.ToShortDateString().Replace("/", "").Substring(2); // YYMMDD
+                        string dateShareKey = $"{dateKeySeg},{shareNum}";
+                        topupInfo.DatesData[dateShareKey] = new WantHaveInfo(true, false);
+                        topupInfo.LastDate[shareNum] = dateKeySeg;
+                        topupInfo.LastRow[shareNum] = 0; // must be set right later
+                        tradingDayCounter++;
+                    }
+                    runDate = runDate.AddDays(1);
                 }
-                runDate = runDate.AddDays(1);
             }
-            return datesWanted;
+
+            return topupInfo;
         }
 
         private static void SaveTradehashAudit(Dictionary<String, Trade> tradeHash, string shareName, short shareNum)
@@ -599,11 +662,42 @@ namespace ShareViewer
         //based on the ShareList, creating one AllTable for each share, populated with initial values.
         internal static void RefreshNewAllTables(DateTime startDate, int tradingSpan, string[] allSharesArray, bool topUpOnly)
         {
-            var tradingDatesWanted = LocalStore.BuildTradingDatesHash(startDate, tradingSpan);
+            //initialize the topupInfo structure which will hold the info we need to enable us to do a topup run
+            var topupInfo = LocalStore.InitializeTopupInfo(startDate, tradingSpan, allSharesArray);
+            //fill topupInfo, prepare trimmed AllTabl files (if topping up) and delete Audit files
+            InitAllTablesAuditsAndTopupInfo(ref topupInfo, startDate, tradingSpan, allSharesArray, topUpOnly); xxx why problems at the tenth allTable?
 
-            ClearOutAllTablesPlusAudits(tradingDatesWanted, startDate, tradingSpan, allSharesArray, topUpOnly);
-            UpdateAllTables(startDate, tradingSpan, allSharesArray, topUpOnly);
+            // TODO UNCOMMENT ME!
+            //UpdateAllTables(topupInfo,startDate, tradingSpan, allSharesArray, topUpOnly);
+
+
         }
+
+        // accesses AllTable for passed in share number and determines the 
+        // Firstday,Lastday and NumberOfTradingDays which it returns in an AllTableSummary object
+        internal static AllTableSummary GetAllTableSummaryForShare(int shareNum)
+        {
+            var allTablesFolder = Helper.GetAppUserSettings().AllTablesFolder;
+            string allTableFilename = allTablesFolder + $"\\alltable_{shareNum}.at";
+
+            var shareSummary = new AllTableSummary(new Share("dontcare", 1));
+
+            //determine First Day, Last Day and number of trading days by inspecting the All-Table file
+            using (FileStream fs = new FileStream(allTableFilename, FileMode.Open))
+            {
+                //read in entire all-table
+                var atRows = Helper.DeserializeList<AllTable>(fs).ToArray();
+
+                shareSummary.FirstDay = atRows[2].Date;
+                shareSummary.LastDay = atRows[atRows.Count() - 1].Date;
+                shareSummary.NumberOfTradingDays = (atRows.Count() - 2) / 104;
+            }
+
+            return shareSummary;
+
+        }
+
+
 
     }
 }

@@ -33,6 +33,7 @@
             this.tabControlMain = new System.Windows.Forms.TabControl();
             this.tabPageImportation = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.buttonAddToAllTables = new System.Windows.Forms.Button();
             this.buttonBusyAllTables = new System.Windows.Forms.Button();
             this.labelGenNewAllTables = new System.Windows.Forms.Label();
             this.progressBarGenNewAllTables = new System.Windows.Forms.ProgressBar();
@@ -85,7 +86,7 @@
             this.toolTipShareList = new System.Windows.Forms.ToolTip(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
-            this.buttonAddToAllTables = new System.Windows.Forms.Button();
+            this.linkLabelSummary = new System.Windows.Forms.LinkLabel();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -145,6 +146,22 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(994, 490);
             this.panel2.TabIndex = 4;
+            // 
+            // buttonAddToAllTables
+            // 
+            this.buttonAddToAllTables.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAddToAllTables.Enabled = false;
+            this.buttonAddToAllTables.FlatAppearance.BorderSize = 2;
+            this.buttonAddToAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonAddToAllTables.Image = ((System.Drawing.Image)(resources.GetObject("buttonAddToAllTables.Image")));
+            this.buttonAddToAllTables.Location = new System.Drawing.Point(380, 167);
+            this.buttonAddToAllTables.Name = "buttonAddToAllTables";
+            this.buttonAddToAllTables.Size = new System.Drawing.Size(278, 47);
+            this.buttonAddToAllTables.TabIndex = 19;
+            this.buttonAddToAllTables.Text = "Add new data to All-Tables";
+            this.buttonAddToAllTables.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.buttonAddToAllTables.UseVisualStyleBackColor = true;
+            this.buttonAddToAllTables.Click += new System.EventHandler(this.OnTopupAllTables);
             // 
             // buttonBusyAllTables
             // 
@@ -222,11 +239,11 @@
             this.buttonNewAllTables.FlatAppearance.BorderSize = 2;
             this.buttonNewAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonNewAllTables.Image = ((System.Drawing.Image)(resources.GetObject("buttonNewAllTables.Image")));
-            this.buttonNewAllTables.Location = new System.Drawing.Point(380, 181);
+            this.buttonNewAllTables.Location = new System.Drawing.Point(380, 101);
             this.buttonNewAllTables.Name = "buttonNewAllTables";
             this.buttonNewAllTables.Size = new System.Drawing.Size(278, 47);
             this.buttonNewAllTables.TabIndex = 15;
-            this.buttonNewAllTables.Text = "Calculate ALL NEW All-Tables";
+            this.buttonNewAllTables.Text = "Generate NEW All-Tables";
             this.buttonNewAllTables.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             this.buttonNewAllTables.UseVisualStyleBackColor = true;
             this.buttonNewAllTables.Click += new System.EventHandler(this.OnMakeNewAllTables);
@@ -315,6 +332,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.linkLabelSummary);
             this.panel1.Controls.Add(this.listBoxSpannedHolidays);
             this.panel1.Controls.Add(this.labelHolidays);
             this.panel1.Controls.Add(this.label4);
@@ -381,17 +399,17 @@
             this.label3.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(203, 193);
+            this.label3.Location = new System.Drawing.Point(163, 193);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(101, 20);
+            this.label3.Size = new System.Drawing.Size(143, 20);
             this.label3.TabIndex = 16;
-            this.label3.Text = "Datafiles List";
+            this.label3.Text = "Datafiles for period";
             // 
             // labelDatafilesCount
             // 
             this.labelDatafilesCount.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelDatafilesCount.AutoSize = true;
-            this.labelDatafilesCount.Location = new System.Drawing.Point(125, 201);
+            this.labelDatafilesCount.Location = new System.Drawing.Point(77, 201);
             this.labelDatafilesCount.Name = "labelDatafilesCount";
             this.labelDatafilesCount.Size = new System.Drawing.Size(63, 13);
             this.labelDatafilesCount.TabIndex = 15;
@@ -402,17 +420,17 @@
             // 
             this.label8.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(856, 196);
+            this.label8.Location = new System.Drawing.Point(891, 196);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(78, 13);
+            this.label8.Size = new System.Drawing.Size(43, 13);
             this.label8.TabIndex = 14;
-            this.label8.Text = "search share #";
+            this.label8.Text = "share #";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // textBoxShareNumSearch
             // 
             this.textBoxShareNumSearch.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.textBoxShareNumSearch.Location = new System.Drawing.Point(938, 193);
+            this.textBoxShareNumSearch.Location = new System.Drawing.Point(940, 193);
             this.textBoxShareNumSearch.Name = "textBoxShareNumSearch";
             this.textBoxShareNumSearch.Size = new System.Drawing.Size(50, 20);
             this.textBoxShareNumSearch.TabIndex = 13;
@@ -532,7 +550,7 @@
             this.label7.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(720, 193);
+            this.label7.Location = new System.Drawing.Point(718, 193);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(81, 20);
             this.label7.TabIndex = 9;
@@ -739,21 +757,17 @@
             this.stripText.Size = new System.Drawing.Size(22, 17);
             this.stripText.Text = "Ok";
             // 
-            // buttonAddToAllTables
+            // linkLabelSummary
             // 
-            this.buttonAddToAllTables.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonAddToAllTables.Enabled = false;
-            this.buttonAddToAllTables.FlatAppearance.BorderSize = 2;
-            this.buttonAddToAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonAddToAllTables.Image = ((System.Drawing.Image)(resources.GetObject("buttonAddToAllTables.Image")));
-            this.buttonAddToAllTables.Location = new System.Drawing.Point(380, 114);
-            this.buttonAddToAllTables.Name = "buttonAddToAllTables";
-            this.buttonAddToAllTables.Size = new System.Drawing.Size(278, 47);
-            this.buttonAddToAllTables.TabIndex = 19;
-            this.buttonAddToAllTables.Text = "Add NEW data to All-Tables";
-            this.buttonAddToAllTables.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-            this.buttonAddToAllTables.UseVisualStyleBackColor = true;
-            this.buttonAddToAllTables.Click += new System.EventHandler(this.OnTopupAllTables);
+            this.linkLabelSummary.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.linkLabelSummary.AutoSize = true;
+            this.linkLabelSummary.Location = new System.Drawing.Point(577, 198);
+            this.linkLabelSummary.Name = "linkLabelSummary";
+            this.linkLabelSummary.Size = new System.Drawing.Size(136, 13);
+            this.linkLabelSummary.TabIndex = 21;
+            this.linkLabelSummary.TabStop = true;
+            this.linkLabelSummary.Text = "Current All-Tables Summary";
+            this.linkLabelSummary.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelSummary_LinkClicked);
             // 
             // MainForm
             // 
@@ -845,6 +859,7 @@
         private System.Windows.Forms.Label labelHolidays;
         private System.Windows.Forms.ListBox listBoxSpannedHolidays;
         private System.Windows.Forms.Button buttonAddToAllTables;
+        private System.Windows.Forms.LinkLabel linkLabelSummary;
     }
 }
 

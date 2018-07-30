@@ -293,6 +293,38 @@ namespace ShareViewer
             return date.ToShortDateString().Replace("/", "_") + ".TXT";
         }
 
+        internal static string GetCompressedDate(DateTime date)
+        {
+            return date.ToShortDateString().Replace("/", "").Substring(2); // YYMMDD
+        }
+        
+        //grabs run of digits at end of string, returns as an integer
+        internal static int GetDigitsAtEnd(string line)
+        {
+            int digitsNum = 0;
+            Match regMatch = Regex.Match(line, @".+(\d+)$");
+            if (regMatch.Success)
+            {
+                digitsNum = Convert.ToInt16(regMatch.Groups[1].Value);
+            }
+            return digitsNum;
+        }
+
+        internal static Share CreateShareFromLine(string line)
+        {
+            Match regMatch = Regex.Match(line, @"(.+)\s(\d+)$");
+            if (regMatch.Success)
+            {
+                var shareName = regMatch.Groups[1].Value.TrimEnd();
+                var shareNum = Convert.ToInt16(regMatch.Groups[2].Value);
+                return new Share(shareName, shareNum);
+            }
+            else
+            {
+                return new Share("???", 0);
+            }
+        }
+
         internal static int ComputeTimeBand(string trade)
         {
             //Compute timeband (timband 1 is from 09:00:00 - 09:04:59)
@@ -436,6 +468,15 @@ namespace ShareViewer
             return (runDate.DayOfWeek != DayOfWeek.Saturday) && (runDate.DayOfWeek != DayOfWeek.Sunday) && !IsHoliday(runDate);
         }
 
+        //given a string of the form YYMMDD, return a DateTime
+        internal static DateTime ConvertCompressedDateToDateTime(string lastDayOnHand)
+        {
+            var Year = Convert.ToInt16("20" + lastDayOnHand.Substring(0, 2));
+            var Month = Convert.ToInt16(lastDayOnHand.Substring(2, 2));
+            var Day = Convert.ToInt16(lastDayOnHand.Substring(4, 2));
 
+            return new DateTime(Year, Month, Day);
+
+        }
     }
 }

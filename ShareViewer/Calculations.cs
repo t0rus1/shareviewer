@@ -66,15 +66,16 @@ namespace ShareViewer
         internal static bool LazyShare(AllTable[] bands, LazyShareParam Z, int startRow, int endRow, out string[] auditSummary)
         {
             bool isLazy = false;
+            auditSummary = "".Split('\n');
             int numBands = endRow - startRow + 1; // normally 1040 bands = 10 days
 
-            if (numBands > 0)
+            if (bands.Count() == numBands && numBands > 2)
             {
                 //we must skip startRow rows because 'Row' starts at -1
                 double totalFV = bands.Skip(startRow).Take(numBands).Sum(atRec => atRec.FV);
                 double numDays = numBands / 104; // there are 104 bands per day
                 double avgDailyVolume = totalFV / numDays;
-                double effectivePrice = bands[10401].FP;
+                double effectivePrice = bands[numBands-1].FP;
                 double VP = avgDailyVolume * effectivePrice;
                 isLazy = VP < Z.Setting;
                 auditSummary =
@@ -92,7 +93,7 @@ Result:
             }
             else
             {
-                throw new Exception("LazyShare: number of bands must be > 0");
+                //throw new Exception("LazyShare: number of bands must be > 0");
             }
             return isLazy;
         }

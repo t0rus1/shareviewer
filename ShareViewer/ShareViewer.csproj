@@ -49,6 +49,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllTable.cs" />
+    <Compile Include="AllTableSummaryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AllTableSummaryForm.Designer.cs">
+      <DependentUpon>AllTableSummaryForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Calculations.cs" />
     <Compile Include="FiveMinutesPriceGradientsUI.cs" />
     <Compile Include="Helper.cs" />
@@ -83,6 +89,9 @@
     </Compile>
     <Compile Include="TaskMaster.cs" />
     <Compile Include="Trade.cs" />
+    <EmbeddedResource Include="AllTableSummaryForm.resx">
+      <DependentUpon>AllTableSummaryForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="InputBox.resx">
       <DependentUpon>InputBox.cs</DependentUpon>
     </EmbeddedResource>

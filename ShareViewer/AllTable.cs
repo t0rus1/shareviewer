@@ -8,6 +8,85 @@ using System.Threading.Tasks;
 
 namespace ShareViewer
 {
+    //See notes below for class TopupInfo
+    public class WantHaveInfo
+    {
+        public WantHaveInfo(bool want, bool have)
+        {
+            wanted = want;
+            alreadyHave = have;
+        }
+
+        private bool wanted;
+        private bool alreadyHave;
+
+        public bool Wanted { get => wanted; set => wanted = value; }
+        public bool AlreadyHave { get => alreadyHave; set => alreadyHave = value; }
+    }
+
+    //This object will hold info required to do a topup run for alltables
+    //It holds a 'DatesData' dictionary, keyed on date,sharenumber string. e.g. "YYMMDD,Sharenum"
+    //with the value being a WantHaveInfo object. 'Want' implying the date is 'in' range
+    //while 'AlreadyHave' if true, means the alltable already has such data for the share and date
+    public class TopupInformation
+    {
+        private Dictionary<string, WantHaveInfo> datesData;
+        private Dictionary<int,string> lastDate;  // key=shareNum, value = YYMMDD
+        private Dictionary<int,int> lastRow; // key=shareNum, value = lastRow
+
+        public TopupInformation()
+        {
+            datesData = new Dictionary<string, WantHaveInfo>();
+            lastDate = new Dictionary<int, string>();
+            lastRow = new Dictionary<int, int>();
+        }
+
+        public Dictionary<string, WantHaveInfo> DatesData { get => datesData; set => datesData = value; }
+        public Dictionary<int,string> LastDate { get => lastDate; set => lastDate = value; }
+        public Dictionary<int,int> LastRow { get => lastRow; set => lastRow = value; }
+    }
+
+    //for use in the 'Whats on hand' grid
+    //One such record for each share in the share list
+    public class AllTableSummary
+    {
+        private Share theShare;
+        private string firstDay;
+        private string lastDay;
+        private int numberOfTradingDays;
+
+        public AllTableSummary(Share theShare)
+        {
+            this.theShare = theShare;
+            firstDay = ""; // YYMMDD
+            LastDay = ""; //YYMMDD            
+        }
+
+        public Share TheShare { get => theShare; set => theShare = value; }
+        public string FirstDay { get => firstDay; set => firstDay = value; }
+        public string LastDay { get => lastDay; set => lastDay = value; }
+        public int NumberOfTradingDays { get => numberOfTradingDays; set => numberOfTradingDays = value; }
+    }
+
+    public class Share
+    {
+        public Share(string name, int number)
+        {
+            this.name = name;
+            this.number = number;
+        }
+
+        private string name;
+        private int number;
+
+        public string Name { get => name; set => name = value; }
+        public int Number { get => number; set => number = value; }
+
+        public override string ToString()
+        {
+            return $"{number.ToString("000")} {name}";
+        }
+    }
 
     public class HintAttribute : Attribute
     {

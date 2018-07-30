@@ -441,7 +441,7 @@ namespace ShareViewer
             if (listBoxInhalt.Items.Count == 0)
             {
                 string dataFilesBtnText = buttonLogin.Text;
-                MessageBox.Show($"The 'Datafiles List' is empty.\nPlease select the source (Internet or Local)\nthen click the '{dataFilesBtnText}' button\nin order to confirm that data is on hand.",
+                MessageBox.Show($"The 'Datafiles for period' list is empty.\nPlease select the source (Internet or Local)\nthen click the '{dataFilesBtnText}' button\nin order to confirm that data is on hand.",
                     "Precaution", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return true;
             }
@@ -468,6 +468,67 @@ namespace ShareViewer
 
         }
 
+        private bool BleatForSpan()
+        {
+            //firstly, daysBack span MUST BE 100 days
+            if (daysBack.Value > 100)
+            {
+                MessageBox.Show("The trading days span MAY NOT be set to more 100 days for this operation", "Add new Data",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                return true;
+            }
+
+            var wantedStartDate = Helper.GetCompressedDate(calendarFrom.SelectionStart);
+            var wantedEndDate = Helper.GetCompressedDate(calendarTo.SelectionStart);
+
+            var onhandShareSummary = LocalStore.GetAllTableSummaryForShare(1);
+            var firstDayOnHand = onhandShareSummary.FirstDay;
+            var lastDayOnHand = onhandShareSummary.LastDay;
+
+            if (String.Compare(wantedStartDate,firstDayOnHand,true) < 0)
+            {
+                var msg = $"The requested date span ({wantedStartDate} - {wantedEndDate}) starts at an EARLIER date than that which is currently held in the All-Tables.\n\n" +
+                          $"Either create a NEW 100 day set of All-Tables (with required date span) or set the start date later than '{wantedStartDate}'";
+                MessageBox.Show(msg, "Overlay not allowed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return true;
+            }
+            else
+            {
+                //OK. The requested date span starts late enough. 
+                //Does it end too early?
+                if (String.Compare(wantedEndDate,lastDayOnHand) < 0)
+                {
+                    //yes
+                    var msg = $"The requested date span ({wantedStartDate} - {wantedEndDate}) ends at an EARLIER date than that which is currently held in the All-Tables ({lastDayOnHand}).\n\n" +
+                              $"This will mean already processed days will have to be re processed again later.";
+                    MessageBox.Show(msg, "All-Tables data overlay Protection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return true;
+                }
+                else
+                {
+                    if (String.Compare(wantedEndDate, lastDayOnHand) == 0)
+                    {
+                        var msg = $"We already have data in the All-Tables up until {wantedEndDate} !";
+                        MessageBox.Show(msg, "All-Tables data overlay Protection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return true;
+                    }
+                    else
+                    {
+                        //finally, we can tell user how many new days data he is trying to add
+                        var lastDayOnHandDT = Helper.ConvertCompressedDateToDateTime(lastDayOnHand);
+                        int addDays = (calendarTo.SelectionStart - lastDayOnHandDT).Days;
+                        var msg = $"Add new data for the {addDays} day(s) beyond last day on hand in the All-Tables ({lastDayOnHand}) ?";
+                        if (MessageBox.Show(msg, "Add New Data to All-Tables", MessageBoxButtons.OKCancel, MessageBoxIcon.Question,MessageBoxDefaultButton.Button1,MessageBoxOptions.DefaultDesktopOnly) == DialogResult.OK)
+                        {
+                            return false; // user can proceed to next check
+                        }
+                        return true; // user cancelled, so dont proceed
+                    }
+
+                }
+                return false;
+            }
+        }
+
         private void CreateOrTopupAllTables(bool topUp)
         {
             //prepare structures needed for the run
@@ -483,9 +544,9 @@ namespace ShareViewer
                 DateTime endDate = calendarTo.SelectionStart;
                 int tradingSpan = Helper.ComputeTradingSpanDayCount(startDate, endDate);
 
-                string createOrTopup = topUp ? "TOP-UP" : "CREATE";
+                string createOrTopup = topUp ? "OVERLAY" : "CREATE";
                 var msg = $"{createOrTopup} All-tables for the {tradingSpan} trading days up to {endDate.ToShortDateString()} (inclusive)?";
-                string preserveOrNew = topUp ? "Existing All-Table data will be preserved, NEW data will be added" : "All-Table data will be created from scratch.";
+                string preserveOrNew = topUp ? "Existing data in the range will be preserved, NEW data will be added." : "All-Table data will be created from scratch.";
                 var extraMsg = $"\n\n{preserveOrNew}\n\nWarning: This may take time!";
                 if ((MessageBox.Show(msg + extraMsg, "All-Tables",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes))
@@ -514,6 +575,8 @@ namespace ShareViewer
         {
             if (BleatForDataFilesListEmpty()) return;
             if (BleatForDataFilesNeeded()) return;
+
+            if (BleatForSpan()) return;
 
             CreateOrTopupAllTables(true);
 
@@ -693,5 +756,10 @@ namespace ShareViewer
             }
         }
 
+        private void linkLabelSummary_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var summaryForm = new AllTableSummaryForm();
+            summaryForm.Show();
+        }
     }
 }
