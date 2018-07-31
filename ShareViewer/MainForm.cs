@@ -15,7 +15,7 @@ namespace ShareViewer
 {
     public partial class MainForm : Form
     {
-        public const String Version = "0.0.4";
+        public const String Version = "0.0.5";
         internal Properties.Settings appUserSettings;
         bool initializing = true;
         bool SuppressDaysBackChangeHandling = false; // when true, suppresses OnChangehandling
@@ -173,7 +173,7 @@ namespace ShareViewer
             //load ShareList
             listBoxShareList.DataSource = LocalStore.ReadShareList();
             //possibly enable the New AllTables button
-            buttonNewAllTables.Enabled = listBoxShareList.Items.Count > 0;
+            //buttonNewAllTables.Enabled = listBoxShareList.Items.Count > 0;
             buttonAddToAllTables.Enabled = listBoxShareList.Items.Count > 0; ;
             //
             labelDatafilesCount.Text = "";
@@ -417,7 +417,7 @@ namespace ShareViewer
                         var sharesList = LocalStore.GenerateShareList(selectedDayFile);
 
                         listBoxShareList.DataSource = LocalStore.WriteShareList(sharesList, selectedDayFile);
-                        buttonNewAllTables.Enabled = listBoxShareList.Items.Count > 0;
+                        //buttonNewAllTables.Enabled = listBoxShareList.Items.Count > 0;
                         buttonAddToAllTables.Enabled = listBoxShareList.Items.Count > 0; ;
                     }
                 }
@@ -516,8 +516,8 @@ namespace ShareViewer
                         //finally, we can tell user how many new days data he is trying to add
                         var lastDayOnHandDT = Helper.ConvertCompressedDateToDateTime(lastDayOnHand);
                         int addDays = (calendarTo.SelectionStart - lastDayOnHandDT).Days;
-                        var msg = $"Add new data for the {addDays} day(s) beyond last day on hand in the All-Tables ({lastDayOnHand}) ?";
-                        if (MessageBox.Show(msg, "Add New Data to All-Tables", MessageBoxButtons.OKCancel, MessageBoxIcon.Question,MessageBoxDefaultButton.Button1,MessageBoxOptions.DefaultDesktopOnly) == DialogResult.OK)
+                        var msg = $"Add new trading data for the {addDays} calendar day(s) beyond last data on hand in the All-Tables ({lastDayOnHand}) ?";
+                        if (MessageBox.Show(msg, "Add New Data to All-Tables", MessageBoxButtons.OKCancel, MessageBoxIcon.Question,MessageBoxDefaultButton.Button1) == DialogResult.OK)
                         {
                             return false; // user can proceed to next check
                         }
@@ -525,7 +525,6 @@ namespace ShareViewer
                     }
 
                 }
-                return false;
             }
         }
 
@@ -552,7 +551,7 @@ namespace ShareViewer
                         MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes))
                 {
                     //put some buttons on hold, make progress bar visible etc..
-                    Helper.HoldWhileGeneratingNewAllTables(true);
+                    Helper.HoldWhileGeneratingNewAllTables(true,topUp);
                     Helper.Log("Info", Helper.Repeat("==========", 8));
                     Helper.Log("Info", msg);
                     LocalStore.RefreshNewAllTables(startDate, tradingSpan, allShareArray, topUp); //will queue up a lot of tasks!
@@ -760,6 +759,13 @@ namespace ShareViewer
         {
             var summaryForm = new AllTableSummaryForm();
             summaryForm.Show();
+        }
+
+        private void linkLabelAllowNew_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            buttonNewAllTables.Enabled = !buttonNewAllTables.Enabled;
+            //label text must be based on state of button
+            linkLabelAllowNew.Text = buttonNewAllTables.Enabled ? "lock" : "unlock";
         }
     }
 }

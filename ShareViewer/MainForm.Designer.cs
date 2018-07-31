@@ -47,6 +47,7 @@
             this.listBoxShareList = new System.Windows.Forms.ListBox();
             this.listBoxInhalt = new System.Windows.Forms.ListBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.linkLabelSummary = new System.Windows.Forms.LinkLabel();
             this.listBoxSpannedHolidays = new System.Windows.Forms.ListBox();
             this.labelHolidays = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -86,7 +87,7 @@
             this.toolTipShareList = new System.Windows.Forms.ToolTip(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
-            this.linkLabelSummary = new System.Windows.Forms.LinkLabel();
+            this.linkLabelAllowNew = new System.Windows.Forms.LinkLabel();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -128,6 +129,7 @@
             // panel2
             // 
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.linkLabelAllowNew);
             this.panel2.Controls.Add(this.buttonAddToAllTables);
             this.panel2.Controls.Add(this.buttonBusyAllTables);
             this.panel2.Controls.Add(this.labelGenNewAllTables);
@@ -154,7 +156,7 @@
             this.buttonAddToAllTables.FlatAppearance.BorderSize = 2;
             this.buttonAddToAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonAddToAllTables.Image = ((System.Drawing.Image)(resources.GetObject("buttonAddToAllTables.Image")));
-            this.buttonAddToAllTables.Location = new System.Drawing.Point(380, 167);
+            this.buttonAddToAllTables.Location = new System.Drawing.Point(380, 182);
             this.buttonAddToAllTables.Name = "buttonAddToAllTables";
             this.buttonAddToAllTables.Size = new System.Drawing.Size(278, 47);
             this.buttonAddToAllTables.TabIndex = 19;
@@ -189,9 +191,9 @@
             this.labelGenNewAllTables.ForeColor = System.Drawing.Color.ForestGreen;
             this.labelGenNewAllTables.Location = new System.Drawing.Point(299, 406);
             this.labelGenNewAllTables.Name = "labelGenNewAllTables";
-            this.labelGenNewAllTables.Size = new System.Drawing.Size(56, 13);
+            this.labelGenNewAllTables.Size = new System.Drawing.Size(16, 13);
             this.labelGenNewAllTables.TabIndex = 17;
-            this.labelGenNewAllTables.Text = "progress...";
+            this.labelGenNewAllTables.Text = "...";
             this.labelGenNewAllTables.Visible = false;
             // 
             // progressBarGenNewAllTables
@@ -239,7 +241,7 @@
             this.buttonNewAllTables.FlatAppearance.BorderSize = 2;
             this.buttonNewAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonNewAllTables.Image = ((System.Drawing.Image)(resources.GetObject("buttonNewAllTables.Image")));
-            this.buttonNewAllTables.Location = new System.Drawing.Point(380, 101);
+            this.buttonNewAllTables.Location = new System.Drawing.Point(380, 116);
             this.buttonNewAllTables.Name = "buttonNewAllTables";
             this.buttonNewAllTables.Size = new System.Drawing.Size(278, 47);
             this.buttonNewAllTables.TabIndex = 15;
@@ -356,6 +358,19 @@
             this.panel1.Size = new System.Drawing.Size(994, 215);
             this.panel1.TabIndex = 0;
             // 
+            // linkLabelSummary
+            // 
+            this.linkLabelSummary.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.linkLabelSummary.AutoSize = true;
+            this.linkLabelSummary.Location = new System.Drawing.Point(577, 198);
+            this.linkLabelSummary.Name = "linkLabelSummary";
+            this.linkLabelSummary.Size = new System.Drawing.Size(136, 13);
+            this.linkLabelSummary.TabIndex = 21;
+            this.linkLabelSummary.TabStop = true;
+            this.linkLabelSummary.Text = "Current All-Tables Summary";
+            this.toolTipShareList.SetToolTip(this.linkLabelSummary, "Generate a report which summarizes the content of each All-Table.");
+            this.linkLabelSummary.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelSummary_LinkClicked);
+            // 
             // listBoxSpannedHolidays
             // 
             this.listBoxSpannedHolidays.FormattingEnabled = true;
@@ -434,7 +449,8 @@
             this.textBoxShareNumSearch.Name = "textBoxShareNumSearch";
             this.textBoxShareNumSearch.Size = new System.Drawing.Size(50, 20);
             this.textBoxShareNumSearch.TabIndex = 13;
-            this.toolTipShareList.SetToolTip(this.textBoxShareNumSearch, "search for share by number");
+            this.toolTipShareList.SetToolTip(this.textBoxShareNumSearch, "Search for a share by number. \r\nIf you hit the \'enter\' key afterwards, the reques" +
+        "ted share\'s All-Table will be opened.");
             this.textBoxShareNumSearch.TextChanged += new System.EventHandler(this.OnSearchForShare);
             this.textBoxShareNumSearch.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxShareNumSearch_KeyPress);
             // 
@@ -471,6 +487,9 @@
             this.buttonLogin.TabIndex = 5;
             this.buttonLogin.Text = "Show Datafiles on hand";
             this.buttonLogin.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.toolTipShareList.SetToolTip(this.buttonLogin, "Downloads, then lists, or simply lists the contents of the local \'Inhalt.txt\' fil" +
+        "e. \r\nDownload will only succeed if the credentials (above) are entered correctly" +
+        ".");
             this.buttonLogin.UseVisualStyleBackColor = true;
             this.buttonLogin.Click += new System.EventHandler(this.OnLogin);
             // 
@@ -577,6 +596,7 @@
             this.daysBack.Name = "daysBack";
             this.daysBack.Size = new System.Drawing.Size(61, 29);
             this.daysBack.TabIndex = 7;
+            this.toolTipShareList.SetToolTip(this.daysBack, resources.GetString("daysBack.ToolTip"));
             this.daysBack.Value = new decimal(new int[] {
             100,
             0,
@@ -742,6 +762,13 @@
             this.monthCalendarHolidays.TabIndex = 0;
             this.monthCalendarHolidays.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.monthCalendarHolidays_DateSelected);
             // 
+            // toolTipShareList
+            // 
+            this.toolTipShareList.AutoPopDelay = 9000;
+            this.toolTipShareList.InitialDelay = 500;
+            this.toolTipShareList.IsBalloon = true;
+            this.toolTipShareList.ReshowDelay = 100;
+            // 
             // statusStrip
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -757,17 +784,18 @@
             this.stripText.Size = new System.Drawing.Size(22, 17);
             this.stripText.Text = "Ok";
             // 
-            // linkLabelSummary
+            // linkLabelAllowNew
             // 
-            this.linkLabelSummary.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.linkLabelSummary.AutoSize = true;
-            this.linkLabelSummary.Location = new System.Drawing.Point(577, 198);
-            this.linkLabelSummary.Name = "linkLabelSummary";
-            this.linkLabelSummary.Size = new System.Drawing.Size(136, 13);
-            this.linkLabelSummary.TabIndex = 21;
-            this.linkLabelSummary.TabStop = true;
-            this.linkLabelSummary.Text = "Current All-Tables Summary";
-            this.linkLabelSummary.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelSummary_LinkClicked);
+            this.linkLabelAllowNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.linkLabelAllowNew.AutoSize = true;
+            this.linkLabelAllowNew.Location = new System.Drawing.Point(379, 102);
+            this.linkLabelAllowNew.Name = "linkLabelAllowNew";
+            this.linkLabelAllowNew.Size = new System.Drawing.Size(39, 13);
+            this.linkLabelAllowNew.TabIndex = 20;
+            this.linkLabelAllowNew.TabStop = true;
+            this.linkLabelAllowNew.Text = "unlock";
+            this.toolTipShareList.SetToolTip(this.linkLabelAllowNew, resources.GetString("linkLabelAllowNew.ToolTip"));
+            this.linkLabelAllowNew.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelAllowNew_LinkClicked);
             // 
             // MainForm
             // 
@@ -860,6 +888,7 @@
         private System.Windows.Forms.ListBox listBoxSpannedHolidays;
         private System.Windows.Forms.Button buttonAddToAllTables;
         private System.Windows.Forms.LinkLabel linkLabelSummary;
+        private System.Windows.Forms.LinkLabel linkLabelAllowNew;
     }
 }
 

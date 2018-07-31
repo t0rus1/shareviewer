@@ -38,12 +38,11 @@ namespace ShareViewer
             form.statusStrip.Items["stripText"].Text = msg;
         }
 
-        internal static void UpdateNewAllTableGenerationProgress(string msg)
+        internal static void UpdateAllTableProgress(string msg)
         {
             var form = GetMainForm();
-            ((MainForm)form).labelGenNewAllTables.Text = msg;
+            form.labelGenNewAllTables.Text = msg;
         }
-
 
         internal static void SetProgressBar(string progressBarName, double numerator, double denominator)
         {
@@ -206,7 +205,7 @@ namespace ShareViewer
             ((Button)form.Controls.Find("buttonNewShareList", true)[0]).Enabled = !hold;
             ((Button)form.Controls.Find("buttonDays", true)[0]).Enabled = !hold;
             ((GroupBox)form.Controls.Find("groupBoxSource", true)[0]).Enabled = !hold;
-            ((Button)form.Controls.Find("buttonNewAllTables", true)[0]).Enabled = !hold;
+            //((Button)form.Controls.Find("buttonNewAllTables", true)[0]).Enabled = !hold;
             ((TextBox)form.Controls.Find("textBoxShareNumSearch", true)[0]).Enabled = !hold;
 
             ((MonthCalendar)form.Controls.Find("calendarFrom", true)[0]).Enabled = !hold;
@@ -216,17 +215,26 @@ namespace ShareViewer
         }
 
         //disable / enable some buttons
-        internal static void HoldWhileGeneratingNewAllTables(bool hold)
+        internal static void HoldWhileGeneratingNewAllTables(bool hold, bool topUp)
         {
             var form = GetMainForm();
             ((Button)form.Controls.Find("buttonDayDataDownload", true)[0]).Enabled = !hold;
             ((Button)form.Controls.Find("buttonDays", true)[0]).Enabled = !hold;
-            ((Button)form.Controls.Find("buttonNewShareList", true)[0]).Enabled = !hold;
+            ((Button)form.Controls.Find("buttonNewShareList", true)[0]).Enabled = !hold;  
+
             ((ListBox)form.Controls.Find("listBoxShareList", true)[0]).Enabled = !hold;
             ((TextBox)form.Controls.Find("textBoxShareNumSearch", true)[0]).Enabled = !hold;
 
             ((GroupBox)form.Controls.Find("groupBoxSource", true)[0]).Enabled = !hold;
-            ((Button)form.Controls.Find("buttonNewAllTables", true)[0]).Enabled = !hold;
+            if (hold)
+            {
+                //allow this button to be disabled only
+                ((Button)form.Controls.Find("buttonNewAllTables", true)[0]).Enabled = false;
+                //label text must be based on state of button
+                ((LinkLabel)form.Controls.Find("linkLabelAllowNew", true)[0]).Text = "unlock";
+
+            }
+            ((Button)form.Controls.Find("buttonAddToAllTables", true)[0]).Enabled = !hold;
 
             ((MonthCalendar)form.Controls.Find("calendarFrom", true)[0]).Enabled = !hold;
             ((MonthCalendar)form.Controls.Find("calendarTo", true)[0]).Enabled = !hold;
@@ -235,7 +243,7 @@ namespace ShareViewer
             //make progressBar and paired label visible/not
             ((ProgressBar)form.Controls.Find("progressBarGenNewAllTables", true)[0]).Visible = hold;
             ((Label)form.Controls.Find("labelGenNewAllTables", true)[0]).Visible = hold;
-            ((Button)form.Controls.Find("buttonBusyAllTables", true)[0]).Visible = hold;
+            ((Button)form.Controls.Find("buttonBusyAllTables", true)[0]).Visible = !topUp && hold;
 
         }
 
@@ -302,7 +310,7 @@ namespace ShareViewer
         internal static int GetDigitsAtEnd(string line)
         {
             int digitsNum = 0;
-            Match regMatch = Regex.Match(line, @".+(\d+)$");
+            Match regMatch = Regex.Match(line, @".+\s(\d+)$");
             if (regMatch.Success)
             {
                 digitsNum = Convert.ToInt16(regMatch.Groups[1].Value);
@@ -336,12 +344,28 @@ namespace ShareViewer
                 hr = Convert.ToInt16(regMatch.Groups[2].Value);
                 min = Convert.ToInt16(regMatch.Groups[3].Value);
                 sec = Convert.ToInt16(regMatch.Groups[4].Value);
-                totalsecs = 3600 * hr + 60 * min + sec;
-                return (totalsecs / (9 * 3600)) + (totalsecs % (9 * 3600)) / 300;
+                if ((hr < 9 || hr > 17) || (min > 59) || (sec > 59))
+                {
+                    return 0;// indicate not in allowable band
+                }
+                else
+                {
+                    totalsecs = 3600 * hr + 60 * min + sec;
+                    int tb = (totalsecs / (9 * 3600)) + (totalsecs % (9 * 3600)) / 300;
+                    if (tb > 0 && tb < 105)
+                    {
+                        return tb;
+                    }
+                    else
+                    {
+                        return 0; // indicate not in allowable band
+                    }
+                }
             }
             else
             {
-                throw (new FormatException($"could not extract timeband from trade '{trade}'"));
+                //throw (new FormatException($"could not extract timeband from trade '{trade}'"));
+                return 0; // indicate error
             }
         }
 

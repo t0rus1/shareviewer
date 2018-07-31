@@ -209,8 +209,8 @@ namespace ShareViewer
         // Also, once complete, there will in general be a tail bit of the toupInfo object for whose dates have
         // values of 'alreadyHave' remaining false. 
         // These will be the dates for which new All-Table records will need to be appended
-        private static void InitAllTablesAuditsAndTopupInfo(ref TopupInformation topupInfo, DateTime startDate, 
-            int tradingSpan, string[] allShares, bool topUpOnly)
+        private static void PrepareAllTables(ref TopupInformation topupInfo, DateTime startDate, 
+            int tradingSpan, string[] allShares, bool topUpOnly, Action<int> progress)
         {
             var atPath = Helper.GetAppUserSettings().AllTablesFolder;
 
@@ -270,6 +270,7 @@ namespace ShareViewer
                             {
                                 File.Delete(allTableFile);
                                 File.Move(tmpFile, allTableFile);
+                                progress(shareNum);
                             }
                         }
                         else
@@ -485,19 +486,23 @@ namespace ShareViewer
                                 if (ourTrades)
                                 {
                                     //one of our trades, build/update a Trade object eg 13:29:55;4,7;1069;1884
-                                    var newTrade = new Trade(shareNum, tradeDate, line);
-                                    var bandNum = Helper.ComputeTimeBand(line);
-                                    var hashKey = $"{tradeDate},{bandNum}"; 
-                                    if (tradeHash.ContainsKey(hashKey))
+                                    var bandNum = Helper.ComputeTimeBand(line); // returns 0 if out of band
+                                    //ignore the trade if not in our time bands
+                                    if (bandNum != 0)
                                     {
-                                        tradeHash[hashKey].Price = newTrade.Price;
-                                        tradeHash[hashKey].Volume += newTrade.Volume;
-                                        //and for Audit, addd this new ticker
-                                        tradeHash[hashKey].Tickers.Add(line);
-                                    }
-                                    else
-                                    {
-                                        tradeHash.Add(hashKey, newTrade);
+                                        var newTrade = new Trade(shareNum, tradeDate, line);
+                                        var hashKey = $"{tradeDate},{bandNum}";
+                                        if (tradeHash.ContainsKey(hashKey))
+                                        {
+                                            tradeHash[hashKey].Price = newTrade.Price;
+                                            tradeHash[hashKey].Volume += newTrade.Volume;
+                                            //and for Audit, addd this new ticker
+                                            tradeHash[hashKey].Tickers.Add(line);
+                                        }
+                                        else
+                                        {
+                                            tradeHash.Add(hashKey, newTrade);
+                                        }
                                     }
                                 }
                             }
@@ -544,7 +549,7 @@ namespace ShareViewer
                         SaveTradehashAudit(tradeHash, shareName, shareNum);
                         
                         //generate an all-table
-                        //GenerateSingleAllTable(ct, allTableFile, shareNum, startDate, tradingSpan,tradeHash,topUpOnly,topUpInfo);
+                        GenerateSingleAllTable(ct, allTableFile, shareNum, startDate, tradingSpan,tradeHash,topUpOnly,topUpInfo);
 
                     }, tokenSource.Token);
                     
@@ -554,7 +559,7 @@ namespace ShareViewer
                         sharesDone++;
                         Helper.SetProgressBar("progressBarGenNewAllTables", sharesDone, numShares);
                         var progressMsg = $"All-Table done. (Share {shareName})";
-                        Helper.UpdateNewAllTableGenerationProgress(progressMsg);
+                        Helper.UpdateAllTableProgress(progressMsg);
                         Helper.Log("Info", progressMsg);
                         if (sharesDone == numShares)
                         {
@@ -579,7 +584,7 @@ namespace ShareViewer
                                 MessageBox.Show(msg, "Completed", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
                             //re-enable buttons, hide progress bar etc
-                            Helper.HoldWhileGeneratingNewAllTables(false);
+                            Helper.HoldWhileGeneratingNewAllTables(false,topUpOnly);
                         }    
 
                     });
@@ -594,30 +599,37 @@ namespace ShareViewer
         //Initially 'wants' the data for every trading day in the range, and sets 'have' to false
         internal static TopupInformation InitializeTopupInfo(DateTime startDate, int tradingSpan, string[] allShares)
         {
+            Helper.Log("Info", $"InitializeTopupInfo...{startDate.ToShortDateString()} for {tradingSpan} days for {allShares.Count()-1} shares");
             var topupInfo = new TopupInformation();
 
             foreach (string shareLine in allShares.Skip(1))
             {
                 //extract share number from each shareLine (1st line is a heading, so skip it)
                 int shareNum = Helper.GetDigitsAtEnd(shareLine);
-
-                var runDate = startDate.AddDays(0); // start at startDate with a new runDate object
-                int tradingDayCounter = 0;
-                while (tradingDayCounter < tradingSpan)
+                if (shareNum != 0)
                 {
-                    if (Helper.IsTradingDay(runDate))
+                    var runDate = startDate.AddDays(0); // start at startDate with a new runDate object
+                    int tradingDayCounter = 0;
+                    while (tradingDayCounter < tradingSpan)
                     {
-                        string dateKeySeg = runDate.ToShortDateString().Replace("/", "").Substring(2); // YYMMDD
-                        string dateShareKey = $"{dateKeySeg},{shareNum}";
-                        topupInfo.DatesData[dateShareKey] = new WantHaveInfo(true, false);
-                        topupInfo.LastDate[shareNum] = dateKeySeg;
-                        topupInfo.LastRow[shareNum] = 0; // must be set right later
-                        tradingDayCounter++;
+                        if (Helper.IsTradingDay(runDate))
+                        {
+                            string compressedDate = runDate.ToShortDateString().Replace("/", "").Substring(2); // YYMMDD
+                            string dateShareKey = $"{compressedDate},{shareNum}";
+                            topupInfo.DatesData[dateShareKey] = new WantHaveInfo(true, false);
+                            topupInfo.LastDate[shareNum] = compressedDate;
+                            topupInfo.LastRow[shareNum] = 0; // must be set right later
+                            tradingDayCounter++;
+                        }
+                        runDate = runDate.AddDays(1);
                     }
-                    runDate = runDate.AddDays(1);
+                }
+                else
+                {
+                    Helper.Log("Error", $"Unable to extract share number from '{shareLine}'");
                 }
             }
-
+            Helper.Log("Info", $"topupInfo.DatesData has {topupInfo.DatesData.Keys.Count} keys. LastDate has {topupInfo.LastDate.Keys.Count} keys, LastRow has {topupInfo.LastRow.Keys.Count} keys.");
             return topupInfo;
         }
 
@@ -664,13 +676,15 @@ namespace ShareViewer
         {
             //initialize the topupInfo structure which will hold the info we need to enable us to do a topup run
             var topupInfo = LocalStore.InitializeTopupInfo(startDate, tradingSpan, allSharesArray);
-            //fill topupInfo, prepare trimmed AllTabl files (if topping up) and delete Audit files
-            InitAllTablesAuditsAndTopupInfo(ref topupInfo, startDate, tradingSpan, allSharesArray, topUpOnly); xxx why problems at the tenth allTable?
+            //fill topupInfo, prepare trimmed AllTable files (if topping up) and delete Audit files
+            var task = Task.Run(() => PrepareAllTables(ref topupInfo, startDate, tradingSpan, allSharesArray, topUpOnly, PrepareAllTablesProgress));
+            var awaiter = task.GetAwaiter();
+            awaiter.OnCompleted(() => UpdateAllTables(topupInfo, startDate, tradingSpan, allSharesArray, topUpOnly));
+        }
 
-            // TODO UNCOMMENT ME!
-            //UpdateAllTables(topupInfo,startDate, tradingSpan, allSharesArray, topUpOnly);
-
-
+        internal static void PrepareAllTablesProgress(int shareNum)
+        {
+            Helper.Status($"Preparing All-Table for share {shareNum}...");
         }
 
         // accesses AllTable for passed in share number and determines the 
