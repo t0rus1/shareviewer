@@ -54,6 +54,10 @@ namespace ShareViewer
         private string firstDay;
         private string lastDay;
         private int numberOfTradingDays;
+        private double lastPrice;
+        private double averageDailyVolume;
+        private uint totalVolume;
+        private uint lastDayVolume;
 
         public AllTableSummary(Share theShare)
         {
@@ -66,6 +70,11 @@ namespace ShareViewer
         public string FirstDay { get => firstDay; set => firstDay = value; }
         public string LastDay { get => lastDay; set => lastDay = value; }
         public int NumberOfTradingDays { get => numberOfTradingDays; set => numberOfTradingDays = value; }
+        public double LastPrice { get => lastPrice; set => lastPrice = value; }
+        public double AverageDailyVolume { get => averageDailyVolume; set => averageDailyVolume = value; }
+        public uint TotalVolume { get => totalVolume; set => totalVolume = value; }
+        public uint LastDayVolume { get => lastDayVolume; set => lastDayVolume = value; }
+
     }
 
     public class Share

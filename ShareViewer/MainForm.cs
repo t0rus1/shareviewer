@@ -15,7 +15,7 @@ namespace ShareViewer
 {
     public partial class MainForm : Form
     {
-        public const String Version = "0.0.5";
+        public const String Version = "0.0.6";
         internal Properties.Settings appUserSettings;
         bool initializing = true;
         bool SuppressDaysBackChangeHandling = false; // when true, suppresses OnChangehandling
@@ -354,6 +354,8 @@ namespace ShareViewer
 
         }
 
+
+
         //trading days back changed (up down spinner or enter pressed in it's textbox)
         private void DaysBackChanged(object sender, EventArgs e)
         {
@@ -554,7 +556,7 @@ namespace ShareViewer
                     Helper.HoldWhileGeneratingNewAllTables(true,topUp);
                     Helper.Log("Info", Helper.Repeat("==========", 8));
                     Helper.Log("Info", msg);
-                    LocalStore.RefreshNewAllTables(startDate, tradingSpan, allShareArray, topUp); //will queue up a lot of tasks!
+                    LocalStore.RefreshNewAllTables(startDate, tradingSpan, allShareArray, topUp, ""); //will queue up a lot of tasks!
                 }
             }
         }
@@ -565,7 +567,7 @@ namespace ShareViewer
             if (BleatForDataFilesListEmpty()) return;
             if (BleatForDataFilesNeeded()) return;
 
-            CreateOrTopupAllTables(false);
+            CreateOrTopupAllTables(false); // not a top up, full blown set of new all-tables
 
         }
 
@@ -577,7 +579,7 @@ namespace ShareViewer
 
             if (BleatForSpan()) return;
 
-            CreateOrTopupAllTables(true);
+            CreateOrTopupAllTables(true); // just a top up
 
         }
 
@@ -766,6 +768,63 @@ namespace ShareViewer
             buttonNewAllTables.Enabled = !buttonNewAllTables.Enabled;
             //label text must be based on state of button
             linkLabelAllowNew.Text = buttonNewAllTables.Enabled ? "lock" : "unlock";
+        }
+
+        private void calendarFrom_DateSelected(object sender, DateRangeEventArgs e)
+        {
+            linkLabelSingleDayLoad.Visible = (DateTime.Compare(e.Start,calendarTo.SelectionStart) == 0);
+            buttonAddToAllTables.Enabled = !linkLabelSingleDayLoad.Visible;
+        }
+
+        private void calendarTo_DateSelected(object sender, DateRangeEventArgs e)
+        {
+            linkLabelSingleDayLoad.Visible = (DateTime.Compare(e.Start, calendarFrom.SelectionStart) == 0);
+            buttonAddToAllTables.Enabled = !linkLabelSingleDayLoad.Visible;
+        }
+
+        //Single Day reload
+        private void linkLabelSingleDayLoad_Click(object sender, EventArgs e)
+        {
+            //user want to reload for a single day
+            var reloadDate = Helper.GetCompressedDate(calendarTo.SelectionStart);
+            var onhandSummary = LocalStore.GetAllTableSummaryForShare(1);
+
+            if ((String.Compare(onhandSummary.FirstDay,reloadDate) <= 0) && 
+                (String.Compare(onhandSummary.LastDay, reloadDate) >= 0))
+            {
+                //check for data file availability
+                var path = Helper.GetAppUserSettings().ExtraFolder;
+                var yy = reloadDate.Substring(0, 2);
+                var mm = reloadDate.Substring(2, 2);
+                var dd = reloadDate.Substring(4, 2);
+                var pattern = $"20{yy}_{mm}_{dd}.TXT";
+                if (!Directory.EnumerateFiles(path,pattern).Any()) {
+                    var msg = $"The required Datafile '{pattern}' is not present, cannot reload!";
+                    MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    //we may proceed with REload
+                    var allShareArray = LocalStore.CreateShareArrayFromShareList();
+                    if (allShareArray.Count() > 0)
+                    {
+                        DateTime startDate = calendarFrom.SelectionStart;
+                        DateTime endDate = calendarTo.SelectionStart;
+                        int tradingSpan = Helper.ComputeTradingSpanDayCount(startDate, endDate);
+                        if (tradingSpan == 1)
+                        {
+                            LocalStore.RefreshNewAllTables(startDate, tradingSpan, allShareArray, false, reloadDate);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var msg = $"Reload Date '{reloadDate}' is not in current All-Table range ('{onhandSummary.FirstDay}' -> '{onhandSummary.LastDay}')";
+                MessageBox.Show(msg,"Error",MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+
         }
     }
 }

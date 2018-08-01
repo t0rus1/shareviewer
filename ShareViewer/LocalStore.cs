@@ -296,45 +296,110 @@ namespace ShareViewer
             Helper.Log("Info", $"{shares.Count()} '.at' files participating");
         }
 
-        //Creates from scratch or 'tops up' an All-Table for a single share for a period spanning tradingSpan trading days 
-        //starting at startDate. If topupOnly, then a leading number of days get 'skipped' (since the AllTable is understood
-        //to already have the data in it). 
+        private static void LogHeaderForGenerateSingleAllTable(string allTableFile, DateTime startDate, bool topUpOnly, string reloadDate)
+        {
+            if (!topUpOnly && reloadDate == "")
+            {
+                Helper.Log("Info", $"Creating All-Table for:\n{allTableFile}");
+            }
+            else
+            {
+                if (topUpOnly && reloadDate == "")
+                {
+                    Helper.Log("Info", $"Topping up All-Table for:\n{allTableFile}");
+                }
+                else
+                {
+                    if (reloadDate != "")
+                    {
+                        Helper.Log("Info", $"Reloading All-Table\n{allTableFile} for {reloadDate}");
+                    }
+                    else
+                    {
+                        Helper.Log("Error", "GenerateSingleAllTable - don't know what to do!");
+                    }
+                }
+            }
+        }
+
+        //Creates from scratch, or 'tops up', or reloads a single day of, an All-Table for a single share for a period 
+        //spanning tradingSpan trading days starting at startDate. 
+        //If topupOnly, then a leading number of days get 'skipped' (since the AllTable is assumed to already have the data in it). 
+        //If reloadOffset is non zero, we skip that number of AllTable records into the AllTable file and then overwrite
+        //the succeeding 104 bands (i.e. one days worth)
         //The passed in tradeHash holds the raw trading information needed to create each AllTable record. 
         //tradeHash: Key: 'YYMMDD,bandNum' e.g. "180722,1" band 1 is from 09:00:00 to 09:04:59 
         //           Value: Trade object with properties shareNum,tradeDate,line
         private static void GenerateSingleAllTable(CancellationToken ct, string allTableFile, int shareNum, DateTime startDate, 
-            int tradingSpan, Dictionary<string, Trade> tradeHash, bool topUpOnly, TopupInformation topupInfo)
+            int tradingSpan, Dictionary<string, Trade> tradeHash, bool topUpOnly, TopupInformation topupInfo, string reloadDate)
         {
-            Helper.Log("Info", $"creating all-table for:\n{allTableFile}");
+            LogHeaderForGenerateSingleAllTable(allTableFile, startDate, topUpOnly, reloadDate);
 
             AllTable atRec;
             var runDate = startDate.AddDays(0);
 
-            //create or append to AllTable file?
-            FileMode mode = topUpOnly ? FileMode.Append : FileMode.Create;
-            
-            using (FileStream fs = new FileStream(allTableFile, mode)) 
+            //Create or Append to AllTable file?
+            FileMode mode;
+            if (reloadDate.Length == 6)
+            {
+                // we are reloading... reloadDate = YYMMDD
+                mode = FileMode.Open;
+            }
+            else
+            {
+                //more usual case 
+                mode = topUpOnly ? FileMode.Append : FileMode.Create;
+            }
+
+            using (FileStream fs = new FileStream(allTableFile, mode))
             {
                 int rowNum = 0;
-                if (topUpOnly)
+                if (reloadDate.Length == 6)
                 {
-                    //we're appending...
-                    //no need to write rows 1 and 2 if this is a topup
-                    //get starting RowNum to use from passed in TopupInformation
-                    rowNum = topupInfo.LastRow[shareNum] + 1;
+                    //RELOAD of a single day
+                    // advance the seek position to the start of the day we want to overwrite
+                    var bf = new BinaryFormatter();
+                    while (fs.Position != fs.Length)
+                    {
+                        var lastPos = fs.Position;
+                        var testAt = (AllTable)bf.Deserialize(fs);
+                        rowNum++;
+                        if (testAt.Date == reloadDate)
+                        {
+                            fs.Position = lastPos; // back up
+                            rowNum--;
+                            break; // and go on to writing out 104 bands
+                        }
+                    }
+                    if (fs.Position == fs.Length)
+                    {
+                        Helper.LogStatus("Error", $"Could not find reloadDate '{reloadDate}' records in All-Table {allTableFile}");
+                        fs.Dispose();
+                        return;
+                    }
                 }
                 else
                 {
-                    //we're creatng from scratch
-                    //do the first 2 rows right away (they are special)
-                    atRec = AllTableFactory.InitialRow(rowNum++, "YYMMDD", "Day", "TimeFrom", "TimeTo");
-                    Helper.SerializeAllTableRecord(fs, atRec);
-                    atRec = AllTableFactory.InitialRow(rowNum++, "", "", "", "");
-                    Helper.SerializeAllTableRecord(fs, atRec);
+                    if (topUpOnly)
+                    {
+                        //we're appending...
+                        //no need to write rows 1 and 2 if this is a topup
+                        //get starting RowNum to use from passed in TopupInformation
+                        rowNum = topupInfo.LastRow[shareNum] + 1;
+                    }
+                    else
+                    {
+                        //we're creating from scratch
+                        //do the first 2 rows right away (they are special)
+                        atRec = AllTableFactory.InitialRow(rowNum++, "YYMMDD", "Day", "TimeFrom", "TimeTo");
+                        Helper.SerializeAllTableRecord(fs, atRec);
+                        atRec = AllTableFactory.InitialRow(rowNum++, "", "", "", "");
+                        Helper.SerializeAllTableRecord(fs, atRec);
+                    }
                 }
 
-                //now condider every day in the trading span, but if topUpOnly, skip over those we already have.
-                int tradingDays = 0; double yesterPrice = 0;  double lastPrice = 0;
+                //now consider every day in the trading span, but if topUpOnly, skip over those we already have.
+                int tradingDays = 0; double yesterPrice = 0; double lastPrice = 0;
                 while (!ct.IsCancellationRequested && tradingDays < tradingSpan)
                 {
                     if (Helper.IsTradingDay(runDate))
@@ -359,7 +424,7 @@ namespace ShareViewer
                                 atRec.FP = lastPrice;
                                 // now fill from passed in tradeHash
                                 lastPrice = FillAllTableRowFromTradehash(atRec, timeBand + 1, tradeHash, lastPrice);
-                                //save AllTable row record to disk
+                                //save AllTable row record to disk - this will be overwriting of reloadDate has been set
                                 Helper.SerializeAllTableRecord(fs, atRec);
                             }
                             yesterPrice = lastPrice;
@@ -517,8 +582,9 @@ namespace ShareViewer
         //Iterates over the allShares array passed in and instantiates queued async Tasks 
         //which individually create an AllTable file for each share
         //NOTE: if topUpOnly then existing allTable files must be preserved and simply appended to
+        //      if reloadOnly then just one day's worth of timebands within the existing all-table must be overwritten
         private static void UpdateAllTables(TopupInformation topUpInfo, DateTime startDate, int tradingSpan, 
-            string[] allShares, bool topUpOnly)
+            string[] allShares, bool topUpOnly, string reloadDate)
         {
             var appUserSettings = Helper.GetAppUserSettings();
             var atPath = appUserSettings.AllTablesFolder;
@@ -549,7 +615,7 @@ namespace ShareViewer
                         SaveTradehashAudit(tradeHash, shareName, shareNum);
                         
                         //generate an all-table
-                        GenerateSingleAllTable(ct, allTableFile, shareNum, startDate, tradingSpan,tradeHash,topUpOnly,topUpInfo);
+                        GenerateSingleAllTable(ct, allTableFile, shareNum, startDate, tradingSpan, tradeHash, topUpOnly, topUpInfo, reloadDate);
 
                     }, tokenSource.Token);
                     
@@ -579,7 +645,7 @@ namespace ShareViewer
                                 appUserSettings.AllTableDataStart = startDate.ToShortDateString();
                                 appUserSettings.AllTableTradingSpan = tradingSpan.ToString();
                                 appUserSettings.Save();
-                                var msg = $"All-Table generation completed, {sharesDone} shares processed.";
+                                var msg = $"All-Table updates completed, {sharesDone} shares processed.";
                                 Helper.LogStatus("Info", msg);
                                 MessageBox.Show(msg, "Completed", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
@@ -672,14 +738,24 @@ namespace ShareViewer
 
         //Entrypoint for the generation/update of a complete batch of fresh new AllTables
         //based on the ShareList, creating one AllTable for each share, populated with initial values.
-        internal static void RefreshNewAllTables(DateTime startDate, int tradingSpan, string[] allSharesArray, bool topUpOnly)
+        internal static void RefreshNewAllTables(DateTime startDate, int tradingSpan, string[] allSharesArray, 
+                                                        bool topUpOnly, string reloadDate)
         {
             //initialize the topupInfo structure which will hold the info we need to enable us to do a topup run
             var topupInfo = LocalStore.InitializeTopupInfo(startDate, tradingSpan, allSharesArray);
-            //fill topupInfo, prepare trimmed AllTable files (if topping up) and delete Audit files
-            var task = Task.Run(() => PrepareAllTables(ref topupInfo, startDate, tradingSpan, allSharesArray, topUpOnly, PrepareAllTablesProgress));
-            var awaiter = task.GetAwaiter();
-            awaiter.OnCompleted(() => UpdateAllTables(topupInfo, startDate, tradingSpan, allSharesArray, topUpOnly));
+
+            if (reloadDate=="")
+            {
+                //prepare trimmed AllTable files (if topping up) and delete Audit files
+                var task = Task.Run(() => PrepareAllTables(ref topupInfo, startDate, tradingSpan, allSharesArray, topUpOnly, PrepareAllTablesProgress));
+                var awaiter = task.GetAwaiter();
+                awaiter.OnCompleted(() => UpdateAllTables(topupInfo, startDate, tradingSpan, allSharesArray, topUpOnly, ""));
+            }
+            else
+            {
+                UpdateAllTables(topupInfo, startDate, tradingSpan, allSharesArray, false, reloadDate);
+            }
+
         }
 
         internal static void PrepareAllTablesProgress(int shareNum)

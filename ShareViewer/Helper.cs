@@ -206,6 +206,7 @@ namespace ShareViewer
             ((Button)form.Controls.Find("buttonDays", true)[0]).Enabled = !hold;
             ((GroupBox)form.Controls.Find("groupBoxSource", true)[0]).Enabled = !hold;
             //((Button)form.Controls.Find("buttonNewAllTables", true)[0]).Enabled = !hold;
+            ((Button)form.Controls.Find("buttonAddToAllTables", true)[0]).Enabled = !hold;
             ((TextBox)form.Controls.Find("textBoxShareNumSearch", true)[0]).Enabled = !hold;
 
             ((MonthCalendar)form.Controls.Find("calendarFrom", true)[0]).Enabled = !hold;
@@ -232,13 +233,14 @@ namespace ShareViewer
                 ((Button)form.Controls.Find("buttonNewAllTables", true)[0]).Enabled = false;
                 //label text must be based on state of button
                 ((LinkLabel)form.Controls.Find("linkLabelAllowNew", true)[0]).Text = "unlock";
-
+                //single day reload link label can only be made invisible
+                ((LinkLabel)form.Controls.Find("linkLabelSingleDayLoad", true)[0]).Visible = false;
             }
-            ((Button)form.Controls.Find("buttonAddToAllTables", true)[0]).Enabled = !hold;
+            ((Button)form.Controls.Find("buttonAddToAllTables", true)[0]).Enabled = !hold; 
 
             ((MonthCalendar)form.Controls.Find("calendarFrom", true)[0]).Enabled = !hold;
             ((MonthCalendar)form.Controls.Find("calendarTo", true)[0]).Enabled = !hold;
-            ((NumericUpDown)form.Controls.Find("daysBack", true)[0]).Enabled = !hold;
+            ((NumericUpDown)form.Controls.Find("daysBack", true)[0]).Enabled = !hold; 
 
             //make progressBar and paired label visible/not
             ((ProgressBar)form.Controls.Find("progressBarGenNewAllTables", true)[0]).Visible = hold;

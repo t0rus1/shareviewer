@@ -33,6 +33,7 @@
             this.tabControlMain = new System.Windows.Forms.TabControl();
             this.tabPageImportation = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.linkLabelAllowNew = new System.Windows.Forms.LinkLabel();
             this.buttonAddToAllTables = new System.Windows.Forms.Button();
             this.buttonBusyAllTables = new System.Windows.Forms.Button();
             this.labelGenNewAllTables = new System.Windows.Forms.Label();
@@ -87,7 +88,7 @@
             this.toolTipShareList = new System.Windows.Forms.ToolTip(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
-            this.linkLabelAllowNew = new System.Windows.Forms.LinkLabel();
+            this.linkLabelSingleDayLoad = new System.Windows.Forms.LinkLabel();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -129,6 +130,7 @@
             // panel2
             // 
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.linkLabelSingleDayLoad);
             this.panel2.Controls.Add(this.linkLabelAllowNew);
             this.panel2.Controls.Add(this.buttonAddToAllTables);
             this.panel2.Controls.Add(this.buttonBusyAllTables);
@@ -149,6 +151,19 @@
             this.panel2.Size = new System.Drawing.Size(994, 490);
             this.panel2.TabIndex = 4;
             // 
+            // linkLabelAllowNew
+            // 
+            this.linkLabelAllowNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.linkLabelAllowNew.AutoSize = true;
+            this.linkLabelAllowNew.Location = new System.Drawing.Point(379, 102);
+            this.linkLabelAllowNew.Name = "linkLabelAllowNew";
+            this.linkLabelAllowNew.Size = new System.Drawing.Size(39, 13);
+            this.linkLabelAllowNew.TabIndex = 20;
+            this.linkLabelAllowNew.TabStop = true;
+            this.linkLabelAllowNew.Text = "unlock";
+            this.toolTipShareList.SetToolTip(this.linkLabelAllowNew, resources.GetString("linkLabelAllowNew.ToolTip"));
+            this.linkLabelAllowNew.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelAllowNew_LinkClicked);
+            // 
             // buttonAddToAllTables
             // 
             this.buttonAddToAllTables.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
@@ -158,9 +173,9 @@
             this.buttonAddToAllTables.Image = ((System.Drawing.Image)(resources.GetObject("buttonAddToAllTables.Image")));
             this.buttonAddToAllTables.Location = new System.Drawing.Point(380, 182);
             this.buttonAddToAllTables.Name = "buttonAddToAllTables";
-            this.buttonAddToAllTables.Size = new System.Drawing.Size(278, 47);
+            this.buttonAddToAllTables.Size = new System.Drawing.Size(249, 47);
             this.buttonAddToAllTables.TabIndex = 19;
-            this.buttonAddToAllTables.Text = "Add new data to All-Tables";
+            this.buttonAddToAllTables.Text = "Add new Data";
             this.buttonAddToAllTables.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             this.buttonAddToAllTables.UseVisualStyleBackColor = true;
             this.buttonAddToAllTables.Click += new System.EventHandler(this.OnTopupAllTables);
@@ -174,9 +189,9 @@
             this.buttonBusyAllTables.ForeColor = System.Drawing.Color.Green;
             this.buttonBusyAllTables.Image = ((System.Drawing.Image)(resources.GetObject("buttonBusyAllTables.Image")));
             this.buttonBusyAllTables.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.buttonBusyAllTables.Location = new System.Drawing.Point(352, 246);
+            this.buttonBusyAllTables.Location = new System.Drawing.Point(352, 291);
             this.buttonBusyAllTables.Name = "buttonBusyAllTables";
-            this.buttonBusyAllTables.Size = new System.Drawing.Size(320, 121);
+            this.buttonBusyAllTables.Size = new System.Drawing.Size(320, 76);
             this.buttonBusyAllTables.TabIndex = 18;
             this.buttonBusyAllTables.Text = "All-Table generation... Click to Abort";
             this.buttonBusyAllTables.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -243,7 +258,7 @@
             this.buttonNewAllTables.Image = ((System.Drawing.Image)(resources.GetObject("buttonNewAllTables.Image")));
             this.buttonNewAllTables.Location = new System.Drawing.Point(380, 116);
             this.buttonNewAllTables.Name = "buttonNewAllTables";
-            this.buttonNewAllTables.Size = new System.Drawing.Size(278, 47);
+            this.buttonNewAllTables.Size = new System.Drawing.Size(249, 47);
             this.buttonNewAllTables.TabIndex = 15;
             this.buttonNewAllTables.Text = "Generate NEW All-Tables";
             this.buttonNewAllTables.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
@@ -620,6 +635,7 @@
             this.calendarTo.Name = "calendarTo";
             this.calendarTo.TabIndex = 8;
             this.calendarTo.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.ToDateChanged);
+            this.calendarTo.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.calendarTo_DateSelected);
             // 
             // calendarFrom
             // 
@@ -630,6 +646,7 @@
             this.calendarFrom.ShowTodayCircle = false;
             this.calendarFrom.TabIndex = 6;
             this.calendarFrom.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.FromDateChanged);
+            this.calendarFrom.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.calendarFrom_DateSelected);
             // 
             // tabPageCalendar
             // 
@@ -784,18 +801,20 @@
             this.stripText.Size = new System.Drawing.Size(22, 17);
             this.stripText.Text = "Ok";
             // 
-            // linkLabelAllowNew
+            // linkLabelSingleDayLoad
             // 
-            this.linkLabelAllowNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.linkLabelAllowNew.AutoSize = true;
-            this.linkLabelAllowNew.Location = new System.Drawing.Point(379, 102);
-            this.linkLabelAllowNew.Name = "linkLabelAllowNew";
-            this.linkLabelAllowNew.Size = new System.Drawing.Size(39, 13);
-            this.linkLabelAllowNew.TabIndex = 20;
-            this.linkLabelAllowNew.TabStop = true;
-            this.linkLabelAllowNew.Text = "unlock";
-            this.toolTipShareList.SetToolTip(this.linkLabelAllowNew, resources.GetString("linkLabelAllowNew.ToolTip"));
-            this.linkLabelAllowNew.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelAllowNew_LinkClicked);
+            this.linkLabelSingleDayLoad.AutoSize = true;
+            this.linkLabelSingleDayLoad.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.linkLabelSingleDayLoad.Location = new System.Drawing.Point(436, 247);
+            this.linkLabelSingleDayLoad.Name = "linkLabelSingleDayLoad";
+            this.linkLabelSingleDayLoad.Size = new System.Drawing.Size(137, 20);
+            this.linkLabelSingleDayLoad.TabIndex = 21;
+            this.linkLabelSingleDayLoad.TabStop = true;
+            this.linkLabelSingleDayLoad.Text = "Single day Reload";
+            this.toolTipShareList.SetToolTip(this.linkLabelSingleDayLoad, "Re-load the single chosen day in ALL All-Tables. \r\n(intended as a fix, when a day" +
+        "\'s files were problematic)");
+            this.linkLabelSingleDayLoad.Visible = false;
+            this.linkLabelSingleDayLoad.Click += new System.EventHandler(this.linkLabelSingleDayLoad_Click);
             // 
             // MainForm
             // 
@@ -889,6 +908,7 @@
         private System.Windows.Forms.Button buttonAddToAllTables;
         private System.Windows.Forms.LinkLabel linkLabelSummary;
         private System.Windows.Forms.LinkLabel linkLabelAllowNew;
+        private System.Windows.Forms.LinkLabel linkLabelSingleDayLoad;
     }
 }
 

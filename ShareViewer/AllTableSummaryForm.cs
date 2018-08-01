@@ -77,6 +77,30 @@ namespace ShareViewer
                     Name = "Trading Days",
                     DataPropertyName = "NumberOfTradingDays",
                 });
+            dgViewSummary.Columns.Add(
+                new DataGridViewTextBoxColumn()
+                {
+                    Name = "Last Price",
+                    DataPropertyName = "Last Price",
+                });
+            dgViewSummary.Columns.Add(
+                new DataGridViewTextBoxColumn()
+                {
+                    Name = "Total Volume",
+                    DataPropertyName = "TotalVolume",
+                });
+            dgViewSummary.Columns.Add(
+                new DataGridViewTextBoxColumn()
+                {
+                    Name = "Avg Daily Volume",
+                    DataPropertyName = "AverageDailyVolume",
+                });
+            dgViewSummary.Columns.Add(
+                new DataGridViewTextBoxColumn()
+                {
+                    Name = "Last Day Volume",
+                    DataPropertyName = "LastDayVolume",
+                });
         }
 
 
@@ -94,12 +118,17 @@ namespace ShareViewer
                 using (FileStream fs = new FileStream(allTableFilename, FileMode.Open))
                 {
                     //read in entire all-table
-                    var atRows = Helper.DeserializeList<AllTable>(fs).ToArray();
+                    var atRows = Helper.DeserializeList<AllTable>(fs).Skip(2).ToArray();
+                    var numRows = atRows.Count();
 
                     var shareSummary = new AllTableSummary(share);
-                    shareSummary.FirstDay = atRows[2].Date;
-                    shareSummary.LastDay = atRows[atRows.Count() - 1].Date;
-                    shareSummary.NumberOfTradingDays = (atRows.Count() - 2) / 104;
+                    shareSummary.FirstDay = atRows[0].Date;
+                    shareSummary.LastDay = atRows[numRows - 1].Date;
+                    shareSummary.LastPrice = atRows[numRows - 1].FP;
+                    shareSummary.TotalVolume = (uint)atRows.Sum(x => x.FV);
+                    shareSummary.AverageDailyVolume = Convert.ToUInt32(104*atRows.Average(x => x.FV));
+                    shareSummary.LastDayVolume = (uint)atRows.Skip(numRows - 104).Take(14).Sum(x => x.FV);
+                    shareSummary.NumberOfTradingDays = (atRows.Count()) / 104;
 
                     summaries.Add(shareSummary);
                 }
@@ -110,5 +139,25 @@ namespace ShareViewer
 
         }
 
+        private void dgViewSummary_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            var row = dgViewSummary.Rows[e.RowIndex];
+            AllTableSummary item = (AllTableSummary)row.DataBoundItem;
+
+            //row.DefaultCellStyle.ForeColor = Color.Red;
+            if (item != null && item.LastPrice==0)
+            {
+                row.Cells["Last Price"].Style.ForeColor = Color.Red;
+            }
+            if (item != null && item.TotalVolume == 0)
+            {
+                row.Cells["Total Volume"].Style.ForeColor = Color.Red;
+            }
+            if (item != null && item.LastDayVolume == 0)
+            {
+                row.Cells["Last Day Volume"].Style.ForeColor = Color.Red;
+            }
+
+        }
     }
 }
