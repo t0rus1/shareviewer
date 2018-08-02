@@ -770,15 +770,19 @@ namespace ShareViewer
             linkLabelAllowNew.Text = buttonNewAllTables.Enabled ? "lock" : "unlock";
         }
 
+        //Reveal the linkLabelSingleDayLoad button if both calendars are indicating the same, single day
         private void calendarFrom_DateSelected(object sender, DateRangeEventArgs e)
         {
             linkLabelSingleDayLoad.Visible = (DateTime.Compare(e.Start,calendarTo.SelectionStart) == 0);
+            linkLabelSingleDayLoad.Enabled = linkLabelSingleDayLoad.Visible;
             buttonAddToAllTables.Enabled = !linkLabelSingleDayLoad.Visible;
         }
 
+        //Reveal the linkLabelSingleDayLoad button if both calendars are indicating the same, single day
         private void calendarTo_DateSelected(object sender, DateRangeEventArgs e)
         {
             linkLabelSingleDayLoad.Visible = (DateTime.Compare(e.Start, calendarFrom.SelectionStart) == 0);
+            linkLabelSingleDayLoad.Enabled = linkLabelSingleDayLoad.Visible;
             buttonAddToAllTables.Enabled = !linkLabelSingleDayLoad.Visible;
         }
 
@@ -804,17 +808,32 @@ namespace ShareViewer
                 }
                 else
                 {
-                    //we may proceed with REload
-                    var allShareArray = LocalStore.CreateShareArrayFromShareList();
-                    if (allShareArray.Count() > 0)
+                    //we may proceed with RE-load
+                    var dlgResult = MessageBox.Show($"Re-load the AllTables with data from this day: '{reloadDate}' ?",
+                        "Single Day Re-Load", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (dlgResult == DialogResult.Yes)
                     {
-                        DateTime startDate = calendarFrom.SelectionStart;
-                        DateTime endDate = calendarTo.SelectionStart;
-                        int tradingSpan = Helper.ComputeTradingSpanDayCount(startDate, endDate);
-                        if (tradingSpan == 1)
+                        var allShareArray = LocalStore.CreateShareArrayFromShareList();
+                        if (allShareArray.Count() > 0)
                         {
-                            LocalStore.RefreshNewAllTables(startDate, tradingSpan, allShareArray, false, reloadDate);
+                            linkLabelSingleDayLoad.Enabled = false;
+                            DateTime startDate = calendarFrom.SelectionStart;
+                            DateTime endDate = calendarTo.SelectionStart;
+                            int tradingSpan = Helper.ComputeTradingSpanDayCount(startDate, endDate);
+                            if (tradingSpan == 1)
+                            {
+                                LocalStore.RefreshNewAllTables(startDate, tradingSpan, allShareArray, false, reloadDate);
+                            }
                         }
+                    }
+                    else
+                    {
+                        //reset calendars
+                        calendarFrom.SetDate(DateTime.Today.AddDays(-Helper.ActualDaysBackToEncompassTradingDays(DateTime.Today, 100)));
+                        calendarTo.SetDate(DateTime.Today);
+                        labelBackFrom.Text = "ending Today";
+                        linkLabelSingleDayLoad.Enabled = false;
+                        linkLabelSingleDayLoad.Visible = false;
                     }
                 }
             }
@@ -825,6 +844,12 @@ namespace ShareViewer
             }
 
 
+        }
+
+        private void buttonOverview_Click(object sender, EventArgs e)
+        {
+            var overviewForm = new OverviewForm();
+            overviewForm.Show();
         }
     }
 }

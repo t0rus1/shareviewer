@@ -33,6 +33,7 @@
             this.tabControlMain = new System.Windows.Forms.TabControl();
             this.tabPageImportation = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.linkLabelSingleDayLoad = new System.Windows.Forms.LinkLabel();
             this.linkLabelAllowNew = new System.Windows.Forms.LinkLabel();
             this.buttonAddToAllTables = new System.Windows.Forms.Button();
             this.buttonBusyAllTables = new System.Windows.Forms.Button();
@@ -88,7 +89,7 @@
             this.toolTipShareList = new System.Windows.Forms.ToolTip(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
-            this.linkLabelSingleDayLoad = new System.Windows.Forms.LinkLabel();
+            this.buttonOverview = new System.Windows.Forms.Button();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -150,6 +151,21 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(994, 490);
             this.panel2.TabIndex = 4;
+            // 
+            // linkLabelSingleDayLoad
+            // 
+            this.linkLabelSingleDayLoad.AutoSize = true;
+            this.linkLabelSingleDayLoad.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.linkLabelSingleDayLoad.Location = new System.Drawing.Point(436, 247);
+            this.linkLabelSingleDayLoad.Name = "linkLabelSingleDayLoad";
+            this.linkLabelSingleDayLoad.Size = new System.Drawing.Size(137, 20);
+            this.linkLabelSingleDayLoad.TabIndex = 21;
+            this.linkLabelSingleDayLoad.TabStop = true;
+            this.linkLabelSingleDayLoad.Text = "Single day Reload";
+            this.toolTipShareList.SetToolTip(this.linkLabelSingleDayLoad, "Re-load the single chosen day in ALL All-Tables. \r\n(intended as a fix, when a day" +
+        "\'s files were problematic)");
+            this.linkLabelSingleDayLoad.Visible = false;
+            this.linkLabelSingleDayLoad.Click += new System.EventHandler(this.linkLabelSingleDayLoad_Click);
             // 
             // linkLabelAllowNew
             // 
@@ -349,6 +365,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.buttonOverview);
             this.panel1.Controls.Add(this.linkLabelSummary);
             this.panel1.Controls.Add(this.listBoxSpannedHolidays);
             this.panel1.Controls.Add(this.labelHolidays);
@@ -379,10 +396,10 @@
             this.linkLabelSummary.AutoSize = true;
             this.linkLabelSummary.Location = new System.Drawing.Point(577, 198);
             this.linkLabelSummary.Name = "linkLabelSummary";
-            this.linkLabelSummary.Size = new System.Drawing.Size(136, 13);
+            this.linkLabelSummary.Size = new System.Drawing.Size(124, 13);
             this.linkLabelSummary.TabIndex = 21;
             this.linkLabelSummary.TabStop = true;
-            this.linkLabelSummary.Text = "Current All-Tables Summary";
+            this.linkLabelSummary.Text = "Raw All-Tables Summary";
             this.toolTipShareList.SetToolTip(this.linkLabelSummary, "Generate a report which summarizes the content of each All-Table.");
             this.linkLabelSummary.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelSummary_LinkClicked);
             // 
@@ -392,7 +409,7 @@
             this.listBoxSpannedHolidays.Location = new System.Drawing.Point(839, 26);
             this.listBoxSpannedHolidays.Name = "listBoxSpannedHolidays";
             this.listBoxSpannedHolidays.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.listBoxSpannedHolidays.Size = new System.Drawing.Size(152, 121);
+            this.listBoxSpannedHolidays.Size = new System.Drawing.Size(152, 108);
             this.listBoxSpannedHolidays.TabIndex = 20;
             // 
             // labelHolidays
@@ -498,7 +515,7 @@
             this.buttonLogin.Image = ((System.Drawing.Image)(resources.GetObject("buttonLogin.Image")));
             this.buttonLogin.Location = new System.Drawing.Point(32, 50);
             this.buttonLogin.Name = "buttonLogin";
-            this.buttonLogin.Size = new System.Drawing.Size(170, 42);
+            this.buttonLogin.Size = new System.Drawing.Size(170, 43);
             this.buttonLogin.TabIndex = 5;
             this.buttonLogin.Text = "Show Datafiles on hand";
             this.buttonLogin.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -801,20 +818,19 @@
             this.stripText.Size = new System.Drawing.Size(22, 17);
             this.stripText.Text = "Ok";
             // 
-            // linkLabelSingleDayLoad
+            // buttonOverview
             // 
-            this.linkLabelSingleDayLoad.AutoSize = true;
-            this.linkLabelSingleDayLoad.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabelSingleDayLoad.Location = new System.Drawing.Point(436, 247);
-            this.linkLabelSingleDayLoad.Name = "linkLabelSingleDayLoad";
-            this.linkLabelSingleDayLoad.Size = new System.Drawing.Size(137, 20);
-            this.linkLabelSingleDayLoad.TabIndex = 21;
-            this.linkLabelSingleDayLoad.TabStop = true;
-            this.linkLabelSingleDayLoad.Text = "Single day Reload";
-            this.toolTipShareList.SetToolTip(this.linkLabelSingleDayLoad, "Re-load the single chosen day in ALL All-Tables. \r\n(intended as a fix, when a day" +
-        "\'s files were problematic)");
-            this.linkLabelSingleDayLoad.Visible = false;
-            this.linkLabelSingleDayLoad.Click += new System.EventHandler(this.linkLabelSingleDayLoad_Click);
+            this.buttonOverview.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonOverview.Image = ((System.Drawing.Image)(resources.GetObject("buttonOverview.Image")));
+            this.buttonOverview.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.buttonOverview.Location = new System.Drawing.Point(838, 139);
+            this.buttonOverview.Name = "buttonOverview";
+            this.buttonOverview.Size = new System.Drawing.Size(153, 43);
+            this.buttonOverview.TabIndex = 22;
+            this.buttonOverview.Text = "Overview";
+            this.buttonOverview.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.buttonOverview.UseVisualStyleBackColor = true;
+            this.buttonOverview.Click += new System.EventHandler(this.buttonOverview_Click);
             // 
             // MainForm
             // 
@@ -902,13 +918,14 @@
         private System.Windows.Forms.ListBox listBoxHolidays;
         private System.Windows.Forms.Button buttonSaveHolidays;
         public System.Windows.Forms.StatusStrip statusStrip;
-        private System.Windows.Forms.ToolStripStatusLabel stripText;
         private System.Windows.Forms.Label labelHolidays;
         private System.Windows.Forms.ListBox listBoxSpannedHolidays;
         private System.Windows.Forms.Button buttonAddToAllTables;
         private System.Windows.Forms.LinkLabel linkLabelSummary;
         private System.Windows.Forms.LinkLabel linkLabelAllowNew;
         private System.Windows.Forms.LinkLabel linkLabelSingleDayLoad;
+        internal System.Windows.Forms.ToolStripStatusLabel stripText;
+        private System.Windows.Forms.Button buttonOverview;
     }
 }
 

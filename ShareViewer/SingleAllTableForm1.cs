@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -159,6 +160,10 @@ namespace ShareViewer
             var auditLines = new string[] { "" };
             labelLazy.Visible = Calculations.LazyShare(atRows.ToArray(), CurrLazyShareParam, 9362, 10401, out auditLines);
 
+            //mark row 1 with a standout colour
+            dgView.Rows[1].DefaultCellStyle.ForeColor = Color.Blue;
+            dgView.Rows[1].DefaultCellStyle.BackColor = Color.Azure;
+
             _loaded = true;
         }
 
@@ -236,7 +241,13 @@ namespace ShareViewer
 
             using (FileStream fs = new FileStream(_allTableFilename, FileMode.Open))
             {
+                //slurp in the previously saved file of AllTable records
                 atRows = Helper.DeserializeList<AllTable>(fs).ToArray();
+                //copy row 10401 (if possible) to row 1 as per Gunther
+                Helper.CopySourceToTargetAllTableRow(atRows, 10401, 1);
+
+                atRows[1].Row = 1;
+
                 if (vertMode == VerticalMode.FiveMinly)
                 {
                     foreach (AllTable item in atRows)

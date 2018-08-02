@@ -98,6 +98,27 @@ Result:
             return isLazy;
         }
 
+        //This version of the LazyShare calculation expects to be passed ONLY a ten day
+        //batch of bands
+        internal static bool isLazyLast10Days(AllTable[] bands, LazyShareParam Z)
+        {
+            int numBands = bands.Count();
+            if (numBands == 1040)
+            {
+                double totalFV = bands.Sum(atRec => atRec.FV);
+                double numDays = numBands / 104; // should be 10
+                double avgDailyVolume = totalFV / numDays;
+                double effectivePrice = bands[numBands - 1].FP;
+                double VP = avgDailyVolume * effectivePrice;
+                return VP < Z.Setting;
+            }
+            else
+            {
+                throw new ArgumentException($"isLazyLast10Days needs 1040 FP bands, got {numBands}");
+            }
+
+        }
+
         // Compute Slow prices per Gunther's notes
         internal static void MakeSlowPrices(ref AllTable[] bands, SlowPriceParam spp, int startRow, int endRow, out string[] auditSummary)
         {

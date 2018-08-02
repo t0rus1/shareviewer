@@ -73,6 +73,13 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="LazyShareParam.cs" />
+    <Compile Include="Overview.cs" />
+    <Compile Include="OverviewForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OverviewForm.Designer.cs">
+      <DependentUpon>OverviewForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="SlowPriceParam.cs" />
     <Compile Include="SlowPriceUI.cs" />
@@ -97,6 +104,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OverviewForm.resx">
+      <DependentUpon>OverviewForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

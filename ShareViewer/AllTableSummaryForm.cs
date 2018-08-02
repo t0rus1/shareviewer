@@ -32,6 +32,13 @@ namespace ShareViewer
             dgViewBindingSource.Clear();
 
             stripText.Text = "";
+
+            LoadGrid();
+
+        }
+
+        private void LoadGrid()
+        {
             var task = Task.Run(() => GenerateAllTableSummaryForGrid(displayProgress, allSummaries));
             var awaiter = task.GetAwaiter();
             awaiter.OnCompleted(() =>
@@ -43,7 +50,6 @@ namespace ShareViewer
                 dgViewSummary.DataSource = dgViewBindingSource;
                 stripText.Text = $"{allSummaries.Count} shares summarised.";
             });
-
         }
 
         internal void displayProgress(int counter)
