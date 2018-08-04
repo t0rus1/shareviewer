@@ -56,6 +56,10 @@
       <DependentUpon>AllTableSummaryForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Calculations.cs" />
+    <Compile Include="DirectionAndTurningParam.cs" />
+    <Compile Include="DirectionAndTurningUI.cs" />
+    <Compile Include="FiveMinsGradientFigureParam.cs" />
+    <Compile Include="FiveMinsGradientFigureUI.cs" />
     <Compile Include="FiveMinutesPriceGradientsUI.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="InputBox.cs">
@@ -74,6 +78,7 @@
     </Compile>
     <Compile Include="LazyShareParam.cs" />
     <Compile Include="Overview.cs" />
+    <Compile Include="OverviewCalcs.cs" />
     <Compile Include="OverviewForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -277,10 +277,6 @@ namespace ShareViewer
                 Helper.Log("Error", "Failed to serialize. Reason: " + e.Message);
                 throw;
             }
-            //finally
-            //{
-            //    fs.Close();
-            //}
         }
 
         internal static ICollection<AllTable> DeserializeList<AllTable>(FileStream fs)
@@ -297,6 +293,23 @@ namespace ShareViewer
             //return the list of objects
             return list;
         }
+
+        internal static void SerializeOverviewRecord(FileStream fs, Overview overviewRec)
+        {
+            // Construct a BinaryFormatter and use it to serialize the data to the stream.
+            BinaryFormatter formatter = new BinaryFormatter();
+            try
+            {
+                formatter.Serialize(fs, overviewRec);
+            }
+            catch (SerializationException e)
+            {
+                Helper.Log("Error", "Failed to serialize. Reason: " + e.Message);
+                throw;
+            }
+        }
+
+
 
         //given a date, construct a file name like "YYYY_MM_DD.TXT"
         internal static string BuildDayDataFilename(DateTime date)

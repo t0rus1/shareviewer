@@ -25,6 +25,18 @@ namespace ShareViewer
                 aus.ParamsSlowPrice = new SlowPriceParam(100, 99999, 0, 0.9999, 100);
                 shouldSave = true;
             }
+            if (aus.ParamsDirectionAndTurning == null)
+            {
+                //not been set yet. set some defaults and save.
+                aus.ParamsDirectionAndTurning = new DirectionAndTurningParam(0.99999, 1.01000, 100000,1.0);
+                shouldSave = true;
+            }
+            if (aus.ParamsFiveMinsGradientFigure == null)
+            {
+                //not yet set
+                aus.ParamsFiveMinsGradientFigure = new FiveMinsGradientFigureParam(104, 999, 104, 1.0, 5.0, 1.0, 0, 0.0050, 0);
+                shouldSave = true;
+            }
             if (shouldSave)
             {
                 aus.Save();
@@ -69,7 +81,7 @@ namespace ShareViewer
             auditSummary = "".Split('\n');
             int numBands = endRow - startRow + 1; // normally 1040 bands = 10 days
 
-            if (bands.Count() == numBands && numBands > 2)
+            if (bands.Count() > 0 && numBands > 2)
             {
                 //we must skip startRow rows because 'Row' starts at -1
                 double totalFV = bands.Skip(startRow).Take(numBands).Sum(atRec => atRec.FV);
@@ -96,27 +108,6 @@ Result:
                 //throw new Exception("LazyShare: number of bands must be > 0");
             }
             return isLazy;
-        }
-
-        //This version of the LazyShare calculation expects to be passed ONLY a ten day
-        //batch of bands
-        internal static bool isLazyLast10Days(AllTable[] bands, LazyShareParam Z)
-        {
-            int numBands = bands.Count();
-            if (numBands == 1040)
-            {
-                double totalFV = bands.Sum(atRec => atRec.FV);
-                double numDays = numBands / 104; // should be 10
-                double avgDailyVolume = totalFV / numDays;
-                double effectivePrice = bands[numBands - 1].FP;
-                double VP = avgDailyVolume * effectivePrice;
-                return VP < Z.Setting;
-            }
-            else
-            {
-                throw new ArgumentException($"isLazyLast10Days needs 1040 FP bands, got {numBands}");
-            }
-
         }
 
         // Compute Slow prices per Gunther's notes
@@ -171,17 +162,17 @@ Result:
                     }
 
                 }
-                auditSummary = $@"{numBands} processed.\nPlease inspect the view for results.".Split('\n');
+                auditSummary = $"{numBands} processed.Please inspect the view for results.".Split('\n');
             }
             else
             {
-                auditSummary = $@"No bands to work with".Split('\n');
+                auditSummary = $"No bands to work with".Split('\n');
             }
 
         }
 
 
-        // Compute Slow prices per Gunther's notes
+        // Compute price gradients per Gunther's notes
         internal static void MakeFiveMinutesPriceGradients(ref AllTable[] bands, int startRow, int endRow, out string[] auditSummary)
         {
             auditSummary = new string[] { };
@@ -207,14 +198,57 @@ Result:
                         bands[f].PGd = bands[f].SPd / bands[f - 1].SPd;
                     }
                 }
-                auditSummary = $@"{numBands} processed.\nPlease inspect the view for results.".Split('\n');
+                auditSummary = $"{numBands} processed.\nPlease inspect the view for results.".Split('\n');
             }
             else
             {
-                auditSummary = $@"No bands to work with".Split('\n');
+                auditSummary = $"No bands to work with".Split('\n');
             }
 
         }
+
+        // Compute DirectionAndTurning per Gunther's notes
+        // startRow is normally 10298, endRow 10401
+        internal static void FindDirectionAndTurning(ref AllTable[] bands, DirectionAndTurningParam dtp, int startRow, int endRow, out string[] auditSummary)
+        {
+            auditSummary = new string[] { };
+            int numBands = endRow - startRow + 1;
+            if (numBands > 0)
+            {
+                if (bands[endRow].PGc > dtp.Z)
+                {
+                    bool jackPot = false;
+                    bands[endRow].PtsGradC += 0.1; // Direction
+                    //if any PGc from row 10298 till row 10400 is smaller than PGcThreshold
+                    for (int i = startRow; i < endRow; i++)  
+                    {
+                        if (bands[i].PGc < dtp.PGcThreshold)
+                        {
+                            jackPot = true;
+                            bands[i].PtsGradC += 3;
+                            auditSummary = $"The PGc value in row {endRow} ({bands[endRow].PGc}) DOES exceed Z ({dtp.Z})\nplus PGc value in row {i} ({bands[i].PGc}) IS < threshold ({dtp.PGcThreshold})\nPlease inspect the view for results.".Split('\n');
+                            break;
+                        }
+                    }
+                    if (!jackPot)
+                    {
+                        auditSummary = $"The PGc value in row {endRow} ({bands[endRow].PGc}) does exceed Z ({dtp.Z})\nBUT no PGc value in rows {startRow} to {endRow}  IS < threshold ({dtp.PGcThreshold})".Split('\n');
+                    }
+                }
+                else
+                {
+                    auditSummary = $"Last PGc value ({bands[endRow].PGc}) does NOT exceed Z ({dtp.Z})\nNo changes made.".Split('\n');
+                }
+            }
+        }
+
+        //Compute per Gunther's notes 
+        internal static void FindFiveMinsGradientsFigurePGF(ref AllTable[] atRows, FiveMinsGradientFigureParam calcFiveMinsGradientFigureParam, int v1, int v2, out string[] auditLines)
+        {
+            throw new NotImplementedException();
+        }
+
+
     }
 
 }

@@ -54,5 +54,14 @@
     <Setting Name="Holidays" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="OverviewViews" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ParamsDirectionAndTurning" Type="ShareViewer.DirectionAndTurningParam" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ParamsFiveMinsGradientFigure" Type="ShareViewer.FiveMinsGradientFigureParam" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

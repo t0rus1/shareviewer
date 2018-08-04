@@ -15,7 +15,7 @@ namespace ShareViewer
 {
     public partial class MainForm : Form
     {
-        public const String Version = "0.0.6";
+        public const String Version = "0.0.7";
         internal Properties.Settings appUserSettings;
         bool initializing = true;
         bool SuppressDaysBackChangeHandling = false; // when true, suppresses OnChangehandling
@@ -37,6 +37,7 @@ namespace ShareViewer
             CheckExtraFolderSettings();
             CheckAllTableFolderSettings();
             CheckAllTableViewsSettings(); // these views not used on main form, but best done upfront
+            CheckOverviewViewsSettings(); // these views not used on main form, but best done upfront
             CheckHolidaysSettings(); // ditto
             Calculations.InitializeAllShareCalculationParameters(appUserSettings);
 
@@ -52,6 +53,16 @@ namespace ShareViewer
             {
                 //not been set yet. set it to default and save.
                 appUserSettings.AllTableViews = new System.Collections.Specialized.StringCollection();
+                appUserSettings.Save();
+            }
+        }
+
+        private void CheckOverviewViewsSettings()
+        {
+            if (appUserSettings.OverviewViews == null)
+            {
+                //not been set yet. set it to default and save.
+                appUserSettings.OverviewViews = new System.Collections.Specialized.StringCollection();
                 appUserSettings.Save();
             }
         }

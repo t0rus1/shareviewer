@@ -188,5 +188,38 @@ namespace ShareViewer.Properties {
                 this["Holidays"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection OverviewViews {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["OverviewViews"]));
+            }
+            set {
+                this["OverviewViews"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::ShareViewer.DirectionAndTurningParam ParamsDirectionAndTurning {
+            get {
+                return ((global::ShareViewer.DirectionAndTurningParam)(this["ParamsDirectionAndTurning"]));
+            }
+            set {
+                this["ParamsDirectionAndTurning"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::ShareViewer.FiveMinsGradientFigureParam ParamsFiveMinsGradientFigure {
+            get {
+                return ((global::ShareViewer.FiveMinsGradientFigureParam)(this["ParamsFiveMinsGradientFigure"]));
+            }
+            set {
+                this["ParamsFiveMinsGradientFigure"] = value;
+            }
+        }
     }
 }

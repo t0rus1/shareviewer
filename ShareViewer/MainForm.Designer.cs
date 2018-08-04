@@ -49,6 +49,7 @@
             this.listBoxShareList = new System.Windows.Forms.ListBox();
             this.listBoxInhalt = new System.Windows.Forms.ListBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.buttonOverview = new System.Windows.Forms.Button();
             this.linkLabelSummary = new System.Windows.Forms.LinkLabel();
             this.listBoxSpannedHolidays = new System.Windows.Forms.ListBox();
             this.labelHolidays = new System.Windows.Forms.Label();
@@ -89,7 +90,6 @@
             this.toolTipShareList = new System.Windows.Forms.ToolTip(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
-            this.buttonOverview = new System.Windows.Forms.Button();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -389,6 +389,21 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(994, 215);
             this.panel1.TabIndex = 0;
+            // 
+            // buttonOverview
+            // 
+            this.buttonOverview.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonOverview.Image = ((System.Drawing.Image)(resources.GetObject("buttonOverview.Image")));
+            this.buttonOverview.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.buttonOverview.Location = new System.Drawing.Point(838, 139);
+            this.buttonOverview.Name = "buttonOverview";
+            this.buttonOverview.Size = new System.Drawing.Size(153, 43);
+            this.buttonOverview.TabIndex = 22;
+            this.buttonOverview.Text = "Overview";
+            this.buttonOverview.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonOverview.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.buttonOverview.UseVisualStyleBackColor = true;
+            this.buttonOverview.Click += new System.EventHandler(this.buttonOverview_Click);
             // 
             // linkLabelSummary
             // 
@@ -817,20 +832,6 @@
             this.stripText.Name = "stripText";
             this.stripText.Size = new System.Drawing.Size(22, 17);
             this.stripText.Text = "Ok";
-            // 
-            // buttonOverview
-            // 
-            this.buttonOverview.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonOverview.Image = ((System.Drawing.Image)(resources.GetObject("buttonOverview.Image")));
-            this.buttonOverview.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.buttonOverview.Location = new System.Drawing.Point(838, 139);
-            this.buttonOverview.Name = "buttonOverview";
-            this.buttonOverview.Size = new System.Drawing.Size(153, 43);
-            this.buttonOverview.TabIndex = 22;
-            this.buttonOverview.Text = "Overview";
-            this.buttonOverview.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-            this.buttonOverview.UseVisualStyleBackColor = true;
-            this.buttonOverview.Click += new System.EventHandler(this.buttonOverview_Click);
             // 
             // MainForm
             // 
