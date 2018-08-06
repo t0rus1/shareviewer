@@ -28,7 +28,7 @@ namespace ShareViewer
             if (aus.ParamsDirectionAndTurning == null)
             {
                 //not been set yet. set some defaults and save.
-                aus.ParamsDirectionAndTurning = new DirectionAndTurningParam(0.99999, 1.01000, 100000,1.0);
+                aus.ParamsDirectionAndTurning = new DirectionAndTurningParam(0.99999, 1.01000, 100000, 1.0);
                 shouldSave = true;
             }
             if (aus.ParamsFiveMinsGradientFigure == null)
@@ -41,7 +41,7 @@ namespace ShareViewer
             {
                 aus.Save();
             }
-            
+
 
         }
 
@@ -87,7 +87,7 @@ namespace ShareViewer
                 double totalFV = bands.Skip(startRow).Take(numBands).Sum(atRec => atRec.FV);
                 double numDays = numBands / 104; // there are 104 bands per day
                 double avgDailyVolume = totalFV / numDays;
-                double effectivePrice = bands[numBands-1].FP;
+                double effectivePrice = bands[numBands - 1].FP;
                 double VP = avgDailyVolume * effectivePrice;
                 isLazy = VP < Z.Setting;
                 auditSummary =
@@ -122,43 +122,43 @@ Result:
                 //init slow prices to 1 in the starting row
                 bands[startRow].SPa = 1; bands[startRow].SPb = 1; bands[startRow].SPc = 1; bands[startRow].SPd = 1;
 
-                for (int f = startRow+1; f <= endRow; f++)
+                for (int f = startRow + 1; f <= endRow; f++)
                 {
                     //SPa,Ya
-                    if (bands[f].FP >= bands[f-1].SPa )
+                    if (bands[f].FP >= bands[f - 1].SPa)
                     {
-                        bands[f].SPa = bands[f-1].SPa + Math.Pow(spp.Z*(bands[f].FP-bands[f-1].SPa),spp.Ya)/spp.Z; //Z wont be zero
+                        bands[f].SPa = bands[f - 1].SPa + Math.Pow(spp.Z * (bands[f].FP - bands[f - 1].SPa), spp.Ya) / spp.Z; //Z wont be zero
                     }
                     else
                     {
-                        bands[f].SPa = bands[f-1].SPa - Math.Pow(spp.Z*(bands[f-1].SPa-bands[f].FP),spp.Ya)/spp.Z; 
+                        bands[f].SPa = bands[f - 1].SPa - Math.Pow(spp.Z * (bands[f - 1].SPa - bands[f].FP), spp.Ya) / spp.Z;
                     }
                     //SPb,Yb
-                    if (bands[f].FP >= bands[f-1].SPb)
+                    if (bands[f].FP >= bands[f - 1].SPb)
                     {
-                        bands[f].SPb = bands[f-1].SPb + Math.Pow(spp.Z*(bands[f].FP-bands[f-1].SPb), spp.Yb)/spp.Z; //Z wont be zero
+                        bands[f].SPb = bands[f - 1].SPb + Math.Pow(spp.Z * (bands[f].FP - bands[f - 1].SPb), spp.Yb) / spp.Z; //Z wont be zero
                     }
                     else
                     {
-                        bands[f].SPb = bands[f-1].SPb - Math.Pow(spp.Z*(bands[f-1].SPb-bands[f].FP), spp.Yb)/spp.Z;
+                        bands[f].SPb = bands[f - 1].SPb - Math.Pow(spp.Z * (bands[f - 1].SPb - bands[f].FP), spp.Yb) / spp.Z;
                     }
                     //SPc,Yc
-                    if (bands[f].FP >= bands[f-1].SPc)
+                    if (bands[f].FP >= bands[f - 1].SPc)
                     {
-                        bands[f].SPc = bands[f-1].SPc + Math.Pow(spp.Z*(bands[f].FP - bands[f-1].SPc), spp.Yc)/spp.Z; //Z wont be zero
+                        bands[f].SPc = bands[f - 1].SPc + Math.Pow(spp.Z * (bands[f].FP - bands[f - 1].SPc), spp.Yc) / spp.Z; //Z wont be zero
                     }
                     else
                     {
-                        bands[f].SPc = bands[f-1].SPc - Math.Pow(spp.Z*(bands[f-1].SPc - bands[f].FP), spp.Yc)/spp.Z;
+                        bands[f].SPc = bands[f - 1].SPc - Math.Pow(spp.Z * (bands[f - 1].SPc - bands[f].FP), spp.Yc) / spp.Z;
                     }
                     //SPd,Yd
-                    if (bands[f].FP >= bands[f-1].SPd)
+                    if (bands[f].FP >= bands[f - 1].SPd)
                     {
-                        bands[f].SPd = bands[f-1].SPd + Math.Pow(spp.Z*(bands[f].FP - bands[f-1].SPd), spp.Yd)/spp.Z; //Z wont be zero
+                        bands[f].SPd = bands[f - 1].SPd + Math.Pow(spp.Z * (bands[f].FP - bands[f - 1].SPd), spp.Yd) / spp.Z; //Z wont be zero
                     }
                     else
                     {
-                        bands[f].SPd = bands[f-1].SPd - Math.Pow(spp.Z*(bands[f-1].SPd - bands[f].FP), spp.Yd)/spp.Z;
+                        bands[f].SPd = bands[f - 1].SPd - Math.Pow(spp.Z * (bands[f - 1].SPd - bands[f].FP), spp.Yd) / spp.Z;
                     }
 
                 }
@@ -179,9 +179,9 @@ Result:
             int numBands = endRow - startRow + 1;
             if (numBands > 0)
             {
-                for (int f = startRow; f <= endRow; f++)
+                for (int f = startRow+1; f <= endRow; f++)
                 {
-                    if (bands[f-1].SPa != 0)
+                    if (bands[f - 1].SPa != 0)
                     {
                         bands[f].PGa = bands[f].SPa / bands[f - 1].SPa;
                     }
@@ -220,7 +220,7 @@ Result:
                     bool jackPot = false;
                     bands[endRow].PtsGradC += 0.1; // Direction
                     //if any PGc from row 10298 till row 10400 is smaller than PGcThreshold
-                    for (int i = startRow; i < endRow; i++)  
+                    for (int i = startRow; i < endRow; i++)
                     {
                         if (bands[i].PGc < dtp.PGcThreshold)
                         {
@@ -243,12 +243,96 @@ Result:
         }
 
         //Compute per Gunther's notes 
-        internal static void FindFiveMinsGradientsFigurePGF(ref AllTable[] atRows, FiveMinsGradientFigureParam calcFiveMinsGradientFigureParam, int v1, int v2, out string[] auditLines)
+        internal static void FindFiveMinsGradientsFigurePGF(ref AllTable[] atRows, FiveMinsGradientFigureParam calcFiveMinsGradientFigureParam, int startRow, int endRow, out string[] auditSummary)
         {
-            throw new NotImplementedException();
+            auditSummary = new string[] { };
+
+            //prefill APpg column 13 with 1's
+            for (int i = startRow; i <= endRow; i++)  // 10298 -> 10401
+            {
+                atRows[i].APpg = 1;
+            }
+            //col 15
+            for (int i = startRow; i <= endRow; i++)  // 10298 -> 10401
+            {
+                atRows[i].PGFrowx15 = atRows[i].PGa / atRows[i].APpg;
+            }
+            //col16
+            for (int i = startRow; i <= endRow - 1; i++)  // 1029 -> 10400
+            {
+                atRows[i].PGFrowx16 = (atRows[i].PGa * atRows[i + 1].PGa) / atRows[i].APpg;
+            }
+            //col17
+            for (int i = startRow; i <= endRow - 2; i++)  // 1029 -> 10399
+            {
+                atRows[i].PGFrowx17 = (atRows[i].PGa * atRows[i + 1].PGa * atRows[i + 2].PGa) / atRows[i].APpg;
+            }
+            auditSummary = $"Columns APpg, PGFrowx15, PGFrowx16, PGFrowx17 filled from row {startRow}-{endRow}.\nPlease inspect the view".Split('\n');
+
+            // from Gunther
+            //2) look in the fields of columns 15 to17 and the last Z rows for the biggest figure. Z = 104 … 999  	
+            //   Z is a variable the user can choose.
+
+            //find biggest figure in last Z rows amongst PGFrowx15, PGFrowx16, PGFrowx17
+            double biggest = 0;
+            int rowBig = -1;
+            for (int i = endRow-(calcFiveMinsGradientFigureParam.Z-1); i <= endRow; i++)
+            {
+                if (atRows[i].PGFrowx15 > biggest)
+                {
+                    biggest = atRows[i].PGFrowx15;
+                    rowBig = i;
+                }
+                if (atRows[i].PGFrowx16 > biggest)
+                {
+                    biggest = atRows[i].PGFrowx16;
+                    rowBig = i;
+                }
+                if (atRows[i].PGFrowx17 > biggest)
+                {
+                    biggest = atRows[i].PGFrowx17;
+                    rowBig = i;
+                }
+            }
+            if (biggest > 1.0)
+            {
+                for (int i = rowBig; i <= endRow; i++)
+                {
+                    atRows[i].APpg *= (1 + calcFiveMinsGradientFigureParam.Y);
+                }
+            }
+            else
+            {
+                for (int i = rowBig; i <= endRow; i++)
+                {
+                    atRows[i].APpg *= Math.Pow(1 - calcFiveMinsGradientFigureParam.Y,calcFiveMinsGradientFigureParam.X);
+                }
+            }
+
+
+        }
+
+        // Performs the full series of Calculations
+        internal static void PerformShareCalculations(Share share, AllTable[] atSegment)
+        {
+            var slowPriceParams = Helper.GetAppUserSettings().ParamsSlowPrice;
+            Calculations.MakeSlowPrices(ref atSegment, slowPriceParams, 2, 10401, out string[] auditSummary);
+
+            Calculations.MakeFiveMinutesPriceGradients(ref atSegment, 2, 10401, out auditSummary);
+
+            var directionAndTurningParams = Helper.GetAppUserSettings().ParamsDirectionAndTurning;
+            Calculations.FindDirectionAndTurning(ref atSegment, directionAndTurningParams, 10298, 10401, out auditSummary);
+
+            var fiveMinsGradientFigParam = Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure;
+            Calculations.FindFiveMinsGradientsFigurePGF(ref atSegment, fiveMinsGradientFigParam, 10298, 10401, out auditSummary);
+
         }
 
 
+
+
+
     }
+
 
 }

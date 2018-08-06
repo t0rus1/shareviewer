@@ -19,8 +19,6 @@ namespace ShareViewer
     public partial class SingleAllTableForm : Form
     {
         private string _allTableFilename;
-        //private ICollection<AllTable> atRows;
-        //private List<AllTable> atRows;
         private AllTable[] atRows;
 
         private VerticalMode _verticalMode = VerticalMode.FiveMinly;
@@ -30,6 +28,7 @@ namespace ShareViewer
         private bool _loaded = false;
         private bool _loadingCols = false;
         private bool _changingColumns = false;
+        private bool _calculatingToHere = false;
 
         // CALCULATIONS
 
@@ -168,11 +167,16 @@ namespace ShareViewer
             var auditLines = new string[] { "" };
             labelLazy.Visible = Calculations.LazyShare(atRows.ToArray(), CurrLazyShareParam, 9362, 10401, out auditLines);
 
+            MarkRowOne();
+
+            _loaded = true;
+        }
+
+        private void MarkRowOne()
+        {
             //mark row 1 with a standout colour
             dgView.Rows[1].DefaultCellStyle.ForeColor = Color.Blue;
             dgView.Rows[1].DefaultCellStyle.BackColor = Color.Azure;
-
-            _loaded = true;
         }
 
         //Retrieve views from User settings and load the Views Combobox
@@ -238,6 +242,7 @@ namespace ShareViewer
             dgView.DataSource = dgViewBindingSource;
 
             Cursor.Current = Cursors.Default;
+
             dgView.Focus();
 
         }
@@ -251,9 +256,10 @@ namespace ShareViewer
             {
                 //slurp in the previously saved file of AllTable records
                 atRows = Helper.DeserializeList<AllTable>(fs).ToArray();
-                //copy row 10401 (if possible) to row 1 as per Gunther
-                Helper.CopySourceToTargetAllTableRow(atRows, 10401, 1);
 
+                //copy row 10401 (if possible) to row 1 as per Gunther
+                AllTable.CopySourceToTargetAllTableRow(atRows, 10401, 1);
+                //fix Row
                 atRows[1].Row = 1;
 
                 if (vertMode == VerticalMode.FiveMinly)
@@ -413,6 +419,7 @@ namespace ShareViewer
         {
             //revert the databinding to initial full set of rows
             BindDatagridView(VerticalMode.FiveMinly);
+            MarkRowOne();
         }
 
         private void radioHours_CheckedChanged(object sender, EventArgs e)
@@ -454,6 +461,7 @@ namespace ShareViewer
         {
             string viewName = ((ComboBox)sender).Text;
             SetView(viewName);
+            MarkRowOne();
         }
 
         //Gets invoked when either user has chosen a View, or a Calculation which requires a view.
@@ -608,30 +616,43 @@ namespace ShareViewer
                 case "Identify Lazy Shares":
                     Calculations.LazyShare(atRows, CalcLazyShareParam, 9362, 10401,  out auditLines);
                     calcAuditTextBox.Lines = auditLines;
+                    //move to row 9362 (10 days from end of range)
+                    dgViewBindingSource.Position = 9362;
+                    dgView.FirstDisplayedScrollingRowIndex = 9362;
                     break;
                 case "Make Slow (Five minutes) Prices SP":
-                    Calculations.MakeSlowPrices(ref atRows, CalcSlowPriceParam, 1, 10401, out auditLines);
+                    Calculations.MakeSlowPrices(ref atRows, CalcSlowPriceParam, 2, 10401, out auditLines);
                     calcAuditTextBox.Lines = auditLines;
                     // atRows must be re-bound to the DataGridView
                     BindDataGridViewToResults(determineVerticalMode());
+                    MarkRowOne();
                     break;
                 case "Make Five minutes Price Gradients PG":
-                    Calculations.MakeFiveMinutesPriceGradients(ref atRows, 1, 10401, out auditLines);
+                    Calculations.MakeFiveMinutesPriceGradients(ref atRows, 2, 10401, out auditLines);
                     calcAuditTextBox.Lines = auditLines;
                     // atRows must be re-bound to the DataGridView
                     BindDataGridViewToResults(determineVerticalMode());
+                    MarkRowOne();
                     break;
                 case "Find direction and Turning":
                     Calculations.FindDirectionAndTurning(ref atRows, CalcDirectionAndTurningParam, 10298, 10401, out auditLines);
                     calcAuditTextBox.Lines = auditLines;
                     // atRows must be re-bound to the DataGridView
                     BindDataGridViewToResults(determineVerticalMode());
+                    MarkRowOne();
+                    //move to row 10298 (09:00:00 of last day)
+                    dgViewBindingSource.Position = 10298;
+                    dgView.FirstDisplayedScrollingRowIndex = 10298;
                     break;
                 case "Find Five minutes Gradients Figure PGF":
                     Calculations.FindFiveMinsGradientsFigurePGF(ref atRows, CalcFiveMinsGradientFigureParam, 10298, 10401, out auditLines);
                     calcAuditTextBox.Lines = auditLines;
                     // atRows must be re-bound to the DataGridView
                     BindDataGridViewToResults(determineVerticalMode());
+                    MarkRowOne();
+                    //move to row 10298 (09:00:00 of last day)
+                    dgViewBindingSource.Position = 10298;
+                    dgView.FirstDisplayedScrollingRowIndex = 10298;
                     break;
 
 
@@ -673,6 +694,9 @@ namespace ShareViewer
         //and invoke a View by the same name as that of the Calculation
         private void listBoxVariables_SelectedIndexChanged(object sender, EventArgs e)
         {
+            //duck away if we're doing a 'calc to here' run
+            if (_calculatingToHere) return;
+
             var affirmNumRows = $"There are {atRows.Count()} records in this All-Table";
             stripText.Text = affirmNumRows;
 
@@ -693,6 +717,8 @@ namespace ShareViewer
 
             MediateCalculation(calculation);
 
+            dgView.Focus();
+
         }
 
         private void MediateCalculation(string calculation)
@@ -711,8 +737,8 @@ namespace ShareViewer
                     groupBoxParams.Controls.Add(btnPairLazy[1]);
                     groupBoxParams.Controls.Add(calcAuditTextBox);
                     //move to row 9362 (10 days from end of range)
-                    dgViewBindingSource.Position = 9362;
-                    dgView.FirstDisplayedScrollingRowIndex = 9362;
+                    //dgViewBindingSource.Position = 9362;
+                    //dgView.FirstDisplayedScrollingRowIndex = 9362;
                     break;
 
                 case "Make Slow (Five minutes) Prices SP":
@@ -731,9 +757,6 @@ namespace ShareViewer
                     groupBoxParams.Controls.Add(btnPairSlow[0]);
                     groupBoxParams.Controls.Add(btnPairSlow[1]);
                     groupBoxParams.Controls.Add(calcAuditTextBox);
-                    //move to row 9362 (10 days from end of range)
-                    //dgViewBindingSource.Position = 9362;
-                    //dgView.FirstDisplayedScrollingRowIndex = 9362;
                     break;
                 case "Make Five minutes Price Gradients PG":
                     var propGridPg = FiveMinutesPriceGradientsUI.PropertyGridParams(groupBoxParams.Height - 20);
@@ -756,8 +779,8 @@ namespace ShareViewer
                     groupBoxParams.Controls.Add(btnPairDandT[1]);
                     groupBoxParams.Controls.Add(calcAuditTextBox);
                     //move to row 10298 (09:00:00 of last day)
-                    dgViewBindingSource.Position = 10298;
-                    dgView.FirstDisplayedScrollingRowIndex = 10298;
+                    //dgViewBindingSource.Position = 10298;
+                    //dgView.FirstDisplayedScrollingRowIndex = 10298;
                     break;
                 case "Find Five minutes Gradients Figure PGF":
                     CalcFiveMinsGradientFigureParam = new FiveMinsGradientFigureParam(
@@ -779,8 +802,8 @@ namespace ShareViewer
                     groupBoxParams.Controls.Add(btnPairFiveMinsPGF[1]);
                     groupBoxParams.Controls.Add(calcAuditTextBox);
                     //move to row 10298 (09:00:00 of last day)
-                    dgViewBindingSource.Position = 10298;
-                    dgView.FirstDisplayedScrollingRowIndex = 10298;
+                    //dgViewBindingSource.Position = 10298;
+                    //dgView.FirstDisplayedScrollingRowIndex = 10298;
                     break;
 
 
@@ -799,6 +822,83 @@ namespace ShareViewer
                 default:
                     break;
             }
+        }
+
+        private async void linkLabelCalcToHere_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            //stripText.Text = "";
+            _calculatingToHere = true;
+            int currSelectedIndex = listBoxVariables.SelectedIndex;
+            int calcsPerformed = 0;
+            int scrollToPos = 0;
+            for (int i = 1; i < currSelectedIndex; i++)
+            {
+                listBoxVariables.SelectedIndex = i;
+                string[] auditLines;
+
+                string calculation = (string)listBoxVariables.SelectedItem;
+                switch (calculation)
+                {
+                    case "Identify Lazy Shares":
+                        stripText.Text = $"{i}...";
+                        await Task.Run(() => Calculations.LazyShare(atRows, Helper.GetAppUserSettings().ParamsLazyShare, 9362, 10401, out auditLines));
+                        stripText.Text += $"{i} done, ";
+                        calcsPerformed++;
+                        scrollToPos = 9362;
+                        break;
+                    case "Make Slow (Five minutes) Prices SP":
+                        stripText.Text += $"{i}...";
+                        await Task.Run(()=>Calculations.MakeSlowPrices(ref atRows, Helper.GetAppUserSettings().ParamsSlowPrice, 2, 10401, out auditLines));
+                        stripText.Text += $"{i} done, ";
+                        calcsPerformed++;
+                        break;
+                    case "Make Five minutes Price Gradients PG":
+                        stripText.Text += $"{i}...";
+                        await Task.Run(()=>Calculations.MakeFiveMinutesPriceGradients(ref atRows, 2, 10401, out auditLines));
+                        stripText.Text += $"{i} done, ";
+                        calcsPerformed++;
+                        break;
+                    case "Find direction and Turning":
+                        stripText.Text += $"{i}...";
+                        await Task.Run(()=>Calculations.FindDirectionAndTurning(ref atRows, Helper.GetAppUserSettings().ParamsDirectionAndTurning, 10298, 10401, out auditLines));
+                        stripText.Text += $"{i} done, ";
+                        scrollToPos = 10298;
+                        break;
+                    case "Find Five minutes Gradients Figure PGF":
+                        stripText.Text += $"{i}...";
+                        await Task.Run(()=>Calculations.FindFiveMinsGradientsFigurePGF(ref atRows, Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure, 10298, 10401, out auditLines));
+                        stripText.Text += $"{i} done, ";
+                        calcsPerformed++;
+                        scrollToPos = 10298;
+                        break;
+
+                    case "Related volume Figure (RPGFV) of biggest PGF":
+                        break;
+                    case "Make High Line HL":
+                        break;
+                    case "Make Low Line LL":
+                        break;
+                    case "Make Slow Volumes SV":
+                        break;
+                    case "Slow Volume Figure SVFac":
+                        break;
+                    case "Slow Volume Figure SVFbd":
+                        break;
+                    default:
+                        break;
+                }
+            }
+            if (calcsPerformed > 0)
+            {
+                BindDataGridViewToResults(determineVerticalMode());
+                dgViewBindingSource.Position = scrollToPos;
+                dgView.FirstDisplayedScrollingRowIndex = scrollToPos;
+            }
+            else
+            {
+                stripText.Text = "No calculations performed.";
+            }
+            _calculatingToHere = false;
         }
     }
 }

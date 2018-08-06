@@ -28,31 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OverviewForm));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
             this.panelLeft = new System.Windows.Forms.Panel();
             this.listBoxCols = new System.Windows.Forms.ListBox();
             this.panelTop = new System.Windows.Forms.Panel();
-            this.linkLabelLock = new System.Windows.Forms.LinkLabel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.linkLabelSaveView = new System.Windows.Forms.LinkLabel();
-            this.comboBoxViews = new System.Windows.Forms.ComboBox();
-            this.dgOverview = new System.Windows.Forms.DataGridView();
-            this.linkLabelLazy = new System.Windows.Forms.LinkLabel();
+            this.buttonCalcAll = new System.Windows.Forms.Button();
             this.groupBoxCalculations = new System.Windows.Forms.GroupBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripCalcs = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBoxParams = new System.Windows.Forms.GroupBox();
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
             this.listBoxVariables = new System.Windows.Forms.ListBox();
+            this.linkLabelLazy = new System.Windows.Forms.LinkLabel();
+            this.comboBoxViews = new System.Windows.Forms.ComboBox();
+            this.linkLabelSaveView = new System.Windows.Forms.LinkLabel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.linkLabelLock = new System.Windows.Forms.LinkLabel();
+            this.dgOverview = new System.Windows.Forms.DataGridView();
             this.statusStrip.SuspendLayout();
             this.panelLeft.SuspendLayout();
             this.panelTop.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgOverview)).BeginInit();
             this.groupBoxCalculations.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBoxParams.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgOverview)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip
@@ -93,6 +96,7 @@
             // 
             // panelTop
             // 
+            this.panelTop.Controls.Add(this.buttonCalcAll);
             this.panelTop.Controls.Add(this.groupBoxCalculations);
             this.panelTop.Controls.Add(this.linkLabelLazy);
             this.panelTop.Controls.Add(this.comboBoxViews);
@@ -105,81 +109,18 @@
             this.panelTop.Size = new System.Drawing.Size(992, 211);
             this.panelTop.TabIndex = 5;
             // 
-            // linkLabelLock
+            // buttonCalcAll
             // 
-            this.linkLabelLock.AutoSize = true;
-            this.linkLabelLock.Location = new System.Drawing.Point(3, 10);
-            this.linkLabelLock.Name = "linkLabelLock";
-            this.linkLabelLock.Size = new System.Drawing.Size(52, 13);
-            this.linkLabelLock.TabIndex = 17;
-            this.linkLabelLock.TabStop = true;
-            this.linkLabelLock.Text = "lock view";
-            this.linkLabelLock.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelLock_LinkClicked);
-            // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 140);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(222, 13);
-            this.label1.TabIndex = 18;
-            this.label1.Text = "<-- ctrl-click to add/remove columns (not shift)";
-            // 
-            // linkLabelSaveView
-            // 
-            this.linkLabelSaveView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.linkLabelSaveView.AutoSize = true;
-            this.linkLabelSaveView.Location = new System.Drawing.Point(6, 159);
-            this.linkLabelSaveView.Name = "linkLabelSaveView";
-            this.linkLabelSaveView.Size = new System.Drawing.Size(93, 13);
-            this.linkLabelSaveView.TabIndex = 19;
-            this.linkLabelSaveView.TabStop = true;
-            this.linkLabelSaveView.Text = "Save current view";
-            this.linkLabelSaveView.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelSaveView_LinkClicked);
-            // 
-            // comboBoxViews
-            // 
-            this.comboBoxViews.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.comboBoxViews.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBoxViews.FormattingEnabled = true;
-            this.comboBoxViews.Items.AddRange(new object[] {
-            "Initial"});
-            this.comboBoxViews.Location = new System.Drawing.Point(6, 181);
-            this.comboBoxViews.Name = "comboBoxViews";
-            this.comboBoxViews.Size = new System.Drawing.Size(219, 24);
-            this.comboBoxViews.Sorted = true;
-            this.comboBoxViews.TabIndex = 20;
-            this.comboBoxViews.Text = "Views";
-            this.comboBoxViews.SelectedIndexChanged += new System.EventHandler(this.comboBoxViews_SelectedIndexChanged);
-            // 
-            // dgOverview
-            // 
-            this.dgOverview.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgOverview.DefaultCellStyle = dataGridViewCellStyle5;
-            this.dgOverview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgOverview.Location = new System.Drawing.Point(165, 211);
-            this.dgOverview.Name = "dgOverview";
-            this.dgOverview.Size = new System.Drawing.Size(992, 454);
-            this.dgOverview.TabIndex = 6;
-            // 
-            // linkLabelLazy
-            // 
-            this.linkLabelLazy.AutoSize = true;
-            this.linkLabelLazy.Location = new System.Drawing.Point(7, 42);
-            this.linkLabelLazy.Name = "linkLabelLazy";
-            this.linkLabelLazy.Size = new System.Drawing.Size(90, 13);
-            this.linkLabelLazy.TabIndex = 21;
-            this.linkLabelLazy.TabStop = true;
-            this.linkLabelLazy.Text = "Hide Lazy Shares";
-            this.linkLabelLazy.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelLazy_LinkClicked);
+            this.buttonCalcAll.Image = ((System.Drawing.Image)(resources.GetObject("buttonCalcAll.Image")));
+            this.buttonCalcAll.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.buttonCalcAll.Location = new System.Drawing.Point(10, 69);
+            this.buttonCalcAll.Name = "buttonCalcAll";
+            this.buttonCalcAll.Size = new System.Drawing.Size(187, 65);
+            this.buttonCalcAll.TabIndex = 1;
+            this.buttonCalcAll.Text = "(re)Calculate for All Shares";
+            this.buttonCalcAll.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.buttonCalcAll.UseVisualStyleBackColor = true;
+            this.buttonCalcAll.Click += new System.EventHandler(this.buttonCalcAll_Click);
             // 
             // groupBoxCalculations
             // 
@@ -198,7 +139,8 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1});
+            this.toolStripStatusLabel1,
+            this.toolStripCalcs});
             this.statusStrip1.Location = new System.Drawing.Point(3, 183);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(737, 22);
@@ -209,6 +151,12 @@
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
+            // 
+            // toolStripCalcs
+            // 
+            this.toolStripCalcs.Name = "toolStripCalcs";
+            this.toolStripCalcs.Size = new System.Drawing.Size(22, 17);
+            this.toolStripCalcs.Text = "Ok";
             // 
             // groupBoxParams
             // 
@@ -237,6 +185,83 @@
             this.listBoxVariables.TabIndex = 11;
             this.listBoxVariables.SelectedIndexChanged += new System.EventHandler(this.listBoxVariables_SelectedIndexChanged);
             // 
+            // linkLabelLazy
+            // 
+            this.linkLabelLazy.AutoSize = true;
+            this.linkLabelLazy.Location = new System.Drawing.Point(7, 42);
+            this.linkLabelLazy.Name = "linkLabelLazy";
+            this.linkLabelLazy.Size = new System.Drawing.Size(90, 13);
+            this.linkLabelLazy.TabIndex = 21;
+            this.linkLabelLazy.TabStop = true;
+            this.linkLabelLazy.Text = "Hide Lazy Shares";
+            this.linkLabelLazy.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelLazy_LinkClicked);
+            // 
+            // comboBoxViews
+            // 
+            this.comboBoxViews.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.comboBoxViews.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBoxViews.FormattingEnabled = true;
+            this.comboBoxViews.Items.AddRange(new object[] {
+            "Initial"});
+            this.comboBoxViews.Location = new System.Drawing.Point(6, 181);
+            this.comboBoxViews.Name = "comboBoxViews";
+            this.comboBoxViews.Size = new System.Drawing.Size(219, 24);
+            this.comboBoxViews.Sorted = true;
+            this.comboBoxViews.TabIndex = 20;
+            this.comboBoxViews.Text = "Views";
+            this.comboBoxViews.SelectedIndexChanged += new System.EventHandler(this.comboBoxViews_SelectedIndexChanged);
+            // 
+            // linkLabelSaveView
+            // 
+            this.linkLabelSaveView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.linkLabelSaveView.AutoSize = true;
+            this.linkLabelSaveView.Location = new System.Drawing.Point(6, 159);
+            this.linkLabelSaveView.Name = "linkLabelSaveView";
+            this.linkLabelSaveView.Size = new System.Drawing.Size(93, 13);
+            this.linkLabelSaveView.TabIndex = 19;
+            this.linkLabelSaveView.TabStop = true;
+            this.linkLabelSaveView.Text = "Save current view";
+            this.linkLabelSaveView.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelSaveView_LinkClicked);
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(3, 140);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(222, 13);
+            this.label1.TabIndex = 18;
+            this.label1.Text = "<-- ctrl-click to add/remove columns (not shift)";
+            // 
+            // linkLabelLock
+            // 
+            this.linkLabelLock.AutoSize = true;
+            this.linkLabelLock.Location = new System.Drawing.Point(3, 10);
+            this.linkLabelLock.Name = "linkLabelLock";
+            this.linkLabelLock.Size = new System.Drawing.Size(52, 13);
+            this.linkLabelLock.TabIndex = 17;
+            this.linkLabelLock.TabStop = true;
+            this.linkLabelLock.Text = "lock view";
+            this.linkLabelLock.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelLock_LinkClicked);
+            // 
+            // dgOverview
+            // 
+            this.dgOverview.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgOverview.DefaultCellStyle = dataGridViewCellStyle1;
+            this.dgOverview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgOverview.Location = new System.Drawing.Point(165, 211);
+            this.dgOverview.Name = "dgOverview";
+            this.dgOverview.Size = new System.Drawing.Size(992, 454);
+            this.dgOverview.TabIndex = 6;
+            this.dgOverview.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgOverview_CellDoubleClick);
+            // 
             // OverviewForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -255,12 +280,12 @@
             this.panelLeft.ResumeLayout(false);
             this.panelTop.ResumeLayout(false);
             this.panelTop.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgOverview)).EndInit();
             this.groupBoxCalculations.ResumeLayout(false);
             this.groupBoxCalculations.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.groupBoxParams.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgOverview)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -285,5 +310,7 @@
         private System.Windows.Forms.GroupBox groupBoxParams;
         private System.Windows.Forms.PropertyGrid propertyGrid1;
         private System.Windows.Forms.ListBox listBoxVariables;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripCalcs;
+        private System.Windows.Forms.Button buttonCalcAll;
     }
 }

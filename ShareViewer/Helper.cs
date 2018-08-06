@@ -519,36 +519,6 @@ namespace ShareViewer
 
         }
 
-        //Copies contents of one All-Table row to another. 
-        //Note: It may be necessary to 'fix' the target Row property afterwards
-        internal static void CopySourceToTargetAllTableRow(AllTable[] atRows, uint sourceRow, uint targetRow)
-        {
-            if ((atRows.Count() > sourceRow) && (atRows.Count() > targetRow))
-            {
-                foreach (PropertyInfo property in typeof(AllTable).GetProperties())
-                {
-                    property.SetValue(atRows[targetRow], property.GetValue(atRows[sourceRow], null), null);
-                }
-            }
-        }
-
-        //Returns a consecutive run of AllTable rows from the passed in AllTable file
-        //eg skip 10297, take 105 will return rows 10297 to the end of the 100 trading day file.
-        //Remember the Row starts at 0.
-        //Row 10297 is actually the last timeband of the penultimate day
-        //while the remaining rows 10298 thru 10401 represent the 104 five-minute bands of the last day
-        internal static AllTable[] GetAllTableSegment(string allTableFileName, int skip, int take)
-        {
-            AllTable[] sharesSegment = new AllTable[take];
-
-            using (FileStream fs = new FileStream(allTableFileName, FileMode.Open))
-            {
-                //slurp in the last 105 rows
-                sharesSegment = Helper.DeserializeList<AllTable>(fs).Skip(skip).Take(take).ToArray();
-            }
-            return sharesSegment;
-        }
-
 
     }
 }

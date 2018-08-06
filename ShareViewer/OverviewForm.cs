@@ -23,20 +23,20 @@ namespace ShareViewer
 
         internal TextBox calcAuditTextBox;
         //CURRENT properties
-        //get our current LazyShare parameters from user settings
-        //private LazyShareParam currLazyShareParam;
         internal LazyShareParam CurrLazyShareParam { get => Helper.GetAppUserSettings().ParamsLazyShare; }
-        //get our current SlowPrice parameters from user settings
-        //private SlowPriceParam currSlowPriceParam;
         internal SlowPriceParam CurrSlowPriceParam { get => Helper.GetAppUserSettings().ParamsSlowPrice; }
+        internal DirectionAndTurningParam CurrDirectionAndTurningParam { get => Helper.GetAppUserSettings().ParamsDirectionAndTurning; }
+        internal FiveMinsGradientFigureParam CurrFiveMinsGradientFigureParam { get => Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure; }
 
         //CALCULATION properties (we bind these to a property grid)
         private LazyShareParam calcLazyShareParam;
-        internal LazyShareParam CalcLazyShareParam { get => calcLazyShareParam; set => calcLazyShareParam = value; }
         private SlowPriceParam calcSlowPriceParam;
+        private DirectionAndTurningParam calcDirectionAndTurningParam;
+        private FiveMinsGradientFigureParam calcFiveMinsGradientFigureParam;
+        internal LazyShareParam CalcLazyShareParam { get => calcLazyShareParam; set => calcLazyShareParam = value; }
         internal SlowPriceParam CalcSlowPriceParam { get => calcSlowPriceParam; set => calcSlowPriceParam = value; }
-
-
+        internal DirectionAndTurningParam CalcDirectionAndTurningParam { get => calcDirectionAndTurningParam; set => calcDirectionAndTurningParam = value; }
+        internal FiveMinsGradientFigureParam CalcFiveMinsGradientFigureParam { get => calcFiveMinsGradientFigureParam; set => calcFiveMinsGradientFigureParam = value; }
 
         public OverviewForm()
         {
@@ -93,8 +93,8 @@ namespace ShareViewer
             dgOverview.AllowUserToResizeColumns = true;
 
             //disable form until grid is loaded
-            this.Enabled = false;
-            BindDatagridView();
+            //this.Enabled = false;
+            //BindDatagridView();
 
             SelectInitialColumnsToView();
 
@@ -123,26 +123,31 @@ namespace ShareViewer
             }
         }
 
-        private void BindDatagridView()
+        private void GenerateOverviewAndBindDataGrid()
         {
             Cursor.Current = Cursors.WaitCursor;
 
             dgViewBindingSource.Clear();
 
-            var task = Task.Run(() => GenerateOverviewForGrid(displayProgress, sharesOverview));
+            var task = Task.Run(() => GenerateOverview(displayProgress, sharesOverview));
             var awaiter = task.GetAwaiter();
             awaiter.OnCompleted(() =>
             {
-                foreach (Overview overview in sharesOverview)
-                {
-                    dgViewBindingSource.Add(overview);
-                }
-                dgOverview.DataSource = dgViewBindingSource;
+                BindDatagridView();
                 stripText.Text = $"{sharesOverview.Count} shares.";
                 Cursor.Current = Cursors.Default;
                 this.Enabled = true;
                 dgOverview.Focus();
             });
+        }
+
+        private void BindDatagridView()
+        {
+            foreach (Overview overview in sharesOverview)
+            {
+                dgViewBindingSource.Add(overview);
+            }
+            dgOverview.DataSource = dgViewBindingSource;
         }
 
         //will Hide/Unhide shares flagged as Lazy
@@ -228,50 +233,15 @@ namespace ShareViewer
         //    dgOverview.Sort(dgOverview.Columns[e.ColumnIndex], ListSortDirection.Ascending);
         //}
 
-        //Here we instantiate an initial Overview object for a share and determine is Laziness
-        //In order to do this, the passed in AllTable array must have the last 10 days in it
-        //in other words 1040 records. Therafter, for the remaining computations, only 
-        //105 AllTable records are needed, 1 + 104 (last timeband of penultimate day plus last day)
-        private Overview CreateInitialOverviewForShare(Share share, AllTable[] atSegment)
-        {
-            var lazyShareParams = Helper.GetAppUserSettings().ParamsLazyShare;
-            // col 2. Instantiate an Overview object and assign Name of share
-            Overview oview = new Overview(share.Name);
-            // Lazy flag
-            oview.Lazy = OverviewCalcs.isLazyLast10Days(atSegment, lazyShareParams);
-            return oview;
-        }
-
-        //perform calculations based on passed in 10 day (1040 band) array of All-Table objects
-        private void PerformOverviewCalcs(Share share, ref Overview oview, AllTable[] atSegment)
-        {
-            //col 3: Sum of volumes (LastDayVolume) from row 936 to 1040 (49) 
-            oview.SumOfVolumes = OverviewCalcs.SumOfVolumes(atSegment, 9 * 104, 104);  //in full AllTable it would be rows 10298 to 10401);
-            //col 4: Price of row 1040 (11) 
-            oview.LastPrice = atSegment[1040 - 1].FP;
-            //col 5: Price of row 1040-104-1
-            oview.DayBeforePrice = atSegment[1040 - 104 - 1].FP;
-            //col 6: Price of row 10401 / Price of row 10297
-            if (oview.DayBeforePrice > 0) { oview.PriceFactor = oview.LastPrice / oview.DayBeforePrice; }
-
-            // col 7: Price-Gradient PGc of row 1040 (23)
-            // First, we need the slow prices injected and Price gradients
-            var slowPriceParams = Helper.GetAppUserSettings().ParamsSlowPrice;
-            Calculations.MakeSlowPrices(ref atSegment, slowPriceParams, 0, 1040 - 1, out string[] auditSummary);
-            Calculations.MakeFiveMinutesPriceGradients(ref atSegment, 1, 1040 - 1, out auditSummary);
-            oview.LastPGc = atSegment[1040 - 1].PGc;
-            // col 8: 
-            oview.LastPGd = atSegment[1040 - 1].PGd;
 
 
-        }
 
         //Fills the sharesOverview list of Overview objects (a form field) 
-        internal void GenerateOverviewForGrid(Action<Share> progress, List<Overview> sharesOverview)
+        internal void GenerateOverview(Action<Share> progress, List<Overview> sharesOverview)
         {
             var allTablesFolder = Helper.GetAppUserSettings().AllTablesFolder;
             var shareLines = LocalStore.CreateShareArrayFromShareList().Skip(1);
-            AllTable[] atSegment = new AllTable[1040];
+            AllTable[] atSegment = new AllTable[10401];
 
             sharesOverview.Clear();
 
@@ -281,16 +251,23 @@ namespace ShareViewer
                 var share = Helper.CreateShareFromLine(line);
                 var atFilename = allTablesFolder + $@"\alltable_{share.Number}.at";
 
-                //grab last 10 days
-                atSegment = Helper.GetAllTableSegment(atFilename, 9362, 1040); // 10297, 105);
-                Overview oview = CreateInitialOverviewForShare(share, atSegment);
+                //load up the full AllTable
+                atSegment = AllTable.GetAllTableRows(atFilename, 10402);
 
-                //do all the overview calculations
-                PerformOverviewCalcs(share, ref oview, atSegment);
+                //(re)do the Calculations
+                Calculations.PerformShareCalculations(share, atSegment);
+                AllTable.SaveAllTable(atFilename, atSegment);
+
+                //then the Overview
+                Overview oview = OverviewCalcs.CreateInitialOverviewForShare(share, atSegment);
+                OverviewCalcs.PerformOverviewCalcs(share, ref oview, atSegment);
 
                 sharesOverview.Add(oview);
                 progress(share);
-                if (++shareCounter == 10) break;
+
+                //TODO comment out!
+                if (++shareCounter == 20) break;
+
             }
 
         }
@@ -420,31 +397,44 @@ namespace ShareViewer
                 case "Identify Lazy Shares":
                     aus.ParamsLazyShare = CalcLazyShareParam;
                     aus.Save();
-                    stripText.Text = "Parameter saved";
+                    toolStripCalcs.Text = $"{calculation} Parameter saved";
                     break;
                 case "Make Slow (Five minutes) Prices SP":
                     aus.ParamsSlowPrice = CalcSlowPriceParam;
                     aus.Save();
-                    //SaveOverview()
+                    toolStripCalcs.Text = $"{calculation} Parameter saved";
                     break;
                 case "Make Five minutes Price Gradients PG":
-                    //SaveOverview();
+                    //no params to save
                     break;
                 case "Find direction and Turning":
+                    aus.ParamsDirectionAndTurning = CalcDirectionAndTurningParam;
+                    aus.Save();
+                    toolStripCalcs.Text = $"{calculation} Parameter saved";
                     break;
                 case "Find Five minutes Gradients Figure PGF":
+                    aus.ParamsFiveMinsGradientFigure = CalcFiveMinsGradientFigureParam;
+                    aus.Save();
+                    toolStripCalcs.Text = $"{calculation} Parameter saved";
                     break;
+
                 case "Related volume Figure (RPGFV) of biggest PGF":
+                    toolStripCalcs.Text = $"{calculation} Parameter saved";
                     break;
                 case "Make High Line HL":
+                    toolStripCalcs.Text = $"{calculation} Parameter saved";
                     break;
                 case "Make Low Line LL":
+                    toolStripCalcs.Text = $"{calculation} Parameter saved";
                     break;
                 case "Make Slow Volumes SV":
+                    toolStripCalcs.Text = $"{calculation} Parameter saved";
                     break;
                 case "Slow Volume Figure SVFac":
+                    toolStripCalcs.Text = $"{calculation} Parameter saved";
                     break;
                 case "Slow Volume Figure SVFbd":
+                    toolStripCalcs.Text = $"{calculation} Parameter saved";
                     break;
                 default:
                     break;
@@ -462,51 +452,6 @@ namespace ShareViewer
                 }
             }
             stripText.Text = $"Saved {overviewFilename}";
-        }
-
-        internal void HandleCalculationClick(object sender, EventArgs e)
-        {
-            //string calculation = (string)((Button)sender).Tag;
-            //var auditLines = new string[] { "" };
-            //Cursor.Current = Cursors.WaitCursor;
-            //switch (calculation)
-            //{
-            //    case "Identify Lazy Shares":
-            //        Calculations.LazyShare(atRows, CalcLazyShareParam, 9362, 10401, out auditLines);
-            //        calcAuditTextBox.Lines = auditLines;
-            //        break;
-            //    case "Make Slow (Five minutes) Prices SP":
-            //        Calculations.MakeSlowPrices(ref atRows, CalcSlowPriceParam, 1, 10401, out auditLines);
-            //        calcAuditTextBox.Lines = auditLines;
-            //        // atRows must be re-bound to the DataGridView
-            //        BindDataGridViewToResults(determineVerticalMode());
-            //        break;
-            //    case "Make Five minutes Price Gradients PG":
-            //        Calculations.MakeFiveMinutesPriceGradients(ref atRows, 1, 10401, out auditLines);
-            //        calcAuditTextBox.Lines = auditLines;
-            //        // atRows must be re-bound to the DataGridView
-            //        BindDataGridViewToResults(determineVerticalMode());
-            //        break;
-            //    case "Find direction and Turning":
-            //        break;
-            //    case "Find Five minutes Gradients Figure PGF":
-            //        break;
-            //    case "Related volume Figure (RPGFV) of biggest PGF":
-            //        break;
-            //    case "Make High Line HL":
-            //        break;
-            //    case "Make Low Line LL":
-            //        break;
-            //    case "Make Slow Volumes SV":
-            //        break;
-            //    case "Slow Volume Figure SVFac":
-            //        break;
-            //    case "Slow Volume Figure SVFbd":
-            //        break;
-            //    default:
-            //        break;
-            //}
-            //Cursor.Current = Cursors.Default;
         }
 
         private TextBox AuditTextBox(string[] auditOutcome)
@@ -550,6 +495,8 @@ namespace ShareViewer
 
             MediateCalculate(calculation);
 
+            dgOverview.Focus();
+
         }
 
         private void MediateCalculate(string calculation)
@@ -560,13 +507,13 @@ namespace ShareViewer
                     //show a bound params property grid with init values taken from current LazyShareParam settings
                     CalcLazyShareParam = new LazyShareParam(CurrLazyShareParam.From, CurrLazyShareParam.To, CurrLazyShareParam.Setting);
                     var propGridLazy = LazyShareUI.PropertyGridParams(CalcLazyShareParam, groupBoxParams.Height - 20);
-                    var btnPairLazy = LazyShareUI.CalcAndSaveBtns(calculation, HandleCalculationClick, HandleParameterSaveClick);
-                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust settings then press 'Calculate' to (re)evaluate" });
+                    var btnPairLazy = LazyShareUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
+                    //calcAuditTextBox = AuditTextBox(new string[] { "Adjust settings then press 'Calculate' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridLazy);
                     groupBoxParams.Controls.Add(btnPairLazy[0]);
                     groupBoxParams.Controls.Add(btnPairLazy[1]);
-                    groupBoxParams.Controls.Add(calcAuditTextBox);
+                    //groupBoxParams.Controls.Add(calcAuditTextBox);
                     break;
 
                 case "Make Slow (Five minutes) Prices SP":
@@ -578,29 +525,56 @@ namespace ShareViewer
                     CalcSlowPriceParam.Yc = CurrSlowPriceParam.Yc;
                     CalcSlowPriceParam.Yd = CurrSlowPriceParam.Yd;
                     var propGridSlow = SlowPriceUI.PropertyGridParams(CalcSlowPriceParam, groupBoxParams.Height - 20);
-                    var btnPairSlow = SlowPriceUI.CalcAndSaveBtns(calculation, HandleCalculationClick, HandleParameterSaveClick);
-                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust settings then press 'Calculate' to (re)evaluate" });
+                    var btnPairSlow = SlowPriceUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
+                    //calcAuditTextBox = AuditTextBox(new string[] { "Adjust settings then press 'Calculate' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridSlow);
                     groupBoxParams.Controls.Add(btnPairSlow[0]);
                     groupBoxParams.Controls.Add(btnPairSlow[1]);
-                    groupBoxParams.Controls.Add(calcAuditTextBox);
+                    //groupBoxParams.Controls.Add(calcAuditTextBox);
                     break;
                 case "Make Five minutes Price Gradients PG":
                     var propGridPg = FiveMinutesPriceGradientsUI.PropertyGridParams(groupBoxParams.Height - 20);
-                    var btnPg = FiveMinutesPriceGradientsUI.CalcAndSaveBtns(calculation, HandleCalculationClick, HandleParameterSaveClick);
-                    calcAuditTextBox = AuditTextBox(new string[] { "There are NO parameters for this calclation. Press 'Calculate' to (re)evaluate" });
+                    var btnPg = FiveMinutesPriceGradientsUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
+                    //calcAuditTextBox = AuditTextBox(new string[] { "There are NO parameters for this calculation. Press 'Calculate' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridPg);
                     groupBoxParams.Controls.Add(btnPg[0]);
                     groupBoxParams.Controls.Add(btnPg[1]);
-                    groupBoxParams.Controls.Add(calcAuditTextBox);
+                    //groupBoxParams.Controls.Add(calcAuditTextBox);
                     break;
-
                 case "Find direction and Turning":
+                    CalcDirectionAndTurningParam = new DirectionAndTurningParam(
+                        CurrDirectionAndTurningParam.From, 
+                        CurrDirectionAndTurningParam.To, 
+                        CurrDirectionAndTurningParam.PGcThreshold, 
+                        CurrDirectionAndTurningParam.Z);
+                    var propGridDandT = DirectionAndTurningUI.PropertyGridParams(CalcDirectionAndTurningParam, groupBoxParams.Height - 20);
+                    var btnPairDandT = DirectionAndTurningUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
+                    groupBoxParams.Controls.Add(propGridDandT);
+                    groupBoxParams.Controls.Add(btnPairDandT[0]);
+                    groupBoxParams.Controls.Add(btnPairDandT[1]);
                     break;
                 case "Find Five minutes Gradients Figure PGF":
+                    CalcFiveMinsGradientFigureParam = new FiveMinsGradientFigureParam(
+                        CurrFiveMinsGradientFigureParam.ZMin,
+                        CurrFiveMinsGradientFigureParam.ZMax,
+                        CurrFiveMinsGradientFigureParam.Z,
+                        CurrFiveMinsGradientFigureParam.XMin,
+                        CurrFiveMinsGradientFigureParam.XMax,
+                        CurrFiveMinsGradientFigureParam.X,
+                        CurrFiveMinsGradientFigureParam.YMin,
+                        CurrFiveMinsGradientFigureParam.YMax,
+                        CurrFiveMinsGradientFigureParam.Y
+                        );
+                    var propGridFiveMinGradFig = FiveMinsGradientFigureUI.PropertyGridParams(CalcFiveMinsGradientFigureParam, groupBoxParams.Height - 20);
+                    var btnPairFiveMinGradFig = FiveMinsGradientFigureUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
+                    groupBoxParams.Controls.Add(propGridFiveMinGradFig);
+                    groupBoxParams.Controls.Add(btnPairFiveMinGradFig[0]);
+                    groupBoxParams.Controls.Add(btnPairFiveMinGradFig[1]);
                     break;
+
+
                 case "Related volume Figure (RPGFV) of biggest PGF":
                     break;
                 case "Make High Line HL":
@@ -616,6 +590,36 @@ namespace ShareViewer
                 default:
                     break;
             }
+        }
+
+        //re do all calculationsa and populate grid afresh
+        private void buttonCalcAll_Click(object sender, EventArgs e)
+        {
+            //disable form until grid is loaded
+            this.Enabled = false;
+            GenerateOverviewAndBindDataGrid();
+        }
+
+        //Show an All-Table
+        private void dgOverview_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex != -1) return; // user must double click on far lh side inorder to bring up All-Table
+
+            var shareName = ((Overview)dgOverview.Rows[e.RowIndex].DataBoundItem).ShareName;
+            var shareNum = ((Overview)dgOverview.Rows[e.RowIndex].DataBoundItem).ShareNumber;
+
+            string allTableFilename = Helper.GetAppUserSettings().AllTablesFolder + $"\\alltable_{shareNum}.at";
+            if (File.Exists(allTableFilename))
+            {
+                var AtShareForm = new SingleAllTableForm(allTableFilename, shareName);
+                AtShareForm.Text = $"[{shareNum}] {shareName}";
+                AtShareForm.Show();
+            }
+            else
+            {
+                MessageBox.Show($"All table for share {shareNum} not found.\nBe sure to generate it.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
         }
     }
 }

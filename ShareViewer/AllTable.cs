@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -200,8 +201,8 @@ namespace ShareViewer
         private double col_75;
         private double ptsVola; //XXX,X (Points Volume a)
         private double ptsVolb; //XXX,X (Points Volume b)
-        private double col_78;
-        private double col_79;
+        private double ptsVolc; //XXX,X (Points Volume c)
+        private double ptsVold; //XXX,X (Points Volume d)
         private double col_80;
         //cols 81-84
         private double col_81;
@@ -375,10 +376,10 @@ namespace ShareViewer
         public double PtsVola { get => ptsVola; set => ptsVola = value; }
         [Hint("Points Volume b")]
         public double PtsVolb { get => ptsVolb; set => ptsVolb = value; }
-        [Hint("")]
-        public double Col_78 { get => col_78; set => col_78 = value; }
-        [Hint("")]
-        public double Col_79 { get => col_79; set => col_79 = value; }
+        [Hint("Points Volume c")]
+        public double PtsVolc { get => ptsVolc; set => ptsVolc = value; }
+        [Hint("Points Volume d")]
+        public double PtsVold { get => ptsVold; set => ptsVold = value; }
         [Hint("")]
         public double Col_80 { get => col_80; set => col_80 = value; }
         //81-84
@@ -491,8 +492,8 @@ namespace ShareViewer
                 case "Col_75": return  74;
                 case "PtsVola": return  75;
                 case "PtsVolb": return  76;
-                case "Col_78": return  77;
-                case "Col_79": return  78;
+                case "PtsVolc": return  77;
+                case "PtsVold": return  78;
                 case "Col_80": return  79;
                 case "Col_81": return  80;
                 case "Col_82": return  81;
@@ -550,6 +551,8 @@ namespace ShareViewer
                 case "PtsLLd": return "N0";
                 case "PtsVola": return "N1";
                 case "PtsVolb": return "N1";
+                case "PtsVolc": return "N1";
+                case "PtsVold": return "N1";
                 case "SumRow1Only": return "N1";
                 case "SameAs83DiffTreatment": return "N1";
 
@@ -565,6 +568,60 @@ namespace ShareViewer
         {
             return typeof(AllTable).GetProperty(colName).GetCustomAttribute<HintAttribute>().Hint;
         }
+
+        internal static void SaveAllTable(string _allTableFilename, AllTable[] atRows)
+        {
+            using (FileStream fs = new FileStream(_allTableFilename, FileMode.Create))
+            {
+                foreach (AllTable item in atRows)
+                {
+                    Helper.SerializeAllTableRecord(fs, item);
+                }
+            }
+        }
+
+        //Copies contents of one All-Table row to another. 
+        //Note: It may be necessary to 'fix' the target Row property afterwards
+        internal static void CopySourceToTargetAllTableRow(AllTable[] atRows, uint sourceRow, uint targetRow)
+        {
+            if ((atRows.Count() > sourceRow) && (atRows.Count() > targetRow))
+            {
+                foreach (PropertyInfo property in typeof(AllTable).GetProperties())
+                {
+                    property.SetValue(atRows[targetRow], property.GetValue(atRows[sourceRow], null), null);
+                }
+            }
+        }
+
+        //Returns a consecutive run of AllTable rows from the passed in AllTable file
+        //eg skip 10297, take 105 will return rows 10297 to the end of the 100 trading day file.
+        //Remember the Row starts at 0.
+        //Row 10297 is actually the last timeband of the penultimate day
+        //while the remaining rows 10298 thru 10401 represent the 104 five-minute bands of the last day
+        internal static AllTable[] GetAllTableSegment(string allTableFileName, int skip, int take)
+        {
+            AllTable[] sharesSegment = new AllTable[take];
+
+            using (FileStream fs = new FileStream(allTableFileName, FileMode.Open))
+            {
+                //slurp in the last take rows
+                sharesSegment = Helper.DeserializeList<AllTable>(fs).Skip(skip).Take(take).ToArray();
+            }
+            return sharesSegment;
+        }
+
+        internal static AllTable[] GetAllTableRows(string allTableFileName, int take)
+        {
+            AllTable[] sharesSegment = new AllTable[take];
+
+            using (FileStream fs = new FileStream(allTableFileName, FileMode.Open))
+            {
+                //slurp in
+                sharesSegment = Helper.DeserializeList<AllTable>(fs).Take(take).ToArray();
+            }
+            return sharesSegment;
+        }
+
 
     }
 
@@ -667,8 +724,8 @@ namespace ShareViewer
             at.Col_75 = 0;
             //public double PtsVola; //XXX,X (Points Volume a)
             //public double PtsVolb; //XXX,X (Points Volume b)
-            at.Col_78 = 0;
-            at.Col_79 = 0;
+            at.PtsVolc = 0;
+            at.PtsVold = 0;
             at.Col_80 = 0;
 
             //cols 81-84
@@ -679,6 +736,9 @@ namespace ShareViewer
 
             return at;
         }
+
+
+
     }
 
 

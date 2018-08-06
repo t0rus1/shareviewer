@@ -52,13 +52,27 @@ namespace ShareViewer
             btnCalc.Location = new Point(170 + 20, 16);
             btnCalc.Text = "Calculate";
             btnCalc.Tag = calculation;
-            btnCalc.Click += handleCalculationClick;
+            if (handleCalculationClick != null)
+            {
+                btnCalc.Click += handleCalculationClick;
+            }
+            else
+            {
+                btnCalc.Enabled = false;
+            }
             buttons[0] = btnCalc;
 
             var btnSave = new Button();
             btnSave.Size = new Size(60, 50);
-            btnSave.Location = new Point(170 + 20, 120);
-            btnSave.Text = "Apply and Save";
+            btnSave.Location = new Point(170 + 20, 120);         
+            if (handleCalculationClick != null)
+            {
+                btnSave.Text = "Apply and Save";
+            }
+            else
+            {
+                btnSave.Text = "Save Changes";
+            }
             btnSave.Tag = calculation;
             btnSave.Click += handleParameterSaveClick;
             buttons[1] = btnSave;

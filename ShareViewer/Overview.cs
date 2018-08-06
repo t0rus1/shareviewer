@@ -9,13 +9,14 @@ namespace ShareViewer
 {
     internal class Overview
     {
-        internal Overview(string name)
+        internal Overview(string name, int number)
         {
             shareName = name;
+            shareNumber = number;
         }
 
         private string shareName;                  //2.  Name of Share
-        private uint sumOfVolumes;               //3.  49 Sum of volumes from row 10298 to 10401
+        private uint lastDayVol;                   //3.  49 Sum of volumes from row 10298 to 10401
         private double lastPrice;                  //4.  11 Price of row 10401
         private double dayBeforePrice;             //5.  Price of row 10297
         private double priceFactor;                //6.  Price of row 10401 / Price of row 10297
@@ -34,21 +35,22 @@ namespace ShareViewer
         private double lastDaySumOfPtsVola;        //19. 73 Sum of Points Volume a of row 10298 to 10401 
         private double lastDaySumOfPtsVolb;        //20. 75 Sum of Points Volume b of row 10298 to 10401 
         private double lastDaySumOfPtsVolc;        //21. 77 Sum of Points Volume c of row 10298 to 10401 
-        private double lastDaySumOfPtsVolLastDay;   //22. 79 Sum of Points Volume d of row 10298 to 10401 
+        private double lastDaySumOfPtsVold;        //22. 79 Sum of Points Volume d of row 10298 to 10401 
         private double lastDaySumOfPtsHLc;         //23. 70 Sum of Points Points High Line HLc of row 10298 to 10401
-        private double lastDaySumOfPtsHLastDay;    //24. 70 Sum of Points Points High Line HLastDay of row 10298 to 10401
+        private double lastDaySumOfPtsHLd;         //24. 70 Sum of Points Points High Line HLastDay of row 10298 to 10401
         private double lastDaySumOfPtsVolaa;       //25. 73 Sum of Points Volume a of row 10298 to 10401 
         private double lastDaySumOfPtsVolbb;       //26. 75 Sum of Points Volume b of row 10298 to 10401 
         private double sumOfSumCols64_79;          //27. 83 Sum of Sum of points of columns 64 to 79 (Only for row 1)
         private double sumOfSumCols64_79trf;       //28. 84 The same as column 83, but when transfer it to the Overview, it is another treatment.
         private bool lazy;
+        private int shareNumber;
 
         [Hint("")]
         public bool Lazy { get => lazy; set => lazy = value; }
         [Hint("")]
         public string ShareName { get => shareName; set => shareName = value; }
         [Hint("")]
-        public uint SumOfVolumes { get => sumOfVolumes; set => sumOfVolumes = value; }
+        public uint LastDayVol { get => lastDayVol; set => lastDayVol = value; }
         [Hint("")]
         public double LastPrice { get => lastPrice; set => lastPrice = value; }
         [Hint("")]
@@ -86,11 +88,11 @@ namespace ShareViewer
         [Hint("")]
         public double LastDaySumOfPtsVolc { get => lastDaySumOfPtsVolc; set => lastDaySumOfPtsVolc = value; }
         [Hint("")]
-        public double LastDaySumOfPtsVolLastDay { get => lastDaySumOfPtsVolLastDay; set => lastDaySumOfPtsVolLastDay = value; }
+        public double LastDaySumOfPtsVold { get => lastDaySumOfPtsVold; set => lastDaySumOfPtsVold = value; }
         [Hint("")]
         public double LastDaySumOfPtsHLc { get => lastDaySumOfPtsHLc; set => lastDaySumOfPtsHLc = value; }
         [Hint("")]
-        public double LastDaySumOfPtsHLastDay { get => lastDaySumOfPtsHLastDay; set => lastDaySumOfPtsHLastDay = value; }
+        public double LastDaySumOfPtsHLd { get => lastDaySumOfPtsHLd; set => lastDaySumOfPtsHLd = value; }
         [Hint("")]
         public double LastDaySumOfPtsVolaa { get => lastDaySumOfPtsVolaa; set => lastDaySumOfPtsVolaa = value; }
         [Hint("")]
@@ -99,6 +101,9 @@ namespace ShareViewer
         public double SumOfSumCols64_79 { get => sumOfSumCols64_79; set => sumOfSumCols64_79 = value; }
         [Hint("")]
         public double SumOfSumCols64_79trf { get => sumOfSumCols64_79trf; set => sumOfSumCols64_79trf = value; }
+        [Hint("")]
+        public int ShareNumber { get => shareNumber; set => shareNumber = value; }
+
 
         public static int NameToIndex(string colName)
         {
@@ -106,7 +111,7 @@ namespace ShareViewer
             {
                 case "Lazy": return 0;
                 case "ShareName": return 1;
-                case "SumOfVolumes": return 2;
+                case "LastDayVol": return 2;
                 case "LastPrice": return 3;
                 case "DayBeforePrice": return 4;
                 case "PriceFactor": return 5;
@@ -125,13 +130,14 @@ namespace ShareViewer
                 case "LastDaySumOfPtsVola": return 18;
                 case "LastDaySumOfPtsVolb": return 19;
                 case "LastDaySumOfPtsVolc": return 20;
-                case "LastDaySumOfPtsVolLastDay": return 21;
+                case "LastDaySumOfPtsVold": return 21;
                 case "LastDaySumOfPtsHLc": return 22;
-                case "LastDaySumOfPtsHLastDay": return 23;
+                case "LastDaySumOfPtsHLd": return 23;
                 case "LastDaySumOfPtsVolaa": return 24;
                 case "LastDaySumOfPtsVolbb": return 25;
                 case "SumOfSumCols64_79": return 26;
                 case "SumOfSumCols64_79trf": return 27;
+                case "ShareNumber": return 28;
 
                 default: return -1;
             }
@@ -141,8 +147,9 @@ namespace ShareViewer
         {
             return new List<int>() {
                 NameToIndex("Lazy"),
+                //NameToIndex("ShareNumber"),
                 NameToIndex("ShareName"),
-                NameToIndex("SumOfVolumes"),
+                NameToIndex("LastDayVol"),
                 NameToIndex("LastPrice"),
                 NameToIndex("DayBeforePrice"),
                 NameToIndex("PriceFactor")
@@ -155,7 +162,7 @@ namespace ShareViewer
             {
                 //case "Lazy": return                           //0;
                 //case "ShareName": return                      //1;
-                case "SumOfVolumes": return "N0";               //2;
+                case "LastDayVol": return "N0";               //2;
                 case "LastPrice": return "N3";                  //3;
                 case "DayBeforePrice": return "N3";             //4;
                 case "PriceFactor": return "N3";                //5;
@@ -174,13 +181,14 @@ namespace ShareViewer
                 case "LastDaySumOfPtsVola": return "N1";        //18;
                 case "LastDaySumOfPtsVolb": return "N1";        //19;
                 case "LastDaySumOfPtsVolc": return "N1";        //20;
-                case "LastDaySumOfPtsVolLastDay": return "N1";  //21;
+                case "LastDaySumOfPtsVold": return "N1";  //21;
                 case "LastDaySumOfPtsHLc": return "N1";         //22;
-                case "LastDaySumOfPtsHLastDay": return "N1";    //23;
+                case "LastDaySumOfPtsHLd": return "N1";    //23;
                 case "LastDaySumOfPtsVolaa": return "N1";       //24;
                 case "LastDaySumOfPtsVolbb": return "N1";       //25;
                 case "SumOfSumCols64_79": return "N1";          //26;
                 case "SumOfSumCols64_79trf": return "N1";       //27;
+                case "ShareNumber": return "N0";                //28;
 
                 default: return "N3";
 
