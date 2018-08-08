@@ -19,6 +19,7 @@ namespace ShareViewer
         private bool _loaded = false;
         private bool _loadingCols = false;
         private bool _changingColumns = false;
+        private bool _sharesBeenDiscarded = false;
 
 
         internal TextBox calcAuditTextBox;
@@ -73,6 +74,9 @@ namespace ShareViewer
 
         private void OverviewForm_Load(object sender, EventArgs e)
         {
+            var rangeFrom = Helper.GetAppUserSettings().AllTableDataStart;
+            var tradingSpan = Helper.GetAppUserSettings().AllTableTradingSpan;
+            this.Text = $"Overview. All-Tables from '{rangeFrom}' for {tradingSpan} trading days";
 
             //load up combobox for views from user settings
             LoadViewsComboBox("");
@@ -129,7 +133,7 @@ namespace ShareViewer
 
             dgViewBindingSource.Clear();
 
-            var task = Task.Run(() => GenerateOverview(displayProgress, sharesOverview));
+            var task = Task.Run(() => GenerateOverview(displayProgress));
             var awaiter = task.GetAwaiter();
             awaiter.OnCompleted(() =>
             {
@@ -151,36 +155,58 @@ namespace ShareViewer
         }
 
         //will Hide/Unhide shares flagged as Lazy
-        private void RebindDatagridView(bool hideLazy)
+        //private void RebindDatagridView(bool hideLazy)
+        //{
+        //    Cursor.Current = Cursors.WaitCursor;
+        //    dgViewBindingSource.Clear();
+
+        //    int displayedCount = 0;
+        //    foreach (Overview overview in sharesOverview)
+        //    {
+        //        if (hideLazy)
+        //        {
+        //            if (!overview.Lazy)
+        //            {
+        //                dgViewBindingSource.Add(overview);
+        //                displayedCount++;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            dgViewBindingSource.Add(overview);
+        //            displayedCount++;
+        //        }
+        //    }
+        //    dgOverview.DataSource = null;
+        //    dgOverview.DataSource = dgViewBindingSource;
+        //    stripText.Text = $"{displayedCount} shares displayed";
+        //    Cursor.Current = Cursors.Default;
+        //    dgOverview.Focus();
+
+        //}
+
+        private void DiscardLazyShares()
         {
-            Cursor.Current = Cursors.WaitCursor;
             dgViewBindingSource.Clear();
 
-            int displayedCount = 0;
+            int priorCount = sharesOverview.Count;
+            sharesOverview.RemoveAll(ov => ov.Lazy);
+            int postCount = sharesOverview.Count;
+            int numDiscards = priorCount - postCount;
+            _sharesBeenDiscarded = (numDiscards > 0);
+
             foreach (Overview overview in sharesOverview)
             {
-                if (hideLazy)
-                {
-                    if (!overview.Lazy)
-                    {
-                        dgViewBindingSource.Add(overview);
-                        displayedCount++;
-                    }
-                }
-                else
-                {
-                    dgViewBindingSource.Add(overview);
-                    displayedCount++;
-                }
+                dgViewBindingSource.Add(overview);
             }
+
             dgOverview.DataSource = null;
             dgOverview.DataSource = dgViewBindingSource;
-            stripText.Text = $"{displayedCount} shares displayed";
+            stripText.Text = $"{numDiscards} shares discarded. {postCount} shares remainining";
             Cursor.Current = Cursors.Default;
             dgOverview.Focus();
 
         }
-
 
         internal void displayProgress(Share share)
         {
@@ -202,7 +228,7 @@ namespace ShareViewer
                             Name = item,
                             DataPropertyName = colName,
                             ToolTipText = Overview.PropNameToHint(colName),
-                            ReadOnly = true,
+                            //ReadOnly = true,
                         });
                 }
                 else
@@ -233,11 +259,11 @@ namespace ShareViewer
         //    dgOverview.Sort(dgOverview.Columns[e.ColumnIndex], ListSortDirection.Ascending);
         //}
 
-
+        
 
 
         //Fills the sharesOverview list of Overview objects (a form field) 
-        internal void GenerateOverview(Action<Share> progress, List<Overview> sharesOverview)
+        internal void GenerateOverview(Action<Share> progress)
         {
             var allTablesFolder = Helper.GetAppUserSettings().AllTablesFolder;
             var shareLines = LocalStore.CreateShareArrayFromShareList().Skip(1);
@@ -245,7 +271,6 @@ namespace ShareViewer
 
             sharesOverview.Clear();
 
-            int shareCounter = 0;
             foreach (string line in shareLines)
             {
                 var share = Helper.CreateShareFromLine(line);
@@ -254,9 +279,9 @@ namespace ShareViewer
                 //load up the full AllTable
                 atSegment = AllTable.GetAllTableRows(atFilename, 10402);
 
-                //(re)do the Calculations
-                Calculations.PerformShareCalculations(share, atSegment);
-                AllTable.SaveAllTable(atFilename, atSegment);
+                // ##### ASSUME CALCS ALREADY DONE?
+                //Calculations.PerformShareCalculations(share, atSegment);
+                //AllTable.SaveAllTable(atFilename, atSegment);
 
                 //then the Overview
                 Overview oview = OverviewCalcs.CreateInitialOverviewForShare(share, atSegment);
@@ -266,7 +291,7 @@ namespace ShareViewer
                 progress(share);
 
                 //TODO comment out!
-                if (++shareCounter == 20) break;
+                //if (++shareCounter == 20) break;
 
             }
 
@@ -370,22 +395,11 @@ namespace ShareViewer
             if (_loaded && !_changingColumns) InstallOverviewColumns();
         }
 
+        //Discard LAZY shares from grid
         private void linkLabelLazy_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            //hide / unhide Lazy shares
-            if (linkLabelLazy.Text.Contains("Show"))
-            {
-                //show 'em
-                RebindDatagridView(false);
-                linkLabelLazy.Text = "Hide Lazy Shares";
-            }
-            else
-            {
-                //hide 'em
-                RebindDatagridView(true);
-                linkLabelLazy.Text = "Show All Shares";
-            }
-
+            //RebindDatagridView(true);
+            DiscardLazyShares();
         }
 
         internal void HandleParameterSaveClick(object sender, EventArgs e)
@@ -442,18 +456,6 @@ namespace ShareViewer
 
         }
 
-        private void SaveOverview(string overviewFilename)
-        {
-            using (FileStream fs = new FileStream(overviewFilename, FileMode.Create))
-            {
-                foreach (Overview item in sharesOverview)
-                {
-                    Helper.SerializeOverviewRecord(fs, item);
-                }
-            }
-            stripText.Text = $"Saved {overviewFilename}";
-        }
-
         private TextBox AuditTextBox(string[] auditOutcome)
         {
             var auditBox = new TextBox();
@@ -477,6 +479,7 @@ namespace ShareViewer
         {
             //var affirmNumRows = $"There are {atRows.Count()} records in this All-Table";
             //stripText.Text = affirmNumRows;
+            Cursor.Current = Cursors.WaitCursor;
 
             groupBoxParams.Controls.Clear();
             string calculation = ((ListBox)sender).Text;
@@ -495,6 +498,7 @@ namespace ShareViewer
 
             MediateCalculate(calculation);
 
+            Cursor.Current = Cursors.Default;
             dgOverview.Focus();
 
         }
@@ -595,15 +599,12 @@ namespace ShareViewer
         //re do all calculationsa and populate grid afresh
         private void buttonCalcAll_Click(object sender, EventArgs e)
         {
-            //disable form until grid is loaded
-            this.Enabled = false;
+            //this re-introduces discarded shares
             GenerateOverviewAndBindDataGrid();
         }
 
-        //Show an All-Table
-        private void dgOverview_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private void dgOverview_RowHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (e.ColumnIndex != -1) return; // user must double click on far lh side inorder to bring up All-Table
 
             var shareName = ((Overview)dgOverview.Rows[e.RowIndex].DataBoundItem).ShareName;
             var shareNum = ((Overview)dgOverview.Rows[e.RowIndex].DataBoundItem).ShareNumber;
@@ -619,6 +620,67 @@ namespace ShareViewer
             {
                 MessageBox.Show($"All table for share {shareNum} not found.\nBe sure to generate it.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+
+        }
+
+        private void SaveOverview(string overviewFilename)
+        {
+            int itemCount = 0;
+            using (FileStream fs = new FileStream(overviewFilename, FileMode.Create))
+            {
+                foreach (Overview item in sharesOverview)
+                {
+                    Helper.SerializeOverviewRecord(fs, item);
+                    itemCount++;
+                }
+            }
+            stripText.Text = $"Saved {itemCount} lines.";
+        }
+
+        private void buttonSave_Click(object sender, EventArgs e)
+        {
+            if (dgOverview.Rows.Count > 1)
+            {
+                string overviewFilename = Helper.GetAppUserSettings().AllTablesFolder + $"\\overview.at";
+                SaveOverview(overviewFilename);
+            }
+            else
+            {
+                stripText.Text = "Nothing to save!";
+            }
+        }
+
+        private void linkLabelLoad_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+
+            string overviewFilename = Helper.GetAppUserSettings().AllTablesFolder + $"\\overview.at";
+            if (File.Exists(overviewFilename))
+            {
+                FileInfo fileInfo = new FileInfo(overviewFilename);
+
+                var dlgResult = MessageBox.Show(
+                    $"Last saved overview was at {fileInfo.LastWriteTime.ToLocalTime()}.\nLoad this one?", 
+                    "Confirm Load", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (dlgResult == DialogResult.Yes)
+                {
+                    Cursor.Current = Cursors.WaitCursor;
+                    dgViewBindingSource.Clear();
+
+                    using (FileStream fs = new FileStream(overviewFilename, FileMode.Open))
+                    {
+                        //slurp in previously saved file
+                        sharesOverview = (List<Overview>)Helper.DeserializeOverview<Overview>(fs);
+
+                        BindDatagridView();
+
+                        stripText.Text = $"{sharesOverview.Count} shares.";
+                        Cursor.Current = Cursors.Default;
+                        dgOverview.Focus();
+                    }
+                }
+            }
+
 
         }
     }

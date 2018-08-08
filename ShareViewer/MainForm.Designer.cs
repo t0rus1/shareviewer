@@ -155,8 +155,9 @@
             // linkLabelSingleDayLoad
             // 
             this.linkLabelSingleDayLoad.AutoSize = true;
+            this.linkLabelSingleDayLoad.Enabled = false;
             this.linkLabelSingleDayLoad.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabelSingleDayLoad.Location = new System.Drawing.Point(436, 247);
+            this.linkLabelSingleDayLoad.Location = new System.Drawing.Point(380, 247);
             this.linkLabelSingleDayLoad.Name = "linkLabelSingleDayLoad";
             this.linkLabelSingleDayLoad.Size = new System.Drawing.Size(137, 20);
             this.linkLabelSingleDayLoad.TabIndex = 21;
@@ -411,10 +412,10 @@
             this.linkLabelSummary.AutoSize = true;
             this.linkLabelSummary.Location = new System.Drawing.Point(577, 198);
             this.linkLabelSummary.Name = "linkLabelSummary";
-            this.linkLabelSummary.Size = new System.Drawing.Size(124, 13);
+            this.linkLabelSummary.Size = new System.Drawing.Size(121, 13);
             this.linkLabelSummary.TabIndex = 21;
             this.linkLabelSummary.TabStop = true;
-            this.linkLabelSummary.Text = "Raw All-Tables Summary";
+            this.linkLabelSummary.Text = "All-Tables Status Report";
             this.toolTipShareList.SetToolTip(this.linkLabelSummary, "Generate a report which summarizes the content of each All-Table.");
             this.linkLabelSummary.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelSummary_LinkClicked);
             // 
@@ -820,8 +821,6 @@
             // 
             // statusStrip
             // 
-            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.stripText});
             this.statusStrip.Location = new System.Drawing.Point(0, 739);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(1008, 22);

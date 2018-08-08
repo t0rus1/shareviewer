@@ -28,15 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OverviewForm));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
             this.panelLeft = new System.Windows.Forms.Panel();
             this.listBoxCols = new System.Windows.Forms.ListBox();
             this.panelTop = new System.Windows.Forms.Panel();
-            this.buttonCalcAll = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBoxCalculations = new System.Windows.Forms.GroupBox();
+            this.linkLabelLoad = new System.Windows.Forms.LinkLabel();
+            this.buttonCalcAll = new System.Windows.Forms.Button();
+            this.buttonSave = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripCalcs = new System.Windows.Forms.ToolStripStatusLabel();
@@ -49,6 +53,10 @@
             this.label1 = new System.Windows.Forms.Label();
             this.linkLabelLock = new System.Windows.Forms.LinkLabel();
             this.dgOverview = new System.Windows.Forms.DataGridView();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.toolStripDDBtnSaveAs = new System.Windows.Forms.ToolStripDropDownButton();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadNamedOverviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             this.panelLeft.SuspendLayout();
             this.panelTop.SuspendLayout();
@@ -96,7 +104,7 @@
             // 
             // panelTop
             // 
-            this.panelTop.Controls.Add(this.buttonCalcAll);
+            this.panelTop.Controls.Add(this.label2);
             this.panelTop.Controls.Add(this.groupBoxCalculations);
             this.panelTop.Controls.Add(this.linkLabelLazy);
             this.panelTop.Controls.Add(this.comboBoxViews);
@@ -109,23 +117,23 @@
             this.panelTop.Size = new System.Drawing.Size(992, 211);
             this.panelTop.TabIndex = 5;
             // 
-            // buttonCalcAll
+            // label2
             // 
-            this.buttonCalcAll.Image = ((System.Drawing.Image)(resources.GetObject("buttonCalcAll.Image")));
-            this.buttonCalcAll.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.buttonCalcAll.Location = new System.Drawing.Point(10, 69);
-            this.buttonCalcAll.Name = "buttonCalcAll";
-            this.buttonCalcAll.Size = new System.Drawing.Size(187, 65);
-            this.buttonCalcAll.TabIndex = 1;
-            this.buttonCalcAll.Text = "(re)Calculate for All Shares";
-            this.buttonCalcAll.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.buttonCalcAll.UseVisualStyleBackColor = true;
-            this.buttonCalcAll.Click += new System.EventHandler(this.buttonCalcAll_Click);
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(5, 195);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(136, 13);
+            this.label2.TabIndex = 23;
+            this.label2.Text = "\\/ double click for All-Table";
+            this.toolTip1.SetToolTip(this.label2, "Double click on the far left of the row to pop up the corresponding All-Table");
             // 
             // groupBoxCalculations
             // 
             this.groupBoxCalculations.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxCalculations.Controls.Add(this.linkLabelLoad);
+            this.groupBoxCalculations.Controls.Add(this.buttonCalcAll);
+            this.groupBoxCalculations.Controls.Add(this.buttonSave);
             this.groupBoxCalculations.Controls.Add(this.statusStrip1);
             this.groupBoxCalculations.Controls.Add(this.groupBoxParams);
             this.groupBoxCalculations.Controls.Add(this.listBoxVariables);
@@ -136,10 +144,54 @@
             this.groupBoxCalculations.TabStop = false;
             this.groupBoxCalculations.Text = "Calculations";
             // 
+            // linkLabelLoad
+            // 
+            this.linkLabelLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.linkLabelLoad.AutoSize = true;
+            this.linkLabelLoad.Location = new System.Drawing.Point(647, 161);
+            this.linkLabelLoad.Name = "linkLabelLoad";
+            this.linkLabelLoad.Size = new System.Drawing.Size(68, 13);
+            this.linkLabelLoad.TabIndex = 18;
+            this.linkLabelLoad.TabStop = true;
+            this.linkLabelLoad.Text = "re-load Work";
+            this.toolTip1.SetToolTip(this.linkLabelLoad, "Load the grid with the Overview which was last saved.\r\nIt will be overwritten sho" +
+        "uld you save again.");
+            this.linkLabelLoad.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelLoad_LinkClicked);
+            // 
+            // buttonCalcAll
+            // 
+            this.buttonCalcAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCalcAll.Image = ((System.Drawing.Image)(resources.GetObject("buttonCalcAll.Image")));
+            this.buttonCalcAll.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.buttonCalcAll.Location = new System.Drawing.Point(643, 12);
+            this.buttonCalcAll.Name = "buttonCalcAll";
+            this.buttonCalcAll.Size = new System.Drawing.Size(76, 85);
+            this.buttonCalcAll.TabIndex = 17;
+            this.buttonCalcAll.Text = "(RE) Calculate";
+            this.buttonCalcAll.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolTip1.SetToolTip(this.buttonCalcAll, "Apply all Calculations using current parameters and re-load the Overview grid");
+            this.buttonCalcAll.UseVisualStyleBackColor = true;
+            this.buttonCalcAll.Click += new System.EventHandler(this.buttonCalcAll_Click);
+            // 
+            // buttonSave
+            // 
+            this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonSave.Location = new System.Drawing.Point(643, 106);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(76, 50);
+            this.buttonSave.TabIndex = 16;
+            this.buttonSave.Text = "Save Work";
+            this.toolTip1.SetToolTip(this.buttonSave, "Save the current Overview so that it may be quickly recalled next time. It will o" +
+        "verwrite any previously saved Overview.");
+            this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
+            this.toolStripDDBtnSaveAs,
             this.toolStripCalcs});
             this.statusStrip1.Location = new System.Drawing.Point(3, 183);
             this.statusStrip1.Name = "statusStrip1";
@@ -155,8 +207,8 @@
             // toolStripCalcs
             // 
             this.toolStripCalcs.Name = "toolStripCalcs";
-            this.toolStripCalcs.Size = new System.Drawing.Size(22, 17);
-            this.toolStripCalcs.Text = "Ok";
+            this.toolStripCalcs.Size = new System.Drawing.Size(16, 17);
+            this.toolStripCalcs.Text = "...";
             // 
             // groupBoxParams
             // 
@@ -164,7 +216,7 @@
             this.groupBoxParams.Controls.Add(this.propertyGrid1);
             this.groupBoxParams.Location = new System.Drawing.Point(240, 1);
             this.groupBoxParams.Name = "groupBoxParams";
-            this.groupBoxParams.Size = new System.Drawing.Size(506, 180);
+            this.groupBoxParams.Size = new System.Drawing.Size(374, 180);
             this.groupBoxParams.TabIndex = 13;
             this.groupBoxParams.TabStop = false;
             // 
@@ -190,10 +242,11 @@
             this.linkLabelLazy.AutoSize = true;
             this.linkLabelLazy.Location = new System.Drawing.Point(7, 42);
             this.linkLabelLazy.Name = "linkLabelLazy";
-            this.linkLabelLazy.Size = new System.Drawing.Size(90, 13);
+            this.linkLabelLazy.Size = new System.Drawing.Size(104, 13);
             this.linkLabelLazy.TabIndex = 21;
             this.linkLabelLazy.TabStop = true;
-            this.linkLabelLazy.Text = "Hide Lazy Shares";
+            this.linkLabelLazy.Text = "Discard Lazy Shares";
+            this.toolTip1.SetToolTip(this.linkLabelLazy, "Hides or Shows Lazy (or those checked as \'Lazy\') shares. ");
             this.linkLabelLazy.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelLazy_LinkClicked);
             // 
             // comboBoxViews
@@ -203,7 +256,7 @@
             this.comboBoxViews.FormattingEnabled = true;
             this.comboBoxViews.Items.AddRange(new object[] {
             "Initial"});
-            this.comboBoxViews.Location = new System.Drawing.Point(6, 181);
+            this.comboBoxViews.Location = new System.Drawing.Point(6, 151);
             this.comboBoxViews.Name = "comboBoxViews";
             this.comboBoxViews.Size = new System.Drawing.Size(219, 24);
             this.comboBoxViews.Sorted = true;
@@ -215,7 +268,7 @@
             // 
             this.linkLabelSaveView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkLabelSaveView.AutoSize = true;
-            this.linkLabelSaveView.Location = new System.Drawing.Point(6, 159);
+            this.linkLabelSaveView.Location = new System.Drawing.Point(6, 129);
             this.linkLabelSaveView.Name = "linkLabelSaveView";
             this.linkLabelSaveView.Size = new System.Drawing.Size(93, 13);
             this.linkLabelSaveView.TabIndex = 19;
@@ -227,7 +280,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 140);
+            this.label1.Location = new System.Drawing.Point(3, 110);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(222, 13);
             this.label1.TabIndex = 18;
@@ -247,20 +300,49 @@
             // dgOverview
             // 
             this.dgOverview.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgOverview.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgOverview.DefaultCellStyle = dataGridViewCellStyle4;
             this.dgOverview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgOverview.Location = new System.Drawing.Point(165, 211);
             this.dgOverview.Name = "dgOverview";
             this.dgOverview.Size = new System.Drawing.Size(992, 454);
             this.dgOverview.TabIndex = 6;
-            this.dgOverview.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgOverview_CellDoubleClick);
+            this.dgOverview.RowHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgOverview_RowHeaderMouseDoubleClick);
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.IsBalloon = true;
+            // 
+            // toolStripDDBtnSaveAs
+            // 
+            this.toolStripDDBtnSaveAs.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripDDBtnSaveAs.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripDDBtnSaveAs.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadNamedOverviewToolStripMenuItem,
+            this.saveAsToolStripMenuItem});
+            this.toolStripDDBtnSaveAs.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDDBtnSaveAs.Image")));
+            this.toolStripDDBtnSaveAs.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDDBtnSaveAs.Name = "toolStripDDBtnSaveAs";
+            this.toolStripDDBtnSaveAs.Size = new System.Drawing.Size(95, 20);
+            this.toolStripDDBtnSaveAs.Text = "Save As | Load";
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
+            this.saveAsToolStripMenuItem.Text = "Save as a named Overview";
+            // 
+            // loadNamedOverviewToolStripMenuItem
+            // 
+            this.loadNamedOverviewToolStripMenuItem.Name = "loadNamedOverviewToolStripMenuItem";
+            this.loadNamedOverviewToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.loadNamedOverviewToolStripMenuItem.Text = "Load named Overview";
             // 
             // OverviewForm
             // 
@@ -311,6 +393,13 @@
         private System.Windows.Forms.PropertyGrid propertyGrid1;
         private System.Windows.Forms.ListBox listBoxVariables;
         private System.Windows.Forms.ToolStripStatusLabel toolStripCalcs;
+        private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.Button buttonCalcAll;
+        private System.Windows.Forms.LinkLabel linkLabelLoad;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDDBtnSaveAs;
+        private System.Windows.Forms.ToolStripMenuItem loadNamedOverviewToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
     }
 }

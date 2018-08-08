@@ -124,7 +124,7 @@ namespace ShareViewer
                 using (FileStream fs = new FileStream(allTableFilename, FileMode.Open))
                 {
                     //read in entire all-table
-                    var atRows = Helper.DeserializeList<AllTable>(fs).Skip(2).ToArray();
+                    var atRows = Helper.DeserializeAllTable<AllTable>(fs).Skip(2).ToArray();
                     var numRows = atRows.Count();
 
                     var shareSummary = new AllTableSummary(share);

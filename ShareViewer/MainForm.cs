@@ -15,7 +15,7 @@ namespace ShareViewer
 {
     public partial class MainForm : Form
     {
-        public const String Version = "0.0.7";
+        public const String Version = "0.0.8";
         internal Properties.Settings appUserSettings;
         bool initializing = true;
         bool SuppressDaysBackChangeHandling = false; // when true, suppresses OnChangehandling
@@ -784,17 +784,18 @@ namespace ShareViewer
         //Reveal the linkLabelSingleDayLoad button if both calendars are indicating the same, single day
         private void calendarFrom_DateSelected(object sender, DateRangeEventArgs e)
         {
-            linkLabelSingleDayLoad.Visible = (DateTime.Compare(e.Start,calendarTo.SelectionStart) == 0);
-            linkLabelSingleDayLoad.Enabled = linkLabelSingleDayLoad.Visible;
-            buttonAddToAllTables.Enabled = !linkLabelSingleDayLoad.Visible;
+            //linkLabelSingleDayLoad.Visible = (DateTime.Compare(e.Start,calendarTo.SelectionStart) == 0);
+            //linkLabelSingleDayLoad.Enabled = linkLabelSingleDayLoad.Visible;
+            //buttonAddToAllTables.Enabled = !linkLabelSingleDayLoad.Visible;
         }
 
         //Reveal the linkLabelSingleDayLoad button if both calendars are indicating the same, single day
         private void calendarTo_DateSelected(object sender, DateRangeEventArgs e)
         {
-            linkLabelSingleDayLoad.Visible = (DateTime.Compare(e.Start, calendarFrom.SelectionStart) == 0);
-            linkLabelSingleDayLoad.Enabled = linkLabelSingleDayLoad.Visible;
-            buttonAddToAllTables.Enabled = !linkLabelSingleDayLoad.Visible;
+            //linkLabelSingleDayLoad.Visible = true; // (DateTime.Compare(e.Start, calendarFrom.SelectionStart) == 0);
+            ////linkLabelSingleDayLoad.Enabled = linkLabelSingleDayLoad.Visible;
+            ////buttonAddToAllTables.Enabled = !linkLabelSingleDayLoad.Visible;
+            //linkLabelSingleDayLoad.Text = $"Re-Load just this day: {calendarTo.SelectionStart.ToShortDateString()}";
         }
 
         //Single Day reload
@@ -827,9 +828,10 @@ namespace ShareViewer
                         var allShareArray = LocalStore.CreateShareArrayFromShareList();
                         if (allShareArray.Count() > 0)
                         {
-                            linkLabelSingleDayLoad.Enabled = false;
-                            DateTime startDate = calendarFrom.SelectionStart;
+                            //linkLabelSingleDayLoad.Enabled = false;
                             DateTime endDate = calendarTo.SelectionStart;
+                            //force startDate to be the same as endDate
+                            DateTime startDate = endDate; ; // calendarFrom.SelectionStart;
                             int tradingSpan = Helper.ComputeTradingSpanDayCount(startDate, endDate);
                             if (tradingSpan == 1)
                             {
@@ -843,8 +845,8 @@ namespace ShareViewer
                         calendarFrom.SetDate(DateTime.Today.AddDays(-Helper.ActualDaysBackToEncompassTradingDays(DateTime.Today, 100)));
                         calendarTo.SetDate(DateTime.Today);
                         labelBackFrom.Text = "ending Today";
-                        linkLabelSingleDayLoad.Enabled = false;
-                        linkLabelSingleDayLoad.Visible = false;
+                        //linkLabelSingleDayLoad.Enabled = false;
+                        //linkLabelSingleDayLoad.Visible = false;
                     }
                 }
             }

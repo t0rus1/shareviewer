@@ -605,7 +605,7 @@ namespace ShareViewer
             using (FileStream fs = new FileStream(allTableFileName, FileMode.Open))
             {
                 //slurp in the last take rows
-                sharesSegment = Helper.DeserializeList<AllTable>(fs).Skip(skip).Take(take).ToArray();
+                sharesSegment = Helper.DeserializeAllTable<AllTable>(fs).Skip(skip).Take(take).ToArray();
             }
             return sharesSegment;
         }
@@ -617,7 +617,7 @@ namespace ShareViewer
             using (FileStream fs = new FileStream(allTableFileName, FileMode.Open))
             {
                 //slurp in
-                sharesSegment = Helper.DeserializeList<AllTable>(fs).Take(take).ToArray();
+                sharesSegment = Helper.DeserializeAllTable<AllTable>(fs).Take(take).ToArray();
             }
             return sharesSegment;
         }

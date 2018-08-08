@@ -36,7 +36,11 @@ namespace ShareViewer
         internal static void Status(string msg)
         {
             var form = GetMainForm();
-            form.statusStrip.Items["stripText"].Text = msg;
+            //if (form.statusStrip.Items.Count > 0)
+            //{
+                //form.statusStrip.Items["stripText"].Text = msg;
+                form.stripText.Text = msg;
+            //}
         }
 
         internal static void UpdateAllTableProgress(string msg)
@@ -279,7 +283,7 @@ namespace ShareViewer
             }
         }
 
-        internal static ICollection<AllTable> DeserializeList<AllTable>(FileStream fs)
+        internal static ICollection<AllTable> DeserializeAllTable<AllTable>(FileStream fs)
         {
             BinaryFormatter bf = new BinaryFormatter();
             List<AllTable> list = new List<AllTable>();
@@ -287,6 +291,21 @@ namespace ShareViewer
             {
                 //deserialize each object in the file
                 var deserialized = (AllTable)bf.Deserialize(fs);
+                //add individual object to a list
+                list.Add(deserialized);
+            }
+            //return the list of objects
+            return list;
+        }
+
+        internal static ICollection<Overview> DeserializeOverview<Overview>(FileStream fs)
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            List<Overview> list = new List<Overview>();
+            while (fs.Position != fs.Length)
+            {
+                //deserialize each object in the file
+                var deserialized = (Overview)bf.Deserialize(fs);
                 //add individual object to a list
                 list.Add(deserialized);
             }

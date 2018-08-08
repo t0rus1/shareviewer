@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace ShareViewer
 {
+    [Serializable]
     internal class Overview
     {
         internal Overview(string name, int number)

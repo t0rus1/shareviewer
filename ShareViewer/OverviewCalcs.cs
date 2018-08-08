@@ -120,7 +120,7 @@ namespace ShareViewer
         internal static void PerformOverviewCalcs(Share share, ref Overview oview, AllTable[] atSegment)
         {
             //col 3: Sum of volumes (LastDayVolume) (49) 
-            oview.LastDayVol = SumOfVolumes(atSegment, (2 + 99) * 104, 104);  
+            oview.LastDayVol = SumOfVolumes(atSegment, 10298, 104);  
             //col 4: Price of row 10401 (11) 
             oview.LastPrice = atSegment[10401].FP;
             //col 5: Price of row 1040-104-1

@@ -255,7 +255,7 @@ namespace ShareViewer
             using (FileStream fs = new FileStream(_allTableFilename, FileMode.Open))
             {
                 //slurp in the previously saved file of AllTable records
-                atRows = Helper.DeserializeList<AllTable>(fs).ToArray();
+                atRows = Helper.DeserializeAllTable<AllTable>(fs).ToArray();
 
                 //copy row 10401 (if possible) to row 1 as per Gunther
                 AllTable.CopySourceToTargetAllTableRow(atRows, 10401, 1);
