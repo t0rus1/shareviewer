@@ -81,5 +81,12 @@ namespace ShareViewer
         [Description("Upper limit for Z")]
         [ReadOnly(true)]
         public int ZMax { get => zMax; set => zMax = value; }
+
+        public bool DiffersFrom(FiveMinsGradientFigureParam other)
+        {
+            return (this.X != other.X) || (this.Y != other.Y) || (this.Z != other.Z);
+        }
+
+
     }
 }

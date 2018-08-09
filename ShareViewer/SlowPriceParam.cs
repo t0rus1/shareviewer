@@ -75,5 +75,12 @@ namespace ShareViewer
         [ReadOnly(true)]
         public double YMax { get => yMax; set => yMax = value; }
 
+
+        public bool DiffersFrom(SlowPriceParam other)
+        {
+            return (this.Z != other.Z) || (this.Ya != other.Ya) || (this.Yb != other.Yb) || (this.Yc != other.Yc) || (this.Yd != other.Yd);
+        }
+
+
     }
 }

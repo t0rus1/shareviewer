@@ -42,5 +42,10 @@ namespace ShareViewer
         [Description("(Z) adjust to suit")]
         public double Setting { get => setting; set => setting = value; }
 
+        public bool DiffersFrom(LazyShareParam other)
+        {
+            return this.Setting != other.Setting;
+        }
+
     }
 }

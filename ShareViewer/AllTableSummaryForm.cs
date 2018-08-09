@@ -48,7 +48,14 @@ namespace ShareViewer
                     dgViewBindingSource.Add(summary);
                 }
                 dgViewSummary.DataSource = dgViewBindingSource;
+
+                //searchable, sortable approach: (one column only)
+                //SortableBindingList<AllTableSummary> sortableList = new SortableBindingList<AllTableSummary>(allSummaries);
+                //dgViewBindingSource.DataSource = sortableList;
+                //dgViewSummary.DataSource = dgViewBindingSource;
+
                 stripText.Text = $"{allSummaries.Count} shares summarised.";
+
             });
         }
 
@@ -64,48 +71,56 @@ namespace ShareViewer
                 {
                     Name="Share",
                     DataPropertyName = "TheShare",
+                    SortMode= DataGridViewColumnSortMode.Programmatic
                 });
             dgViewSummary.Columns.Add(
                 new DataGridViewTextBoxColumn()
                 {
                     Name = "Earliest Day",
                     DataPropertyName = "FirstDay",
+                    SortMode = DataGridViewColumnSortMode.Programmatic
                 });
             dgViewSummary.Columns.Add(
                 new DataGridViewTextBoxColumn()
                 {
                     Name = "Latest Day",
                     DataPropertyName = "LastDay",
+                    SortMode = DataGridViewColumnSortMode.Programmatic
                 });
             dgViewSummary.Columns.Add(
                 new DataGridViewTextBoxColumn()
                 {
                     Name = "Trading Days",
                     DataPropertyName = "NumberOfTradingDays",
+                    SortMode = DataGridViewColumnSortMode.Programmatic
                 });
             dgViewSummary.Columns.Add(
                 new DataGridViewTextBoxColumn()
                 {
                     Name = "Last Price",
-                    DataPropertyName = "Last Price",
+                    DataPropertyName = "LastPrice",
+                    SortMode = DataGridViewColumnSortMode.Programmatic
                 });
             dgViewSummary.Columns.Add(
                 new DataGridViewTextBoxColumn()
                 {
                     Name = "Total Volume",
                     DataPropertyName = "TotalVolume",
+                    SortMode = DataGridViewColumnSortMode.Programmatic
                 });
             dgViewSummary.Columns.Add(
                 new DataGridViewTextBoxColumn()
                 {
                     Name = "Avg Daily Volume",
                     DataPropertyName = "AverageDailyVolume",
+                    SortMode = DataGridViewColumnSortMode.Programmatic
                 });
             dgViewSummary.Columns.Add(
                 new DataGridViewTextBoxColumn()
                 {
                     Name = "Last Day Volume",
                     DataPropertyName = "LastDayVolume",
+                    SortMode = DataGridViewColumnSortMode.Programmatic
                 });
         }
 
@@ -164,6 +179,38 @@ namespace ShareViewer
                 row.Cells["Last Day Volume"].Style.ForeColor = Color.Red;
             }
 
+        }
+
+        private void dgViewSummary_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            var col = dgViewSummary.Columns[e.ColumnIndex];
+            var sortDirection = col.HeaderCell.SortGlyphDirection;
+            switch (col.DataPropertyName)
+            {
+                case "TheShare":
+                    dgViewBindingSource.Clear();
+                    if (sortDirection == SortOrder.Descending || sortDirection == SortOrder.None)
+                    {
+                        foreach (AllTableSummary summary in allSummaries.OrderBy(s => s.TheShare.Name))
+                        {
+                            dgViewBindingSource.Add(summary);
+                        }
+                        col.HeaderCell.SortGlyphDirection = SortOrder.Ascending;
+                    }
+                    else
+                    {
+                        foreach (AllTableSummary summary in allSummaries.OrderByDescending(s => s.TheShare.Name))
+                        {
+                            dgViewBindingSource.Add(summary);
+                        }
+                        col.HeaderCell.SortGlyphDirection = SortOrder.Descending;
+                    }
+                    dgViewSummary.DataSource = dgViewBindingSource;
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 }

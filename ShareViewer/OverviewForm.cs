@@ -20,6 +20,7 @@ namespace ShareViewer
         private bool _loadingCols = false;
         private bool _changingColumns = false;
         private bool _sharesBeenDiscarded = false;
+        private bool _FullRecalcNeeded = false;
 
 
         internal TextBox calcAuditTextBox;
@@ -210,7 +211,14 @@ namespace ShareViewer
 
         internal void displayProgress(Share share)
         {
-            stripText.Text = $"Preparing overview, {share.Number} {share.Name} ...";
+            if (_FullRecalcNeeded)
+            {
+                stripText.Text = $"FULL RECALC overview, {share.Number} {share.Name} ...";
+            }
+            else
+            {
+                stripText.Text = $"Compiling overview, {share.Number} {share.Name} ...";
+            }
         }
 
         private void InstallOverviewColumns()
@@ -228,6 +236,7 @@ namespace ShareViewer
                             Name = item,
                             DataPropertyName = colName,
                             ToolTipText = Overview.PropNameToHint(colName),
+                            SortMode = DataGridViewColumnSortMode.Programmatic,
                             //ReadOnly = true,
                         });
                 }
@@ -240,6 +249,7 @@ namespace ShareViewer
                             Name = item,
                             DataPropertyName = colName,
                             ToolTipText = Overview.PropNameToHint(colName),
+                            SortMode = DataGridViewColumnSortMode.Programmatic,
                             ReadOnly = true,
                         });
                     //specify format for numbers
@@ -279,9 +289,11 @@ namespace ShareViewer
                 //load up the full AllTable
                 atSegment = AllTable.GetAllTableRows(atFilename, 10402);
 
-                // ##### ASSUME CALCS ALREADY DONE?
-                //Calculations.PerformShareCalculations(share, atSegment);
-                //AllTable.SaveAllTable(atFilename, atSegment);
+                if (_FullRecalcNeeded)
+                {
+                    Calculations.PerformShareCalculations(share, atSegment);
+                    AllTable.SaveAllTable(atFilename, atSegment);
+                }
 
                 //then the Overview
                 Overview oview = OverviewCalcs.CreateInitialOverviewForShare(share, atSegment);
@@ -294,6 +306,8 @@ namespace ShareViewer
                 //if (++shareCounter == 20) break;
 
             }
+
+            _FullRecalcNeeded = false;
 
         }
 
@@ -409,46 +423,68 @@ namespace ShareViewer
             switch (calculation)
             {
                 case "Identify Lazy Shares":
-                    aus.ParamsLazyShare = CalcLazyShareParam;
-                    aus.Save();
-                    toolStripCalcs.Text = $"{calculation} Parameter saved";
+                    if (aus.ParamsLazyShare.DiffersFrom(CalcLazyShareParam))
+                    {
+                        aus.ParamsLazyShare = CalcLazyShareParam;
+                        aus.Save();
+                        toolStripCalcs.Text = $"Changed '{calculation}' parameter saved. You should RE-CALCULATE.";
+                        _FullRecalcNeeded = true;
+                    }
                     break;
                 case "Make Slow (Five minutes) Prices SP":
-                    aus.ParamsSlowPrice = CalcSlowPriceParam;
-                    aus.Save();
-                    toolStripCalcs.Text = $"{calculation} Parameter saved";
+                    if (aus.ParamsSlowPrice.DiffersFrom(CalcSlowPriceParam))
+                    {
+                        aus.ParamsSlowPrice = CalcSlowPriceParam;
+                        aus.Save();
+                        toolStripCalcs.Text = $"Changed '{calculation}' parameter saved. You should RE-CALCULATE.";
+                        _FullRecalcNeeded = true;
+                    }
                     break;
                 case "Make Five minutes Price Gradients PG":
                     //no params to save
                     break;
                 case "Find direction and Turning":
-                    aus.ParamsDirectionAndTurning = CalcDirectionAndTurningParam;
-                    aus.Save();
-                    toolStripCalcs.Text = $"{calculation} Parameter saved";
+                    if (aus.ParamsDirectionAndTurning.DiffersFrom(CalcDirectionAndTurningParam))
+                    {
+                        aus.ParamsDirectionAndTurning = CalcDirectionAndTurningParam;
+                        aus.Save();
+                        toolStripCalcs.Text = $"Changed '{calculation}' parameter saved. You should RE-CALCULATE.";
+                        _FullRecalcNeeded = true;
+                    }
                     break;
                 case "Find Five minutes Gradients Figure PGF":
-                    aus.ParamsFiveMinsGradientFigure = CalcFiveMinsGradientFigureParam;
-                    aus.Save();
-                    toolStripCalcs.Text = $"{calculation} Parameter saved";
+                    if (aus.ParamsFiveMinsGradientFigure.DiffersFrom(calcFiveMinsGradientFigureParam))
+                    {
+                        aus.ParamsFiveMinsGradientFigure = CalcFiveMinsGradientFigureParam;
+                        aus.Save();
+                        toolStripCalcs.Text = $"Changed '{calculation}' parameter saved. You should RE-CALCULATE.";
+                        _FullRecalcNeeded = true;
+                    }
                     break;
 
                 case "Related volume Figure (RPGFV) of biggest PGF":
                     toolStripCalcs.Text = $"{calculation} Parameter saved";
+                    _FullRecalcNeeded = true;
                     break;
                 case "Make High Line HL":
                     toolStripCalcs.Text = $"{calculation} Parameter saved";
+                    _FullRecalcNeeded = true;
                     break;
                 case "Make Low Line LL":
                     toolStripCalcs.Text = $"{calculation} Parameter saved";
+                    _FullRecalcNeeded = true;
                     break;
                 case "Make Slow Volumes SV":
                     toolStripCalcs.Text = $"{calculation} Parameter saved";
+                    _FullRecalcNeeded = true;
                     break;
                 case "Slow Volume Figure SVFac":
                     toolStripCalcs.Text = $"{calculation} Parameter saved";
+                    _FullRecalcNeeded = true;
                     break;
                 case "Slow Volume Figure SVFbd":
                     toolStripCalcs.Text = $"{calculation} Parameter saved";
+                    _FullRecalcNeeded = true;
                     break;
                 default:
                     break;
@@ -474,13 +510,10 @@ namespace ShareViewer
 
 
         //User has chosen a Calculation. Show Parameters appropriate for the calculation
-        //and invoke a View by the same name as that of the Calculation
         private void listBoxVariables_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //var affirmNumRows = $"There are {atRows.Count()} records in this All-Table";
-            //stripText.Text = affirmNumRows;
             Cursor.Current = Cursors.WaitCursor;
-
+            toolStripCalcs.Text = "";
             groupBoxParams.Controls.Clear();
             string calculation = ((ListBox)sender).Text;
             groupBoxParams.Text = calculation;
@@ -490,11 +523,11 @@ namespace ShareViewer
             comboBoxViews.Enabled = calculation.StartsWith("*");
 
             //Invoke view by same name
-            int wantedViewIndex = comboBoxViews.Items.IndexOf(calculation);
-            if (wantedViewIndex != -1)
-            {
-                comboBoxViews.SelectedIndex = wantedViewIndex;
-            }
+            //int wantedViewIndex = comboBoxViews.Items.IndexOf(calculation);
+            //if (wantedViewIndex != -1)
+            //{
+            //    comboBoxViews.SelectedIndex = wantedViewIndex;
+            //}
 
             MediateCalculate(calculation);
 
@@ -600,7 +633,25 @@ namespace ShareViewer
         private void buttonCalcAll_Click(object sender, EventArgs e)
         {
             //this re-introduces discarded shares
-            GenerateOverviewAndBindDataGrid();
+            string msg;
+            if (_FullRecalcNeeded)
+            {
+                msg = "A FULL RECALCULATION within All-Tables will be performed since one or more Calculation parameters were changed.\n(~ 10 mins for 400 shares)";
+                var dlgResult = MessageBox.Show(msg, "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+                if (dlgResult == DialogResult.Yes)
+                {
+                    GenerateOverviewAndBindDataGrid();
+                }
+            }
+            else
+            {
+                msg = "Compile the Overview from EXISTING All-Tables?\n(~ 4 minutes for 400 shares)";
+                var dlgResult = MessageBox.Show(msg, "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button2);
+                if (dlgResult == DialogResult.Yes)
+                {
+                    GenerateOverviewAndBindDataGrid();
+                }
+            }
         }
 
         private void dgOverview_RowHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -682,6 +733,387 @@ namespace ShareViewer
             }
 
 
+        }
+
+        private void dgOverview_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            bool sortHandled = true;
+            var col = dgOverview.Columns[e.ColumnIndex];
+            var sortDirection = col.HeaderCell.SortGlyphDirection;
+            bool GoAscending = (sortDirection == SortOrder.Descending || sortDirection == SortOrder.None);
+
+            switch (col.DataPropertyName)
+            {
+                case "Lazy":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.Lazy)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.Lazy))  dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "ShareName":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.ShareName)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.ShareName)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "LastDayVol":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastDayVol)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastDayVol)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "LastPrice":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastPrice)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastPrice)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "DayBeforePrice":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.DayBeforePrice)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.DayBeforePrice)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "PriceFactor":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.PriceFactor)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.PriceFactor)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "LastPGc":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastPGc)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastPGc)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "LastPGd":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastPGd)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastPGd)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "BigLastDayPGa":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.BigLastDayPGa)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.BigLastDayPGa)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "BigLastDayPGF":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.BigLastDayPGF)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.BigLastDayPGF)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "LastDHLFPc":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastDHLFPc)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastDHLFPc)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "LastDHLFPd":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastDHLFPd)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastDHLFPd)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "LastDLLFPc":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastDLLFPc)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastDLLFPc)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "LastDLLFPd":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastDLLFPd)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastDLLFPd)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "LastDaySumOfPGa":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastDaySumOfPGa)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastDaySumOfPGa)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "LastDaySumOfPGb":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastDaySumOfPGb)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastDaySumOfPGb)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "LastDaySumOfPGc":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastDaySumOfPGc)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastDaySumOfPGc)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "LastDaySumOfPtsVola":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastDaySumOfPtsVola)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastDaySumOfPtsVola)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "LastDaySumOfPtsVolb":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastDaySumOfPtsVolb)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastDaySumOfPtsVolb)) dgViewBindingSource.Add(ov)  ;
+                    }
+                    break;
+                case "LastDaySumOfPtsVolc":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastDaySumOfPtsVolc)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastDaySumOfPtsVolc)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "LastDaySumOfPtsVold":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastDaySumOfPtsVold)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastDaySumOfPtsVold)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "LastDaySumOfPtsHLc":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastDaySumOfPtsHLc)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastDaySumOfPtsHLc)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "LastDaySumOfPtsHLd":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastDaySumOfPtsHLd)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastDaySumOfPtsHLd)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "LastDaySumOfPtsVolaa":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastDaySumOfPtsVolaa)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastDaySumOfPtsVolaa)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "LastDaySumOfPtsVolbb":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.LastDaySumOfPtsVolbb)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.LastDaySumOfPtsVolbb)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "SumOfSumCols64_79":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.SumOfSumCols64_79)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.SumOfSumCols64_79)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "SumOfSumCols64_79trf":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.SumOfSumCols64_79trf)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.SumOfSumCols64_79trf)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "ShareNumber":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.ShareNumber)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.ShareNumber)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+
+                default:
+                    sortHandled = false;
+                    break;
+            }
+            if (sortHandled)
+            {
+                col.HeaderCell.SortGlyphDirection = GoAscending ? SortOrder.Ascending : SortOrder.Descending;
+                dgOverview.DataSource = dgViewBindingSource;
+            }
+
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var saveFileDlg = new SaveFileDialog();
+            saveFileDlg.Filter = "ShareViewer Overview|*.ovw";
+            saveFileDlg.Title = "Save Named Overview";
+            saveFileDlg.ShowDialog();
+
+            if (saveFileDlg.FileName != "")
+            {
+                int overviewsCount = 0;
+                using (FileStream fs = (FileStream)saveFileDlg.OpenFile())
+                {
+                    foreach (Overview item in sharesOverview)
+                    {
+                        Helper.SerializeOverviewRecord(fs, item);
+                        overviewsCount++;
+                    }
+                }
+                toolStripCalcs.Text = $"Saved {overviewsCount} overviews to {saveFileDlg.FileName}";
+            }
+
+        }
+
+        private void loadNamedOverviewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                //StreamReader sr = new StreamReader(openFileDialog1.FileName);
+                //MessageBox.Show(sr.ReadToEnd());
+                //sr.Close();
+
+                Cursor.Current = Cursors.WaitCursor;
+                dgViewBindingSource.Clear();
+
+                using (FileStream fs = new FileStream(openFileDialog1.FileName, FileMode.Open))
+                {
+                    //slurp in previously saved file
+                    sharesOverview = (List<Overview>)Helper.DeserializeOverview<Overview>(fs);
+
+                    BindDatagridView();
+
+                    stripText.Text = $"{sharesOverview.Count} shares.";
+                    Cursor.Current = Cursors.Default;
+                    dgOverview.Focus();
+                    toolStripOverviewNameLabel.Text = openFileDialog1.FileName;
+                }
+
+
+            }
         }
     }
 }

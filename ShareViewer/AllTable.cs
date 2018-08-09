@@ -78,7 +78,7 @@ namespace ShareViewer
 
     }
 
-    public class Share
+    public class Share : IComparable
     {
         public Share(string name, int number)
         {
@@ -95,6 +95,11 @@ namespace ShareViewer
         public override string ToString()
         {
             return $"{number.ToString("000")} {name}";
+        }
+
+        public int CompareTo(object obj)
+        {
+            return Name.CompareTo(((Share)obj).Name);
         }
     }
 

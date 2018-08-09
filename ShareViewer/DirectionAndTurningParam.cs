@@ -39,8 +39,8 @@ namespace ShareViewer
         public double From { get => from; set => from = value; }
 
         [Category("Parameter")]
-        [ReadOnly(true)]
         [Description("Maximum Value")]
+        [ReadOnly(true)]
         public double To { get => to; set => to = value; }
 
         [Category("Parameter")]
@@ -51,6 +51,12 @@ namespace ShareViewer
         [Description("PGc minimum threshold")]
         [ReadOnly(true)]
         public int PGcThreshold { get => pGcThreshold; set => pGcThreshold = value; }
+
+        public bool DiffersFrom(DirectionAndTurningParam other)
+        {
+            return (this.Z != other.Z);
+        }
+
 
 
     }

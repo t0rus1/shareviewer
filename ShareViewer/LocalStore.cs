@@ -622,8 +622,7 @@ namespace ShareViewer
                     var awaiter = genTask.GetAwaiter();
                     awaiter.OnCompleted(() =>
                     {
-                        //Task task = Task.Delay(1000);
-                        //task.ContinueWith(_ => PerformAllTableCalculation(new Share(shareName, shareNum), allTableFile));
+                        //update AllTable calculations
                         PerformAllTableCalculation(new Share(shareName, shareNum), allTableFile);
 
                         sharesDone++;
@@ -650,9 +649,6 @@ namespace ShareViewer
                                 appUserSettings.AllTableTradingSpan = tradingSpan.ToString();
                                 appUserSettings.Save();
                                 Helper.LogStatus("Info", $"{sharesDone} All-Table updates complete.");
-                                //Go on and do the Calculations on every all-table after a 3 sec wait
-                                //Task task = Task.Delay(3000);
-                                //task.ContinueWith(_ => UpdateAllTableCalculations());
                             }
                             //re-enable buttons, hide progress bar etc
                             Helper.HoldWhileGeneratingNewAllTables(false,topUpOnly);
@@ -663,42 +659,6 @@ namespace ShareViewer
             }
         }
 
-        //Sweep thru sharelist and call PerformAllTableCalculation method for each share
-        //internal static void UpdateAllTableCalculations()
-        //{
-        //    var allTablesFolder = Helper.GetAppUserSettings().AllTablesFolder;
-        //    var shareLines = LocalStore.CreateShareArrayFromShareList().Skip(1);
-
-        //    int sharesDone = 0;
-        //    int numShares = shareLines.Count();
-
-        //    foreach (string line in shareLines)
-        //    {
-        //        var share = Helper.CreateShareFromLine(line);
-        //        var atFilename = allTablesFolder + $@"\alltable_{share.Number}.at";
-
-        //        var genTask = Task.Run(() => PerformAllTableCalculation(share, atFilename));
-        //        var awaiter = genTask.GetAwaiter();
-        //        awaiter.OnCompleted(() =>
-        //        {
-        //            sharesDone++;
-        //            //Helper.SetProgressBar("progressBarGenNewAllTables", sharesDone, numShares);
-        //            var progressMsg = $"{sharesDone} shares recalculated. ({share.Name})";
-        //            //Helper.UpdateAllTableProgress(progressMsg);
-        //            //Helper.Log("Info", progressMsg);
-        //            Helper.LogStatus("Info", progressMsg);
-        //            if (sharesDone == numShares)
-        //            {
-        //                var msg = $"{sharesDone} All-Table Updates and Calculations completed.";
-        //                Helper.LogStatus("Info", msg);
-        //                MessageBox.Show(msg, "Completed", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //            }
-        //        });
-        //    }
-
-        //    Helper.LogStatus("Info", "Waiting for Calculations to complete...");
-
-        //}
 
         internal static void PerformAllTableCalculation(Share share, string atFilename)
         {

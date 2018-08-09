@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OverviewForm));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
             this.panelLeft = new System.Windows.Forms.Panel();
@@ -42,7 +42,9 @@
             this.buttonCalcAll = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripDDBtnSaveAs = new System.Windows.Forms.ToolStripDropDownButton();
+            this.loadNamedOverviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripCalcs = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBoxParams = new System.Windows.Forms.GroupBox();
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
@@ -54,9 +56,8 @@
             this.linkLabelLock = new System.Windows.Forms.LinkLabel();
             this.dgOverview = new System.Windows.Forms.DataGridView();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.toolStripDDBtnSaveAs = new System.Windows.Forms.ToolStripDropDownButton();
-            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadNamedOverviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripOverviewNameLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.statusStrip.SuspendLayout();
             this.panelLeft.SuspendLayout();
             this.panelTop.SuspendLayout();
@@ -148,14 +149,14 @@
             // 
             this.linkLabelLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabelLoad.AutoSize = true;
-            this.linkLabelLoad.Location = new System.Drawing.Point(647, 161);
+            this.linkLabelLoad.Location = new System.Drawing.Point(645, 161);
             this.linkLabelLoad.Name = "linkLabelLoad";
-            this.linkLabelLoad.Size = new System.Drawing.Size(68, 13);
+            this.linkLabelLoad.Size = new System.Drawing.Size(75, 13);
             this.linkLabelLoad.TabIndex = 18;
             this.linkLabelLoad.TabStop = true;
-            this.linkLabelLoad.Text = "re-load Work";
-            this.toolTip1.SetToolTip(this.linkLabelLoad, "Load the grid with the Overview which was last saved.\r\nIt will be overwritten sho" +
-        "uld you save again.");
+            this.linkLabelLoad.Text = "Quick Re-load";
+            this.toolTip1.SetToolTip(this.linkLabelLoad, "Load the grid with the Overview which was last \'quick-saved\'.\r\nIt will be overwri" +
+        "tten should you save again.");
             this.linkLabelLoad.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelLoad_LinkClicked);
             // 
             // buttonCalcAll
@@ -163,51 +164,78 @@
             this.buttonCalcAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCalcAll.Image = ((System.Drawing.Image)(resources.GetObject("buttonCalcAll.Image")));
             this.buttonCalcAll.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.buttonCalcAll.Location = new System.Drawing.Point(643, 12);
+            this.buttonCalcAll.Location = new System.Drawing.Point(620, 12);
             this.buttonCalcAll.Name = "buttonCalcAll";
-            this.buttonCalcAll.Size = new System.Drawing.Size(76, 85);
+            this.buttonCalcAll.Size = new System.Drawing.Size(117, 85);
             this.buttonCalcAll.TabIndex = 17;
-            this.buttonCalcAll.Text = "(RE) Calculate";
+            this.buttonCalcAll.Text = "Compile | ReCalc";
+            this.buttonCalcAll.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.buttonCalcAll.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.toolTip1.SetToolTip(this.buttonCalcAll, "Apply all Calculations using current parameters and re-load the Overview grid");
+            this.toolTip1.SetToolTip(this.buttonCalcAll, "Compile an Overview from existing All-Tables or \r\nRe-Calculate and then complie, " +
+        "\r\ndepending on whether parameters have changed.\r\n");
             this.buttonCalcAll.UseVisualStyleBackColor = true;
             this.buttonCalcAll.Click += new System.EventHandler(this.buttonCalcAll_Click);
             // 
             // buttonSave
             // 
             this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonSave.Location = new System.Drawing.Point(643, 106);
+            this.buttonSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonSave.Location = new System.Drawing.Point(643, 128);
             this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(76, 50);
+            this.buttonSave.Size = new System.Drawing.Size(76, 28);
             this.buttonSave.TabIndex = 16;
-            this.buttonSave.Text = "Save Work";
-            this.toolTip1.SetToolTip(this.buttonSave, "Save the current Overview so that it may be quickly recalled next time. It will o" +
-        "verwrite any previously saved Overview.");
+            this.buttonSave.Text = "Quick Save";
+            this.toolTip1.SetToolTip(this.buttonSave, "Save the current Overview so that it may be quickly recalled next time.\r\nIt will " +
+        "overwrite any previously saved Overview.\r\nFor more permanent named worksheet sav" +
+        "es, see the Save|Load button");
             this.buttonSave.UseVisualStyleBackColor = true;
             this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1,
             this.toolStripDDBtnSaveAs,
+            this.toolStripOverviewNameLabel,
             this.toolStripCalcs});
-            this.statusStrip1.Location = new System.Drawing.Point(3, 183);
+            this.statusStrip1.Location = new System.Drawing.Point(3, 181);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(737, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(737, 24);
             this.statusStrip1.TabIndex = 15;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // toolStripStatusLabel1
+            // toolStripDDBtnSaveAs
             // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
+            this.toolStripDDBtnSaveAs.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripDDBtnSaveAs.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripDDBtnSaveAs.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadNamedOverviewToolStripMenuItem,
+            this.saveAsToolStripMenuItem});
+            this.toolStripDDBtnSaveAs.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDDBtnSaveAs.Image")));
+            this.toolStripDDBtnSaveAs.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDDBtnSaveAs.Name = "toolStripDDBtnSaveAs";
+            this.toolStripDDBtnSaveAs.Size = new System.Drawing.Size(79, 22);
+            this.toolStripDDBtnSaveAs.Text = "Save | Load";
+            // 
+            // loadNamedOverviewToolStripMenuItem
+            // 
+            this.loadNamedOverviewToolStripMenuItem.Name = "loadNamedOverviewToolStripMenuItem";
+            this.loadNamedOverviewToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
+            this.loadNamedOverviewToolStripMenuItem.Text = "Load named Overview";
+            this.loadNamedOverviewToolStripMenuItem.Click += new System.EventHandler(this.loadNamedOverviewToolStripMenuItem_Click);
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
+            this.saveAsToolStripMenuItem.Text = "Save as a named Overview";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // toolStripCalcs
             // 
+            this.toolStripCalcs.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
+            this.toolStripCalcs.Margin = new System.Windows.Forms.Padding(142, 3, 0, 2);
             this.toolStripCalcs.Name = "toolStripCalcs";
-            this.toolStripCalcs.Size = new System.Drawing.Size(16, 17);
+            this.toolStripCalcs.Size = new System.Drawing.Size(20, 19);
             this.toolStripCalcs.Text = "...";
             // 
             // groupBoxParams
@@ -300,49 +328,37 @@
             // dgOverview
             // 
             this.dgOverview.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgOverview.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgOverview.DefaultCellStyle = dataGridViewCellStyle1;
             this.dgOverview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgOverview.Location = new System.Drawing.Point(165, 211);
             this.dgOverview.Name = "dgOverview";
             this.dgOverview.Size = new System.Drawing.Size(992, 454);
             this.dgOverview.TabIndex = 6;
+            this.dgOverview.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgOverview_ColumnHeaderMouseClick);
             this.dgOverview.RowHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgOverview_RowHeaderMouseDoubleClick);
             // 
             // toolTip1
             // 
             this.toolTip1.IsBalloon = true;
             // 
-            // toolStripDDBtnSaveAs
+            // toolStripOverviewNameLabel
             // 
-            this.toolStripDDBtnSaveAs.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripDDBtnSaveAs.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDDBtnSaveAs.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadNamedOverviewToolStripMenuItem,
-            this.saveAsToolStripMenuItem});
-            this.toolStripDDBtnSaveAs.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDDBtnSaveAs.Image")));
-            this.toolStripDDBtnSaveAs.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripDDBtnSaveAs.Name = "toolStripDDBtnSaveAs";
-            this.toolStripDDBtnSaveAs.Size = new System.Drawing.Size(95, 20);
-            this.toolStripDDBtnSaveAs.Text = "Save As | Load";
+            this.toolStripOverviewNameLabel.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.toolStripOverviewNameLabel.ForeColor = System.Drawing.Color.Green;
+            this.toolStripOverviewNameLabel.Name = "toolStripOverviewNameLabel";
+            this.toolStripOverviewNameLabel.Size = new System.Drawing.Size(16, 19);
+            this.toolStripOverviewNameLabel.Text = "...";
             // 
-            // saveAsToolStripMenuItem
+            // openFileDialog1
             // 
-            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
-            this.saveAsToolStripMenuItem.Text = "Save as a named Overview";
-            // 
-            // loadNamedOverviewToolStripMenuItem
-            // 
-            this.loadNamedOverviewToolStripMenuItem.Name = "loadNamedOverviewToolStripMenuItem";
-            this.loadNamedOverviewToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.loadNamedOverviewToolStripMenuItem.Text = "Load named Overview";
+            this.openFileDialog1.FileName = "openFileDialog1";
             // 
             // OverviewForm
             // 
@@ -388,7 +404,6 @@
         private System.Windows.Forms.LinkLabel linkLabelLazy;
         private System.Windows.Forms.GroupBox groupBoxCalculations;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.GroupBox groupBoxParams;
         private System.Windows.Forms.PropertyGrid propertyGrid1;
         private System.Windows.Forms.ListBox listBoxVariables;
@@ -401,5 +416,7 @@
         private System.Windows.Forms.ToolStripDropDownButton toolStripDDBtnSaveAs;
         private System.Windows.Forms.ToolStripMenuItem loadNamedOverviewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripOverviewNameLabel;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }

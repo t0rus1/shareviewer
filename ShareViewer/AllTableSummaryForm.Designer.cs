@@ -43,6 +43,7 @@
             this.dgViewSummary.Name = "dgViewSummary";
             this.dgViewSummary.Size = new System.Drawing.Size(800, 450);
             this.dgViewSummary.TabIndex = 0;
+            this.dgViewSummary.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgViewSummary_ColumnHeaderMouseClick);
             this.dgViewSummary.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgViewSummary_RowsAdded);
             // 
             // statusStrip1

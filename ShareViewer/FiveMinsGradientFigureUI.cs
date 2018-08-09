@@ -62,6 +62,7 @@ namespace ShareViewer
             else
             {
                 btnCalc.Enabled = false;
+                btnCalc.Visible = false;
             }
             buttons[0] = btnCalc;
 

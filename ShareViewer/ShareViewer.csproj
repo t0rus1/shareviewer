@@ -88,6 +88,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="SlowPriceParam.cs" />
     <Compile Include="SlowPriceUI.cs" />
+    <Compile Include="SortableBindingList.cs" />
     <Compile Include="TextBoxHeaderCell.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
