@@ -55,6 +55,7 @@
     <Compile Include="AllTableSummaryForm.Designer.cs">
       <DependentUpon>AllTableSummaryForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="AlternateData.cs" />
     <Compile Include="Calculations.cs" />
     <Compile Include="DirectionAndTurningParam.cs" />
     <Compile Include="DirectionAndTurningUI.cs" />
@@ -84,6 +85,12 @@
     </Compile>
     <Compile Include="OverviewForm.Designer.cs">
       <DependentUpon>OverviewForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SaveWithNotesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SaveWithNotesForm.Designer.cs">
+      <DependentUpon>SaveWithNotesForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="SlowPriceParam.cs" />
@@ -124,6 +131,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="SaveWithNotesForm.resx">
+      <DependentUpon>SaveWithNotesForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SingleAllTableForm1.resx">
       <DependentUpon>SingleAllTableForm1.cs</DependentUpon>
     </EmbeddedResource>

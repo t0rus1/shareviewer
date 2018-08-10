@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace ShareViewer
         private bool _changingColumns = false;
         private bool _sharesBeenDiscarded = false;
         private bool _FullRecalcNeeded = false;
+        private string _curOverviewLoadname = "";
 
 
         internal TextBox calcAuditTextBox;
@@ -237,7 +239,7 @@ namespace ShareViewer
                             DataPropertyName = colName,
                             ToolTipText = Overview.PropNameToHint(colName),
                             SortMode = DataGridViewColumnSortMode.Programmatic,
-                            //ReadOnly = true,
+                            ReadOnly = true,
                         });
                 }
                 else
@@ -632,6 +634,10 @@ namespace ShareViewer
         //re do all calculationsa and populate grid afresh
         private void buttonCalcAll_Click(object sender, EventArgs e)
         {
+            //disallow user to view notes
+            _curOverviewLoadname = "";
+            linkLabelNotes.Enabled = false;
+
             //this re-introduces discarded shares
             string msg;
             if (_FullRecalcNeeded)
@@ -728,6 +734,9 @@ namespace ShareViewer
                         stripText.Text = $"{sharesOverview.Count} shares.";
                         Cursor.Current = Cursors.Default;
                         dgOverview.Focus();
+                        //disallow user to view notes
+                        _curOverviewLoadname = "";
+                        linkLabelNotes.Enabled = false;
                     }
                 }
             }
@@ -735,8 +744,23 @@ namespace ShareViewer
 
         }
 
+
+        private void OfferFiltering(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+
         private void dgOverview_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
+            //Filtering
+            if (e.Button == MouseButtons.Right)
+            {
+                OfferFiltering(sender, e);
+                return;
+            }
+
+            //Sorting
             bool sortHandled = true;
             var col = dgOverview.Columns[e.ColumnIndex];
             var sortDirection = col.HeaderCell.SortGlyphDirection;
@@ -1065,25 +1089,77 @@ namespace ShareViewer
 
         }
 
+
+        private void cmd_DataReceived(object sender, DataReceivedEventArgs e)
+        {
+            Helper.Log("Info","cmd_DataReceived:");
+            Helper.Log("Info", e.Data);
+        }
+
+        private void cmd_Error(object sender, DataReceivedEventArgs e)
+        {
+            Helper.Log("Error","cmd_Error");
+            Helper.Log("Info", e.Data);
+        }
+
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var saveFileDlg = new SaveFileDialog();
             saveFileDlg.Filter = "ShareViewer Overview|*.ovw";
-            saveFileDlg.Title = "Save Named Overview";
+            saveFileDlg.Title = dgOverview.SelectedRows.Count == 0 ? "Save Named Overview" : "Save SELECTED rows as Named overview";
             saveFileDlg.ShowDialog();
 
             if (saveFileDlg.FileName != "")
             {
+                string withNotes = "";
+                string selected = "";
                 int overviewsCount = 0;
                 using (FileStream fs = (FileStream)saveFileDlg.OpenFile())
                 {
-                    foreach (Overview item in sharesOverview)
+                    //any 'selected' rows?
+                    if (dgOverview.SelectedRows.Count == 0)
                     {
-                        Helper.SerializeOverviewRecord(fs, item);
-                        overviewsCount++;
+                        //nope
+                        foreach (Overview item in sharesOverview)
+                        {
+                            Helper.SerializeOverviewRecord(fs, item);
+                            overviewsCount++;
+                        }
+                    }
+                    else
+                    {
+                        selected = "(Selected) ";
+                        foreach (DataGridViewRow row in dgOverview.SelectedRows)
+                        {
+                            if (row.Selected)
+                            {
+                                Helper.SerializeOverviewRecord(fs, (Overview)row.DataBoundItem);
+                                overviewsCount++;
+                            }
+                        }
+                    }
+                    if (overviewsCount > 0)
+                    {
+                        //save notes in Alternate Data Stream for .ovw file
+                        // see https://stackoverflow.com/questions/13172129/store-metadata-outside-of-file-any-standard-approach-on-modern-windows?noredirect=1&lq=1
+
+                        var rangeFrom = Helper.GetAppUserSettings().AllTableDataStart;
+                        var tradingSpan = Helper.GetAppUserSettings().AllTableTradingSpan;
+                        var initNotes = $"{selected}Shares Overview from '{rangeFrom}' for {tradingSpan} trading days";
+                        var addNotesForm = new SaveWithNotesForm(initNotes);
+                        var dlgResult = addNotesForm.ShowDialog();
+                        if (dlgResult == DialogResult.Yes)
+                        {
+                            withNotes = " (with notes)";
+                            AlternateData.SetHiddenData(addNotesForm.textBoxNotes.Text, saveFileDlg.FileName, "hidden", cmd_DataReceived, cmd_Error);
+                            //allow user to view notes just saved
+                            _curOverviewLoadname = saveFileDlg.FileName;
+                            linkLabelNotes.Enabled = true;
+                        }
+
                     }
                 }
-                toolStripCalcs.Text = $"Saved {overviewsCount} overviews to {saveFileDlg.FileName}";
+                toolStripCalcs.Text = $"Saved {overviewsCount} overviews to {saveFileDlg.FileName}{withNotes}";
             }
 
         }
@@ -1110,10 +1186,64 @@ namespace ShareViewer
                     Cursor.Current = Cursors.Default;
                     dgOverview.Focus();
                     toolStripOverviewNameLabel.Text = openFileDialog1.FileName;
+                    //allow user to view notes
+                    _curOverviewLoadname = openFileDialog1.FileName;
+                    linkLabelNotes.Enabled = true;
                 }
 
 
             }
+        }
+
+        private void dgOverview_SelectionChanged(object sender, EventArgs e)
+        {
+            linkLabelDeleteSelected.Enabled = (dgOverview.SelectedRows.Count > 0);
+        }
+
+        private void linkLabelDeleteSelected_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var numSelected = dgOverview.SelectedRows.Count;
+            if (numSelected > 0)
+            {
+                var dlgResult = MessageBox.Show($"Discard {numSelected} shares?", "Confirm Discard", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+                if (dlgResult == DialogResult.Yes)
+                {
+                    int overviewsCount = 0;
+                    foreach (DataGridViewRow row in dgOverview.SelectedRows)
+                    {
+                        if (row.Selected)
+                        {
+                            sharesOverview.Remove((Overview)row.DataBoundItem);
+                            overviewsCount++;
+                        }
+                    }
+                    if (overviewsCount > 0)
+                    {
+                        int newCount = 0;
+                        dgViewBindingSource.Clear();
+                        foreach (Overview overview in sharesOverview)
+                        {
+                            dgViewBindingSource.Add(overview);
+                            newCount++;
+                        }
+                        dgOverview.DataSource = null;
+                        dgOverview.DataSource = dgViewBindingSource;
+                        stripText.Text = $"{overviewsCount} shares discarded. {newCount} remain.";
+                    }
+                }
+            }
+            Cursor.Current = Cursors.Default;
+            dgOverview.Focus();
+        }
+
+        private void linkLabelNotes_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_curOverviewLoadname != "")
+            {
+                //open notepad to see notes
+                Process.Start("notepad.exe", _curOverviewLoadname + ":hidden.txt");
+            }
+
         }
     }
 }

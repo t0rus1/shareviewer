@@ -99,7 +99,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.daysBack)).BeginInit();
             this.tabPageCalendar.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControlMain
@@ -857,8 +856,6 @@
             this.tabPageCalendar.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.statusStrip.ResumeLayout(false);
-            this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 

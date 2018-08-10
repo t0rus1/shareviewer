@@ -328,8 +328,6 @@ namespace ShareViewer
             }
         }
 
-
-
         //given a date, construct a file name like "YYYY_MM_DD.TXT"
         internal static string BuildDayDataFilename(DateTime date)
         {
