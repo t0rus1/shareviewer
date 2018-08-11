@@ -30,12 +30,14 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OverviewForm));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
             this.panelLeft = new System.Windows.Forms.Panel();
             this.listBoxCols = new System.Windows.Forms.ListBox();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.linkLabelNotes = new System.Windows.Forms.LinkLabel();
+            this.linkLabelDeleteSelected = new System.Windows.Forms.LinkLabel();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBoxCalculations = new System.Windows.Forms.GroupBox();
             this.linkLabelLoad = new System.Windows.Forms.LinkLabel();
@@ -58,8 +60,6 @@
             this.dgOverview = new System.Windows.Forms.DataGridView();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.linkLabelDeleteSelected = new System.Windows.Forms.LinkLabel();
-            this.linkLabelNotes = new System.Windows.Forms.LinkLabel();
             this.statusStrip.SuspendLayout();
             this.panelLeft.SuspendLayout();
             this.panelTop.SuspendLayout();
@@ -121,6 +121,30 @@
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(992, 211);
             this.panelTop.TabIndex = 5;
+            // 
+            // linkLabelNotes
+            // 
+            this.linkLabelNotes.AutoSize = true;
+            this.linkLabelNotes.Enabled = false;
+            this.linkLabelNotes.Location = new System.Drawing.Point(207, 190);
+            this.linkLabelNotes.Name = "linkLabelNotes";
+            this.linkLabelNotes.Size = new System.Drawing.Size(33, 13);
+            this.linkLabelNotes.TabIndex = 25;
+            this.linkLabelNotes.TabStop = true;
+            this.linkLabelNotes.Text = "notes";
+            this.toolTip1.SetToolTip(this.linkLabelNotes, "See/edit notes entered when Overview was saved. \r\n");
+            this.linkLabelNotes.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelNotes_LinkClicked);
+            // 
+            // linkLabelDeleteSelected
+            // 
+            this.linkLabelDeleteSelected.AutoSize = true;
+            this.linkLabelDeleteSelected.Location = new System.Drawing.Point(3, 79);
+            this.linkLabelDeleteSelected.Name = "linkLabelDeleteSelected";
+            this.linkLabelDeleteSelected.Size = new System.Drawing.Size(124, 13);
+            this.linkLabelDeleteSelected.TabIndex = 24;
+            this.linkLabelDeleteSelected.TabStop = true;
+            this.linkLabelDeleteSelected.Text = "Discard Selected Shares";
+            this.linkLabelDeleteSelected.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDeleteSelected_LinkClicked);
             // 
             // label2
             // 
@@ -340,14 +364,14 @@
             // dgOverview
             // 
             this.dgOverview.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgOverview.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgOverview.DefaultCellStyle = dataGridViewCellStyle2;
             this.dgOverview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgOverview.Location = new System.Drawing.Point(165, 211);
             this.dgOverview.Name = "dgOverview";
@@ -364,30 +388,6 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // linkLabelDeleteSelected
-            // 
-            this.linkLabelDeleteSelected.AutoSize = true;
-            this.linkLabelDeleteSelected.Location = new System.Drawing.Point(3, 79);
-            this.linkLabelDeleteSelected.Name = "linkLabelDeleteSelected";
-            this.linkLabelDeleteSelected.Size = new System.Drawing.Size(124, 13);
-            this.linkLabelDeleteSelected.TabIndex = 24;
-            this.linkLabelDeleteSelected.TabStop = true;
-            this.linkLabelDeleteSelected.Text = "Discard Selected Shares";
-            this.linkLabelDeleteSelected.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDeleteSelected_LinkClicked);
-            // 
-            // linkLabelNotes
-            // 
-            this.linkLabelNotes.AutoSize = true;
-            this.linkLabelNotes.Enabled = false;
-            this.linkLabelNotes.Location = new System.Drawing.Point(207, 190);
-            this.linkLabelNotes.Name = "linkLabelNotes";
-            this.linkLabelNotes.Size = new System.Drawing.Size(33, 13);
-            this.linkLabelNotes.TabIndex = 25;
-            this.linkLabelNotes.TabStop = true;
-            this.linkLabelNotes.Text = "notes";
-            this.toolTip1.SetToolTip(this.linkLabelNotes, "See/edit notes entered when Overview was saved. \r\n");
-            this.linkLabelNotes.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelNotes_LinkClicked);
             // 
             // OverviewForm
             // 

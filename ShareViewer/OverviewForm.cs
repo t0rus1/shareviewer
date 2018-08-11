@@ -17,13 +17,16 @@ namespace ShareViewer
     {
         BindingSource dgViewBindingSource = new BindingSource();
         List<Overview> sharesOverview = new List<Overview>();
-        private bool _loaded = false;
-        private bool _loadingCols = false;
-        private bool _changingColumns = false;
-        private bool _sharesBeenDiscarded = false;
-        private bool _FullRecalcNeeded = false;
-        private string _curOverviewLoadname = "";
+        List<Overview> sharesOverviewPreFiltering = new List<Overview>();
+        OverviewRowFilterForm rowFilterForm;
+        Dictionary<string, OverviewFilter> rowFilters = new Dictionary<string, OverviewFilter>();
 
+        bool _loaded = false;
+        bool _loadingCols = false;
+        bool _changingColumns = false;
+        bool _sharesBeenDiscarded = false;
+        bool _FullRecalcNeeded = false;
+        string _curOverviewLoadname = "";
 
         internal TextBox calcAuditTextBox;
         //CURRENT properties
@@ -33,10 +36,10 @@ namespace ShareViewer
         internal FiveMinsGradientFigureParam CurrFiveMinsGradientFigureParam { get => Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure; }
 
         //CALCULATION properties (we bind these to a property grid)
-        private LazyShareParam calcLazyShareParam;
-        private SlowPriceParam calcSlowPriceParam;
-        private DirectionAndTurningParam calcDirectionAndTurningParam;
-        private FiveMinsGradientFigureParam calcFiveMinsGradientFigureParam;
+        LazyShareParam calcLazyShareParam;
+        SlowPriceParam calcSlowPriceParam;
+        DirectionAndTurningParam calcDirectionAndTurningParam;
+        FiveMinsGradientFigureParam calcFiveMinsGradientFigureParam;
         internal LazyShareParam CalcLazyShareParam { get => calcLazyShareParam; set => calcLazyShareParam = value; }
         internal SlowPriceParam CalcSlowPriceParam { get => calcSlowPriceParam; set => calcSlowPriceParam = value; }
         internal DirectionAndTurningParam CalcDirectionAndTurningParam { get => calcDirectionAndTurningParam; set => calcDirectionAndTurningParam = value; }
@@ -97,6 +100,7 @@ namespace ShareViewer
 
             dgOverview.AutoGenerateColumns = false;
             dgOverview.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dgOverview.EnableHeadersVisualStyles = false;
             dgOverview.AllowUserToResizeColumns = true;
 
             //disable form until grid is loaded
@@ -732,6 +736,7 @@ namespace ShareViewer
                         BindDatagridView();
 
                         stripText.Text = $"{sharesOverview.Count} shares.";
+                        toolStripCalcs.Text = "Tip: Rt-Click on Column Headers to build a composite filter.";
                         Cursor.Current = Cursors.Default;
                         dgOverview.Focus();
                         //disallow user to view notes
@@ -744,10 +749,81 @@ namespace ShareViewer
 
         }
 
+        //this callback gets called when user closes the floating filter form
+        private void FilterForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            rowFilterForm.Hide();
+        }
+
+        private void FilterForm_ApplyFilters(object sender, EventArgs e)
+        {
+            if (sharesOverviewPreFiltering.Count > 0)
+            {
+                //ensure we always start with the (previously saved) unfiltered overview
+                sharesOverview.Clear();
+                foreach (var item in sharesOverviewPreFiltering) { sharesOverview.Add(item); }
+            }
+
+            //Apply filters to the overviews as per current state in the floating filters form
+            //Successive application
+            foreach (string filterProp in rowFilters.Keys)
+            {
+                OverviewFilter filter = rowFilters[filterProp];
+                if (filter.Apply)
+                {
+                    //this will do the filtering of the shares:
+                    OverviewFilter.ApplyFilterToList(filter, ref sharesOverview);
+                    //mark column to indicate filtering is active
+                    if (dgOverview.Columns[filter.ColumnHeader].Name == filter.ColumnHeader) 
+                    {
+                        dgOverview.Columns[filter.ColumnHeader].HeaderCell.Style.BackColor = Color.Azure;
+                    }
+                }
+                else
+                {
+                    if (dgOverview.Columns[filter.ColumnHeader].Name == filter.ColumnHeader)
+                    {
+                        //unmark column to clear it if it was previously marked
+                        dgOverview.Columns[filter.ColumnHeader].HeaderCell.Style.BackColor = Control.DefaultBackColor;
+                    }
+                }
+            }
+            //rebind grid
+            dgViewBindingSource.Clear();
+            foreach (Overview overview in sharesOverview)
+            {
+                dgViewBindingSource.Add(overview);
+            }
+            dgOverview.DataSource = null;
+            dgOverview.DataSource = dgViewBindingSource;
+            stripText.Text = $"Filters applied";
+        }
 
         private void OfferFiltering(object sender, DataGridViewCellMouseEventArgs e)
         {
-            throw new NotImplementedException();
+            //grab name of column from overview
+            string propName = dgOverview.Columns[e.ColumnIndex].DataPropertyName;
+            string colHeader = dgOverview.Columns[e.ColumnIndex].Name;
+            if (propName == "ShareName" || propName == "Lazy") return; // only offer filtering on numeric columns
+
+            //pop up filter form and show state of current filters
+            if (rowFilterForm == null)
+            {
+                //make copy of unfiltered overviews so we can restore
+                sharesOverviewPreFiltering.Clear();
+                foreach (var item in sharesOverview) { sharesOverviewPreFiltering.Add(item); }
+                //create the floating filter form
+                rowFilterForm = new OverviewRowFilterForm(rowFilters, FilterForm_FormClosing, FilterForm_ApplyFilters);
+            }
+            rowFilterForm.Show();
+
+            //is this column already in rowfilters?
+            if (!rowFilters.Keys.Any(k=>k == propName))
+            {
+                //nope, so add it
+                rowFilters.Add(propName, new OverviewFilter(propName, Comparison.GreaterThan, colHeader));
+                rowFilterForm.LoadGrid();
+            }
         }
 
 
@@ -756,7 +832,10 @@ namespace ShareViewer
             //Filtering
             if (e.Button == MouseButtons.Right)
             {
-                OfferFiltering(sender, e);
+                if (dgOverview.Rows.Count > 1)
+                {
+                    OfferFiltering(sender, e);
+                }
                 return;
             }
 
@@ -1186,6 +1265,7 @@ namespace ShareViewer
                     Cursor.Current = Cursors.Default;
                     dgOverview.Focus();
                     toolStripOverviewNameLabel.Text = openFileDialog1.FileName;
+                    toolStripCalcs.Text = "Tip: Rt-Click on Column Headers to build a composite filter.";
                     //allow user to view notes
                     _curOverviewLoadname = openFileDialog1.FileName;
                     linkLabelNotes.Enabled = true;
