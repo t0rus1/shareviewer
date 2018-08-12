@@ -63,5 +63,8 @@
     <Setting Name="ParamsFiveMinsGradientFigure" Type="ShareViewer.FiveMinsGradientFigureParam" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="ParamsMakeHighLine" Type="ShareViewer.MakeHighLineParam" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

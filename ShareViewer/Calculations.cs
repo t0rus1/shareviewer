@@ -37,6 +37,13 @@ namespace ShareViewer
                 aus.ParamsFiveMinsGradientFigure = new FiveMinsGradientFigureParam(104, 999, 104, 1.0, 5.0, 1.0, 0, 0.0050, 0);
                 shouldSave = true;
             }
+            if (aus.ParamsMakeHighLine == null)
+            {
+                //not yet set
+                aus.ParamsMakeHighLine = new MakeHighLineParam(0, 0.001, 0.0005);
+                shouldSave = true;
+            }
+
             if (shouldSave)
             {
                 aus.Save();
@@ -48,17 +55,17 @@ namespace ShareViewer
 
         internal static List<String> CalculationNames = new List<String> {
             "*** Choose a Calculation ***",
-            "Identify Lazy Shares",
-            "Make Slow (Five minutes) Prices SP",
-            "Make Five minutes Price Gradients PG",
-            "Find direction and Turning",
-            "Find Five minutes Gradients Figure PGF",
-            "Related volume Figure (RPGFV) of biggest PGF",
-            "Make High Line HL",
-            "Make Low Line LL",
-            "Make Slow Volumes SV",
-            "Slow Volume Figure SVFac",
-            "Slow Volume Figure SVFbd",
+            "Identify Lazy Shares",                         // 3. Delete lazy shares
+            "Make Slow (Five minutes) Prices SP",           // 4. Make Slow (Five minutes) Prices SP:
+            "Make Five minutes Price Gradients PG",         // 5. Make Five minutes Price Gradients PG:
+            "Find direction and Turning",                   // 6. Find direction and Turning: 
+            "Find Five minutes Gradients Figure PGF",       // 7. Find Five minutes Gradients Figure PGF:
+            "Related volume Figure (RPGFV) of biggest PGF", // 8. Related volume Figure (RPGFV) of biggest PGF
+            "Make High Line HL",                            // 9. Make High Line HL
+            "Make Low Line LL",                             // 10. Make Low Line LL
+            "Make Slow Volumes SV",                         // 11. Make Slow Volumes SV: 
+            "Slow Volume Figure SVFac",                     // 12. Slow Volume Figure SVFac: 
+            "Slow Volume Figure SVFbd",                     // 13. Slow Volume Figure SVFbd: 
             };
 
         /* from Gunther's notes
@@ -245,6 +252,7 @@ Result:
         //Compute per Gunther's notes 
         internal static void FindFiveMinsGradientsFigurePGF(ref AllTable[] atRows, FiveMinsGradientFigureParam calcFiveMinsGradientFigureParam, int startRow, int endRow, out string[] auditSummary)
         {
+            string auditSegment;
             auditSummary = new string[] { };
 
             //prefill APpg column 13 with 1's
@@ -258,7 +266,7 @@ Result:
                 atRows[i].PGFrowx15 = atRows[i].PGa / atRows[i].APpg;
             }
             //col16
-            for (int i = startRow; i <= endRow - 1; i++)  // 1029 -> 10400
+            for (int i = startRow; i <= endRow - 1; i++)  // 10298 -> 10400
             {
                 atRows[i].PGFrowx16 = (atRows[i].PGa * atRows[i + 1].PGa) / atRows[i].APpg;
             }
@@ -267,7 +275,7 @@ Result:
             {
                 atRows[i].PGFrowx17 = (atRows[i].PGa * atRows[i + 1].PGa * atRows[i + 2].PGa) / atRows[i].APpg;
             }
-            auditSummary = $"Columns APpg, PGFrowx15, PGFrowx16, PGFrowx17 filled from row {startRow}-{endRow}.\nPlease inspect the view".Split('\n');
+            auditSegment = $"Columns APpg, PGFrowx15, PGFrowx16, PGFrowx17 filled from row {startRow}-{endRow}.\nPlease inspect the view";
 
             // from Gunther
             //2) look in the fields of columns 15 to17 and the last Z rows for the biggest figure. Z = 104 … 999  	
@@ -294,21 +302,75 @@ Result:
                     rowBig = i;
                 }
             }
-            if (biggest > 1.0)
-            {
-                for (int i = rowBig; i <= endRow; i++)
+            if (rowBig != -1) {
+                if (biggest > 1.0)
                 {
-                    atRows[i].APpg *= (1 + calcFiveMinsGradientFigureParam.Y);
+                    for (int i = rowBig; i <= endRow; i++)
+                    {
+                        atRows[i].APpg *= (1 + calcFiveMinsGradientFigureParam.Y);
+                    }
+                }
+                else
+                {
+                    for (int i = rowBig; i <= endRow; i++)
+                    {
+                        atRows[i].APpg *= Math.Pow(1 - calcFiveMinsGradientFigureParam.Y, calcFiveMinsGradientFigureParam.X);
+                    }
                 }
             }
             else
             {
-                for (int i = rowBig; i <= endRow; i++)
+                auditSegment += $"\nWarning: Unable to locate biggest figure in the last {calcFiveMinsGradientFigureParam.Z} rows amongst PGFrowx15, PGFrowx16, PGFrowx17";
+                auditSummary = auditSegment.Split('\n');
+            }
+
+        }
+
+        internal static void RelatedVolumeFigureOfBiggestPGF(ref AllTable[] atRows, int startRow, int endRow, out string[] auditSummary)
+        {
+            auditSummary = new string[] { };
+            auditSummary = "LEON has questions about interpreting Gunther's notes... No calculations performed yet".Split('\n');
+        }
+
+        internal static void MakeHighLineHL(ref AllTable[] atRows, MakeHighLineParam calcHighLineParam, int startRow, int endRow, out string[] auditSummary)
+        {
+            auditSummary = new string[] { };
+
+            //1) prefill HLc and HLd columns 29 & 33 with 1's
+            for (int i = startRow; i <= endRow; i++)  // 10298 -> 10401
+            {
+                atRows[i].HLc = 1;
+                atRows[i].HLd = 1;
+                atRows[i].PtsHLc = 0;
+                atRows[i].PtsHLd = 0;
+            }
+
+            //1) make two HLs
+            for (int i = startRow + 1; i <= endRow; i++)  // 10298 -> 10401
+            {
+                atRows[i].HLc = atRows[i - 1].HLc * atRows[i].PGc * (1 - calcHighLineParam.Z);
+                if (atRows[i].HLc < atRows[i].FP)
                 {
-                    atRows[i].APpg *= Math.Pow(1 - calcFiveMinsGradientFigureParam.Y,calcFiveMinsGradientFigureParam.X);
+                    // 2) and 3)
+                    atRows[i].HLc = atRows[i].FP;
+                    atRows[i].PtsHLc += 5;
+                }
+                atRows[i].HLd = atRows[i - 1].HLd * atRows[i].PGd * (1 - calcHighLineParam.Z);
+                if (atRows[i].HLd < atRows[i].FP)
+                {
+                    // 2) and 3)
+                    atRows[i].HLd = atRows[i].FP;
+                    atRows[i].PtsHLd += 5;
+                }
+                //4) Distance HL to FP
+                if (atRows[i].FP > 0)
+                {
+                    atRows[i].DHLFPc = atRows[i].HLc / atRows[i].FP;
+                    atRows[i].DHLFPd = atRows[i].HLd / atRows[i].FP;
                 }
             }
 
+            auditSummary = $"HLc, HLd, PtsHLc, PtsHLd, DHLFPc and DHLFPd computed from row {startRow}-{endRow}.\nPlease inspect the view".Split('\n');
 
         }
 
@@ -326,13 +388,17 @@ Result:
             var fiveMinsGradientFigParam = Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure;
             Calculations.FindFiveMinsGradientsFigurePGF(ref atSegment, fiveMinsGradientFigParam, 10298, 10401, out auditSummary);
 
+            Calculations.RelatedVolumeFigureOfBiggestPGF(ref atSegment, 10298, 10401, out auditSummary);
+
+            var highLineParam = Helper.GetAppUserSettings().ParamsMakeHighLine;
+            Calculations.MakeHighLineHL(ref atSegment, highLineParam, 2, 10401, out auditSummary);
+           
+
         }
 
 
 
 
-
     }
-
 
 }

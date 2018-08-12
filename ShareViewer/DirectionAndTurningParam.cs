@@ -25,27 +25,44 @@ namespace ShareViewer
             this.pGcThreshold = 100000;
         }
 
-        public DirectionAndTurningParam(double from, double to, int threshold, double initial)
+        public DirectionAndTurningParam(double from, double to, int threshold, double zinitial)
         {
             this.from = from;
-            this.to = to;
+            if (to >= this.from) { this.to = to; } else { this.to = from; }
             this.pGcThreshold = threshold;
-            this.z = initial;
+            if (zinitial >= this.from && zinitial <= this.to) this.z = zinitial; else this.z = this.from; 
         }
 
         [Category("Parameter")]
         [Description("Minimum Value")]
         [ReadOnly(true)]
-        public double From { get => from; set => from = value; }
+        public double From { get => from;  set => from = value;  }
 
         [Category("Parameter")]
         [Description("Maximum Value")]
         [ReadOnly(true)]
-        public double To { get => to; set => to = value; }
+        public double To
+        {
+            get => to;
+            set
+            {
+                if (value >= this.from) { this.to = value; } else { this.to = this.from; }
+            }
+        }
 
         [Category("Parameter")]
         [Description("(Setting) adjust to suit")]
-        public double Z { get => z; set => z = value; }
+        public double Z
+        {
+            get => z;
+            set
+            {
+                if (value >= from && value <= to)
+                {
+                    z = value;
+                }
+            }
+        }
 
         [Category("Parameter")]
         [Description("PGc minimum threshold")]
@@ -56,7 +73,6 @@ namespace ShareViewer
         {
             return (this.Z != other.Z);
         }
-
 
 
     }

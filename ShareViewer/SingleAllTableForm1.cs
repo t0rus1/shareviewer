@@ -40,6 +40,7 @@ namespace ShareViewer
         internal SlowPriceParam CurrSlowPriceParam { get => Helper.GetAppUserSettings().ParamsSlowPrice;  }
         internal DirectionAndTurningParam CurrDirectionAndTurningParam { get => Helper.GetAppUserSettings().ParamsDirectionAndTurning; }
         internal FiveMinsGradientFigureParam CurrFiveMinsGradientFigureParam { get => Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure; }
+        internal MakeHighLineParam CurrHighLineParam { get => Helper.GetAppUserSettings().ParamsMakeHighLine; }
 
         //CALCULATION properties (we bind these to a property grid)
         private LazyShareParam calcLazyShareParam;
@@ -54,7 +55,8 @@ namespace ShareViewer
         private FiveMinsGradientFigureParam calcFiveMinsGradientFigureParam;
         internal FiveMinsGradientFigureParam CalcFiveMinsGradientFigureParam { get => calcFiveMinsGradientFigureParam; set => calcFiveMinsGradientFigureParam = value; }
 
-
+        private MakeHighLineParam calcHighLineParam;
+        internal MakeHighLineParam CalcHighLineParam { get => calcHighLineParam; set => calcHighLineParam = value; }
 
         //ctor
         public SingleAllTableForm(string allTableFilename, string shareDesc)
@@ -575,11 +577,16 @@ namespace ShareViewer
                     aus.Save();
                     SaveAllTable();
                     break;
-
                 case "Related volume Figure (RPGFV) of biggest PGF":
+                    SaveAllTable();
                     break;
                 case "Make High Line HL":
+                    aus.ParamsMakeHighLine = CalcHighLineParam;
+                    aus.Save();
+                    SaveAllTable();
                     break;
+
+
                 case "Make Low Line LL":
                     break;
                 case "Make Slow Volumes SV":
@@ -616,9 +623,6 @@ namespace ShareViewer
                 case "Identify Lazy Shares":
                     Calculations.LazyShare(atRows, CalcLazyShareParam, 9362, 10401,  out auditLines);
                     calcAuditTextBox.Lines = auditLines;
-                    //move to row 9362 (10 days from end of range)
-                    dgViewBindingSource.Position = 9362;
-                    dgView.FirstDisplayedScrollingRowIndex = 9362;
                     break;
                 case "Make Slow (Five minutes) Prices SP":
                     Calculations.MakeSlowPrices(ref atRows, CalcSlowPriceParam, 2, 10401, out auditLines);
@@ -640,9 +644,6 @@ namespace ShareViewer
                     // atRows must be re-bound to the DataGridView
                     BindDataGridViewToResults(determineVerticalMode());
                     MarkRowOne();
-                    //move to row 10298 (09:00:00 of last day)
-                    dgViewBindingSource.Position = 10298;
-                    dgView.FirstDisplayedScrollingRowIndex = 10298;
                     break;
                 case "Find Five minutes Gradients Figure PGF":
                     Calculations.FindFiveMinsGradientsFigurePGF(ref atRows, CalcFiveMinsGradientFigureParam, 10298, 10401, out auditLines);
@@ -650,16 +651,22 @@ namespace ShareViewer
                     // atRows must be re-bound to the DataGridView
                     BindDataGridViewToResults(determineVerticalMode());
                     MarkRowOne();
-                    //move to row 10298 (09:00:00 of last day)
-                    dgViewBindingSource.Position = 10298;
-                    dgView.FirstDisplayedScrollingRowIndex = 10298;
                     break;
-
-
                 case "Related volume Figure (RPGFV) of biggest PGF":
+                    Calculations.RelatedVolumeFigureOfBiggestPGF(ref atRows, 10298, 10401, out auditLines);
+                    calcAuditTextBox.Lines = auditLines;
+                    // atRows must be re-bound to the DataGridView
+                    BindDataGridViewToResults(determineVerticalMode());
+                    MarkRowOne();
                     break;
                 case "Make High Line HL":
+                    Calculations.MakeHighLineHL(ref atRows, CalcHighLineParam, 1, 10401, out auditLines);
+                    calcAuditTextBox.Lines = auditLines;
+                    // atRows must be re-bound to the DataGridView
+                    BindDataGridViewToResults(determineVerticalMode());
+                    MarkRowOne();
                     break;
+
                 case "Make Low Line LL":
                     break;
                 case "Make Slow Volumes SV":
@@ -805,12 +812,29 @@ namespace ShareViewer
                     //dgViewBindingSource.Position = 10298;
                     //dgView.FirstDisplayedScrollingRowIndex = 10298;
                     break;
-
-
                 case "Related volume Figure (RPGFV) of biggest PGF":
+                    var propGridRv = RelatedVolumeFigureOfBiggestPGFUI.PropertyGridParams(groupBoxParams.Height - 20);
+                    var btnRv = FiveMinutesPriceGradientsUI.CalcAndSaveBtns(calculation, HandleCalculationClick, HandleParameterSaveClick);
+                    calcAuditTextBox = AuditTextBox(new string[] { "There are NO parameters for this calclation. Press 'Calculate' to (re)evaluate" });
+                    //add params property grid and calc button to groupBox panel
+                    groupBoxParams.Controls.Add(propGridRv);
+                    groupBoxParams.Controls.Add(btnRv[0]);
+                    groupBoxParams.Controls.Add(btnRv[1]);
+                    groupBoxParams.Controls.Add(calcAuditTextBox);
                     break;
                 case "Make High Line HL":
+                    CalcHighLineParam = new MakeHighLineParam(CurrHighLineParam.ZMin,CurrHighLineParam.ZMax,CurrHighLineParam.Z);
+                    var propGridMakeHL = MakeHighLineParamUI.PropertyGridParams(CalcHighLineParam, groupBoxParams.Height - 20);
+                    var btnPairMakeHL = MakeHighLineParamUI.CalcAndSaveBtns(calculation, HandleCalculationClick, HandleParameterSaveClick);
+                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust setting then press 'Calculate' to (re)evaluate" });
+                    //add params property grid and calc button to groupBox panel
+                    groupBoxParams.Controls.Add(propGridMakeHL);
+                    groupBoxParams.Controls.Add(btnPairMakeHL[0]);
+                    groupBoxParams.Controls.Add(btnPairMakeHL[1]);
+                    groupBoxParams.Controls.Add(calcAuditTextBox);
                     break;
+
+
                 case "Make Low Line LL":
                     break;
                 case "Make Slow Volumes SV":
@@ -862,20 +886,27 @@ namespace ShareViewer
                         stripText.Text += $"{i}...";
                         await Task.Run(()=>Calculations.FindDirectionAndTurning(ref atRows, Helper.GetAppUserSettings().ParamsDirectionAndTurning, 10298, 10401, out auditLines));
                         stripText.Text += $"{i} done, ";
-                        scrollToPos = 10298;
                         break;
                     case "Find Five minutes Gradients Figure PGF":
                         stripText.Text += $"{i}...";
                         await Task.Run(()=>Calculations.FindFiveMinsGradientsFigurePGF(ref atRows, Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure, 10298, 10401, out auditLines));
                         stripText.Text += $"{i} done, ";
                         calcsPerformed++;
-                        scrollToPos = 10298;
                         break;
-
                     case "Related volume Figure (RPGFV) of biggest PGF":
+                        stripText.Text += $"{i}...";
+                        await Task.Run(() => Calculations.RelatedVolumeFigureOfBiggestPGF(ref atRows, 10298, 10401, out auditLines));
+                        stripText.Text += $"{i} done, ";
+                        calcsPerformed++;
                         break;
                     case "Make High Line HL":
+                        stripText.Text += $"{i}...";
+                        await Task.Run(() => Calculations.MakeHighLineHL(ref atRows, Helper.GetAppUserSettings().ParamsMakeHighLine, 2, 10401, out auditLines));
+                        stripText.Text += $"{i} done, ";
+                        calcsPerformed++;
                         break;
+
+
                     case "Make Low Line LL":
                         break;
                     case "Make Slow Volumes SV":

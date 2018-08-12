@@ -24,8 +24,8 @@ namespace ShareViewer
         public LazyShareParam(double from, double to, double initial)
         {
             this.from = from;
-            this.to = to;
-            this.setting = initial;
+            if (to >= this.from) this.to = to; else this.to = this.from;
+            if (initial >= this.from && initial <= this.to) this.setting = initial; else this.setting = this.from;
         }
 
         [Category("Parameter")]
@@ -36,7 +36,14 @@ namespace ShareViewer
         [Category("Parameter")]
         [ReadOnly(true)]
         [Description("Maximum Value")]
-        public double To { get => to; set => to = value; }
+        public double To
+        {
+            get => to;
+            set
+            {
+                if (value >= this.from) to = value;
+            }
+        }
 
         [Category("Parameter")]
         [Description("(Z) adjust to suit")]

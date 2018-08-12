@@ -78,6 +78,8 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="LazyShareParam.cs" />
+    <Compile Include="MakeHighLineParam.cs" />
+    <Compile Include="MakeHighLineParamUI.cs" />
     <Compile Include="Overview.cs" />
     <Compile Include="OverviewCalcs.cs" />
     <Compile Include="OverviewFilter.cs" />
@@ -93,6 +95,7 @@
     <Compile Include="OverviewRowFilterForm.Designer.cs">
       <DependentUpon>OverviewRowFilterForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="RelatedVolumeFigureOfBiggestPGFUI.cs" />
     <Compile Include="SaveWithNotesForm.cs">
       <SubType>Form</SubType>
     </Compile>

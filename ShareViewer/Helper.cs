@@ -331,12 +331,15 @@ namespace ShareViewer
         //given a date, construct a file name like "YYYY_MM_DD.TXT"
         internal static string BuildDayDataFilename(DateTime date)
         {
-            return date.ToShortDateString().Replace("/", "_") + ".TXT";
+            //return date.ToShortDateString().Replace("/", "_") + ".TXT";
+            return date.ToString("yyyy_MM_dd") + ".TXT";
+
         }
 
         internal static string GetCompressedDate(DateTime date)
         {
-            return date.ToShortDateString().Replace("/", "").Substring(2); // YYMMDD
+            //return date.ToShortDateString().Replace("/", "").Substring(2); // YYMMDD
+            return date.ToString("yyMMdd"); // culture independent
         }
         
         //grabs run of digits at end of string, returns as an integer
@@ -428,7 +431,8 @@ namespace ShareViewer
                 if (IsHoliday(runDate))
                 {
                     holiDays++;
-                    var holidayKey = runDate.ToShortDateString();
+                    //var holidayKey = runDate.ToShortDateString(); // YYYY/MM/DD in ZA
+                    var holidayKey = runDate.ToString("yyyy/MM/dd"); // force it to be so regardless of culture
                     var holidayEntry = $"{holidayHash[holidayKey]} {holidayKey}";
                     spannedHols.Add(holidayEntry);
                 }
@@ -469,7 +473,8 @@ namespace ShareViewer
 
         private static bool IsHoliday(DateTime runDate)
         {
-            string dateStr = runDate.ToShortDateString();
+            //string dateStr = runDate.ToShortDateString(); // YYYY/MM/DD in ZA culture
+            string dateStr = runDate.ToString("yyyy/MM/dd"); // culture independant
             return GetMainForm().HolidayHash.ContainsKey(dateStr);
         }
 

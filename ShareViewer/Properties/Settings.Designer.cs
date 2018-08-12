@@ -221,5 +221,16 @@ namespace ShareViewer.Properties {
                 this["ParamsFiveMinsGradientFigure"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::ShareViewer.MakeHighLineParam ParamsMakeHighLine {
+            get {
+                return ((global::ShareViewer.MakeHighLineParam)(this["ParamsMakeHighLine"]));
+            }
+            set {
+                this["ParamsMakeHighLine"] = value;
+            }
+        }
     }
 }

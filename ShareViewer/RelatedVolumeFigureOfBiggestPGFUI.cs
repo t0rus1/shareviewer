@@ -8,37 +8,21 @@ using System.Windows.Forms;
 
 namespace ShareViewer
 {
-    internal static class DirectionAndTurningUI
+    internal static class RelatedVolumeFigureOfBiggestPGFUI
     {
         // CALCULATION HANDLING
-        internal static PropertyGrid PropertyGridParams(DirectionAndTurningParam param, int height)
+        internal static PropertyGrid PropertyGridParams(int height)
         {
+            //this calculation has no parameters!!!!
+            //so put up an empty property grid
             var pg = new PropertyGrid();
             pg.ToolbarVisible = false;
             pg.PropertySort = PropertySort.NoSort;
             pg.Size = new Size(150, height);
             pg.Location = new Point(20, 12);
-            pg.SelectedObject = param;
-            pg.PropertyValueChanged += OnParamSettingChange;
+            //pg.SelectedObject = param;
+            //pg.PropertyValueChanged += OnParamSettingChange;
             return pg;
-        }
-
-        // Check that new param setting remains within allowed bounds
-        private static void OnParamSettingChange(object sender, EventArgs e)
-        {
-            //var pg = (PropertyGrid)sender;
-            //var param = ((DirectionAndTurningParam)pg.SelectedObject);
-            //var newVal = param.Z;
-            //var lowerLimit = param.From;
-            //var upperLimit = param.To;
-            //if (newVal < lowerLimit)
-            //{
-            //    param.Z = lowerLimit;
-            //}
-            //else if (newVal > upperLimit)
-            //{
-            //    param.Z = upperLimit;
-            //}
         }
 
         internal static Button[] CalcAndSaveBtns(string calculation,
@@ -80,8 +64,5 @@ namespace ShareViewer
             return buttons;
         }
 
-
-
     }
-
 }

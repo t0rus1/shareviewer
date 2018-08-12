@@ -18,10 +18,13 @@ namespace ShareViewer
         public SlowPriceParam(double zmin, double zmax, double ymin, double ymax, double zDefault)
         {
             zMin = zmin;
-            zMax = zmax;
+            if (zmax >= zMin) zMax = zmax; else zMax = zMin;
+
+            //the yMin and Ymax will be applied to Ya,Yb,Yc and Yd
             yMin = ymin;
-            yMax = ymax;
-            z = zDefault;
+            if (ymax >= yMin) yMax = ymax; else yMax = yMin;
+
+            if (zDefault >= zMin && zDefault <= zMax) z = zDefault; else z = zMin;
         }
 
         private double z;
@@ -37,23 +40,58 @@ namespace ShareViewer
 
         [Category("Parameter")]
         [Description("Setting")]
-        public double Z { get => z; set => z = value; }
+        public double Z
+        {
+            get => z;
+            set
+            {
+                if (value >= zMin && value <= zMax) z = value;
+            }
+        }
 
         [Category("Parameter")]
         [Description("Exponent Ya")]
-        public double Ya { get => ya; set => ya = value; }
+        public double Ya
+        {
+            get => ya;
+            set
+            {
+                if (value >= yMin && value <= yMax) ya = value;
+            }
+        }
 
         [Category("Parameter")]
         [Description("Exponent Yb")]
-        public double Yb { get => yb; set => yb = value; }
+        public double Yb
+        {
+            get => yb;
+            set
+            {
+                if (value >= yMin && value <= yMax) yb = value;
+            }
+        }
 
         [Category("Parameter")]
         [Description("Exponent Yc")]
-        public double Yc { get => yc; set => yc = value; }
+        public double Yc
+        {
+            get => yc;
+            set
+            {
+                if (value >= yMin && value <= yMax) yc = value;
+            }
+        }
 
         [Category("Parameter")]
         [Description("Exponent Yd")]
-        public double Yd { get => yd; set => yd = value; }
+        public double Yd
+        {
+            get => yd;
+            set
+            {
+                if (value >= yMin && value <= yMax) yd = value;
+            }
+        }
 
         [Category("Parameter")]
         [Description("Lower limit for Z")]
@@ -63,7 +101,14 @@ namespace ShareViewer
         [Category("Parameter")]
         [Description("Upper limit for Z")]
         [ReadOnly(true)]
-        public double ZMax { get => zMax; set => zMax = value; }
+        public double ZMax
+        {
+            get => zMax;
+            set
+            {
+                if (value >= zMin) zMax = value;
+            }
+        }
 
         [Category("Parameter")]
         [Description("Lower limit for each Y exponent")]
@@ -73,7 +118,14 @@ namespace ShareViewer
         [Category("Parameter")]
         [Description("Upper limit for each Y exponent")]
         [ReadOnly(true)]
-        public double YMax { get => yMax; set => yMax = value; }
+        public double YMax
+        {
+            get => yMax;
+            set
+            {
+                if (value >= yMin) yMax = value;
+            }
+        }
 
 
         public bool DiffersFrom(SlowPriceParam other)

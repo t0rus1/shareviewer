@@ -350,7 +350,8 @@ namespace ShareViewer
             }
             else
             {
-                labelBackFrom.Text = "ending " + calendarTo.SelectionStart.ToShortDateString();
+                //labelBackFrom.Text = "ending " + calendarTo.SelectionStart.ToShortDateString(); // ending YYYY/MM/DD in en-Za culture
+                labelBackFrom.Text = "ending " + calendarTo.SelectionStart.ToString("yyyy/MM/dd"); // culture independent
             }
 
             //recalc number of trading days back
@@ -687,7 +688,8 @@ namespace ShareViewer
 
         private void monthCalendarHolidays_DateSelected(object sender, DateRangeEventArgs e)
         {
-            string holidayDate = ((MonthCalendar)sender).SelectionStart.ToShortDateString();
+            //string holidayDate = ((MonthCalendar)sender).SelectionStart.ToShortDateString();
+            string holidayDate = ((MonthCalendar)sender).SelectionStart.ToString("yyyy/MM/dd"); // culture independent
             //look for possible presence in holidays list already
             foreach (string item in listBoxHolidays.Items)
             {
@@ -713,8 +715,9 @@ namespace ShareViewer
                 return;
             }
 
-            string holidayDate = monthCalendarHolidays.SelectionStart.ToShortDateString();
-            
+            //string holidayDate = monthCalendarHolidays.SelectionStart.ToShortDateString(); // YYYY/MM/DD
+            string holidayDate = monthCalendarHolidays.SelectionStart.ToString("yyyy/MM/dd"); // YYYY/MM/DD culture independent
+
             string holidayName = textBoxHolidayName.Text;
             if (holidayName.Trim().Length > 0)
             {
@@ -792,10 +795,6 @@ namespace ShareViewer
         //Reveal the linkLabelSingleDayLoad button if both calendars are indicating the same, single day
         private void calendarTo_DateSelected(object sender, DateRangeEventArgs e)
         {
-            //linkLabelSingleDayLoad.Visible = true; // (DateTime.Compare(e.Start, calendarFrom.SelectionStart) == 0);
-            ////linkLabelSingleDayLoad.Enabled = linkLabelSingleDayLoad.Visible;
-            ////buttonAddToAllTables.Enabled = !linkLabelSingleDayLoad.Visible;
-            //linkLabelSingleDayLoad.Text = $"Re-Load just this day: {calendarTo.SelectionStart.ToShortDateString()}";
         }
 
         //Single Day reload

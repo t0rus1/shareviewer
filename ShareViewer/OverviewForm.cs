@@ -34,16 +34,20 @@ namespace ShareViewer
         internal SlowPriceParam CurrSlowPriceParam { get => Helper.GetAppUserSettings().ParamsSlowPrice; }
         internal DirectionAndTurningParam CurrDirectionAndTurningParam { get => Helper.GetAppUserSettings().ParamsDirectionAndTurning; }
         internal FiveMinsGradientFigureParam CurrFiveMinsGradientFigureParam { get => Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure; }
+        internal MakeHighLineParam CurrHighLineParam { get => Helper.GetAppUserSettings().ParamsMakeHighLine; }
+
 
         //CALCULATION properties (we bind these to a property grid)
         LazyShareParam calcLazyShareParam;
         SlowPriceParam calcSlowPriceParam;
         DirectionAndTurningParam calcDirectionAndTurningParam;
         FiveMinsGradientFigureParam calcFiveMinsGradientFigureParam;
+        MakeHighLineParam calcHighLineParam;
         internal LazyShareParam CalcLazyShareParam { get => calcLazyShareParam; set => calcLazyShareParam = value; }
         internal SlowPriceParam CalcSlowPriceParam { get => calcSlowPriceParam; set => calcSlowPriceParam = value; }
         internal DirectionAndTurningParam CalcDirectionAndTurningParam { get => calcDirectionAndTurningParam; set => calcDirectionAndTurningParam = value; }
         internal FiveMinsGradientFigureParam CalcFiveMinsGradientFigureParam { get => calcFiveMinsGradientFigureParam; set => calcFiveMinsGradientFigureParam = value; }
+        internal MakeHighLineParam CalcHighLineParam { get => calcHighLineParam; set => calcHighLineParam = value; }
 
         public OverviewForm()
         {
@@ -551,12 +555,10 @@ namespace ShareViewer
                     CalcLazyShareParam = new LazyShareParam(CurrLazyShareParam.From, CurrLazyShareParam.To, CurrLazyShareParam.Setting);
                     var propGridLazy = LazyShareUI.PropertyGridParams(CalcLazyShareParam, groupBoxParams.Height - 20);
                     var btnPairLazy = LazyShareUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
-                    //calcAuditTextBox = AuditTextBox(new string[] { "Adjust settings then press 'Calculate' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridLazy);
                     groupBoxParams.Controls.Add(btnPairLazy[0]);
                     groupBoxParams.Controls.Add(btnPairLazy[1]);
-                    //groupBoxParams.Controls.Add(calcAuditTextBox);
                     break;
 
                 case "Make Slow (Five minutes) Prices SP":
@@ -569,22 +571,18 @@ namespace ShareViewer
                     CalcSlowPriceParam.Yd = CurrSlowPriceParam.Yd;
                     var propGridSlow = SlowPriceUI.PropertyGridParams(CalcSlowPriceParam, groupBoxParams.Height - 20);
                     var btnPairSlow = SlowPriceUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
-                    //calcAuditTextBox = AuditTextBox(new string[] { "Adjust settings then press 'Calculate' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridSlow);
                     groupBoxParams.Controls.Add(btnPairSlow[0]);
                     groupBoxParams.Controls.Add(btnPairSlow[1]);
-                    //groupBoxParams.Controls.Add(calcAuditTextBox);
                     break;
                 case "Make Five minutes Price Gradients PG":
                     var propGridPg = FiveMinutesPriceGradientsUI.PropertyGridParams(groupBoxParams.Height - 20);
                     var btnPg = FiveMinutesPriceGradientsUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
-                    //calcAuditTextBox = AuditTextBox(new string[] { "There are NO parameters for this calculation. Press 'Calculate' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridPg);
                     groupBoxParams.Controls.Add(btnPg[0]);
                     groupBoxParams.Controls.Add(btnPg[1]);
-                    //groupBoxParams.Controls.Add(calcAuditTextBox);
                     break;
                 case "Find direction and Turning":
                     CalcDirectionAndTurningParam = new DirectionAndTurningParam(
@@ -616,12 +614,25 @@ namespace ShareViewer
                     groupBoxParams.Controls.Add(btnPairFiveMinGradFig[0]);
                     groupBoxParams.Controls.Add(btnPairFiveMinGradFig[1]);
                     break;
-
-
                 case "Related volume Figure (RPGFV) of biggest PGF":
+                    var propGridRv = RelatedVolumeFigureOfBiggestPGFUI.PropertyGridParams(groupBoxParams.Height - 20);
+                    var btnRv = RelatedVolumeFigureOfBiggestPGFUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
+                    //add params property grid and calc button to groupBox panel
+                    groupBoxParams.Controls.Add(propGridRv);
+                    groupBoxParams.Controls.Add(btnRv[0]);
+                    groupBoxParams.Controls.Add(btnRv[1]);
                     break;
                 case "Make High Line HL":
+                    CalcHighLineParam = new MakeHighLineParam(CurrHighLineParam.ZMin, CurrHighLineParam.ZMax, CurrHighLineParam.Z);
+                    var propGridHL = MakeHighLineParamUI.PropertyGridParams(CalcHighLineParam, groupBoxParams.Height - 20);
+                    var btnPairHL = MakeHighLineParamUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
+                    //add params property grid and calc button to groupBox panel
+                    groupBoxParams.Controls.Add(propGridHL);
+                    groupBoxParams.Controls.Add(btnPairHL[0]);
+                    groupBoxParams.Controls.Add(btnPairHL[1]);
                     break;
+
+
                 case "Make Low Line LL":
                     break;
                 case "Make Slow Volumes SV":

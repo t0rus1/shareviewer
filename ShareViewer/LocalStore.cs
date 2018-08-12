@@ -404,7 +404,8 @@ namespace ShareViewer
                 {
                     if (Helper.IsTradingDay(runDate))
                     {
-                        var rowDate = runDate.ToShortDateString().Replace("/", "").Substring(2); //YYMMDD
+                        //var rowDate = runDate.ToShortDateString().Replace("/", "").Substring(2); //YYMMDD in en-ZA culture
+                        var rowDate = runDate.ToString("yyMMdd"); // culture independent
                         var topupInfoKey = $"{rowDate},{shareNum}";
                         if (!topUpOnly || !topupInfo.DatesData[topupInfoKey].AlreadyHave)
                         {
@@ -494,7 +495,8 @@ namespace ShareViewer
             //cover the entire span of days, but we skip forward if we already have data
             while (!ct.IsCancellationRequested && tradingDayCounter < tradingSpan)
             {
-                string dateTest = runDate.ToShortDateString().Replace("/", "");
+                //string dateTest = runDate.ToShortDateString().Replace("/", ""); // YYYYMMDD in en-ZA culture
+                string dateTest = runDate.ToString("yyyyMMdd");
                 if (Helper.IsTradingDay(runDate))
                 {
                     //ASSUME all trades inside the daydata file are dated the same as indicated by the file name
@@ -645,7 +647,8 @@ namespace ShareViewer
                             else
                             {
                                 //normal end of run, store date range now held in the AllTables
-                                appUserSettings.AllTableDataStart = startDate.ToShortDateString();
+                                //appUserSettings.AllTableDataStart = startDate.ToShortDateString();  // YYYY/MM/DD in en-ZA culture
+                                appUserSettings.AllTableDataStart = startDate.ToString("yyyy/MM/dd"); // culture independent
                                 appUserSettings.AllTableTradingSpan = tradingSpan.ToString();
                                 appUserSettings.Save();
                                 Helper.LogStatus("Info", $"{sharesDone} All-Table updates complete.");
@@ -690,7 +693,8 @@ namespace ShareViewer
                     {
                         if (Helper.IsTradingDay(runDate))
                         {
-                            string compressedDate = runDate.ToShortDateString().Replace("/", "").Substring(2); // YYMMDD
+                            //string compressedDate = runDate.ToShortDateString().Replace("/", "").Substring(2); // YYMMDD in en-ZA culture
+                            string compressedDate = runDate.ToString("yyMMdd"); // culture independent
                             string dateShareKey = $"{compressedDate},{shareNum}";
                             topupInfo.DatesData[dateShareKey] = new WantHaveInfo(true, false);
                             topupInfo.LastDate[shareNum] = compressedDate;
