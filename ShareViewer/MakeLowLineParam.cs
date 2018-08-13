@@ -8,20 +8,20 @@ using System.Threading.Tasks;
 namespace ShareViewer
 {
     [Serializable]
-    public class MakeHighLineParam
+    public class MakeLowLineParam
     {
-        public MakeHighLineParam()
+
+        public MakeLowLineParam()
         {
 
         }
 
-        public MakeHighLineParam(double zmin, double zmax, double zDefault)
+        public MakeLowLineParam(double zmin, double zmax, double zDefault)
         {
             zMin = zmin;
             if (zmax >= zMin) zMax = zmax; else zMax = zMin;
             if (zDefault >= zMin && zDefault <= zmax) z = zDefault; else z = zMin;
         }
-
 
         private double zMin;
         private double zMax;
@@ -31,6 +31,7 @@ namespace ShareViewer
         [Description("Lower limit for Z")]
         [ReadOnly(true)]
         public double ZMin { get => zMin; set => zMin = value; }
+
 
         [Category("Parameter")]
         [Description("Upper limit for Z")]
@@ -44,12 +45,14 @@ namespace ShareViewer
             }
         }
 
+
         [Category("Parameter")]
         [Description("Setting")]
         public double Z
         {
             get => z;
-            set {
+            set
+            {
                 if (z >= zMin && z <= zMax)
                 {
                     z = value;
@@ -57,11 +60,13 @@ namespace ShareViewer
             }
         }
 
-        public bool DiffersFrom(MakeHighLineParam other)
+        public bool DiffersFrom(MakeLowLineParam other)
         {
             return this.Z != other.Z;
         }
 
+
     }
+
 
 }

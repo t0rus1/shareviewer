@@ -41,6 +41,8 @@ namespace ShareViewer
         internal DirectionAndTurningParam CurrDirectionAndTurningParam { get => Helper.GetAppUserSettings().ParamsDirectionAndTurning; }
         internal FiveMinsGradientFigureParam CurrFiveMinsGradientFigureParam { get => Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure; }
         internal MakeHighLineParam CurrHighLineParam { get => Helper.GetAppUserSettings().ParamsMakeHighLine; }
+        internal MakeLowLineParam CurrLowLineParam { get => Helper.GetAppUserSettings().ParamsMakeLowLine; }
+        internal MakeSlowVolumeParam CurrSlowVolumeParam { get => Helper.GetAppUserSettings().ParamsMakeSlowVolume; }
 
         //CALCULATION properties (we bind these to a property grid)
         private LazyShareParam calcLazyShareParam;
@@ -57,6 +59,13 @@ namespace ShareViewer
 
         private MakeHighLineParam calcHighLineParam;
         internal MakeHighLineParam CalcHighLineParam { get => calcHighLineParam; set => calcHighLineParam = value; }
+
+        private MakeLowLineParam calcLowLineParam;
+        internal MakeLowLineParam CalcLowLineParam { get => calcLowLineParam; set => calcLowLineParam = value; }
+        private MakeSlowVolumeParam calcSlowVolumeParam;
+        internal MakeSlowVolumeParam CalcSlowVolumeParam { get => calcSlowVolumeParam; set => calcSlowVolumeParam = value; }
+
+
 
         //ctor
         public SingleAllTableForm(string allTableFilename, string shareDesc)
@@ -558,39 +567,52 @@ namespace ShareViewer
                     aus.ParamsLazyShare = CalcLazyShareParam;
                     aus.Save();
                     stripText.Text = "Parameter saved";
+                    RecalcToSelectedCalc();
                     break;
                 case "Make Slow (Five minutes) Prices SP":
                     aus.ParamsSlowPrice = CalcSlowPriceParam;
                     aus.Save();
-                    SaveAllTable();
+                    RecalcToSelectedCalc();
+                    //SaveAllTable();
                     break;
                 case "Make Five minutes Price Gradients PG":
-                    SaveAllTable();
+                    RecalcToSelectedCalc();
+                    //SaveAllTable();
                     break;
                 case "Find direction and Turning":
                     aus.ParamsDirectionAndTurning = CalcDirectionAndTurningParam;
                     aus.Save();
-                    SaveAllTable();
+                    RecalcToSelectedCalc();
+                    //SaveAllTable();
                     break;
                 case "Find Five minutes Gradients Figure PGF":
                     aus.ParamsFiveMinsGradientFigure = CalcFiveMinsGradientFigureParam;
                     aus.Save();
-                    SaveAllTable();
+                    RecalcToSelectedCalc();
+                    //SaveAllTable();
                     break;
                 case "Related volume Figure (RPGFV) of biggest PGF":
-                    SaveAllTable();
+                    RecalcToSelectedCalc();
+                    //SaveAllTable();
                     break;
                 case "Make High Line HL":
                     aus.ParamsMakeHighLine = CalcHighLineParam;
                     aus.Save();
-                    SaveAllTable();
+                    RecalcToSelectedCalc();
+                    //SaveAllTable();
                     break;
-
-
                 case "Make Low Line LL":
+                    aus.ParamsMakeLowLine = CalcLowLineParam;
+                    aus.Save();
+                    RecalcToSelectedCalc();
+                    //SaveAllTable();
                     break;
                 case "Make Slow Volumes SV":
+                    aus.ParamsMakeSlowVolume = CalcSlowVolumeParam;
+                    aus.Save();
+                    RecalcToSelectedCalc();
                     break;
+
                 case "Slow Volume Figure SVFac":
                     break;
                 case "Slow Volume Figure SVFbd":
@@ -601,85 +623,93 @@ namespace ShareViewer
 
         }
 
-        private void SaveAllTable()
-        {
-            using (FileStream fs = new FileStream(_allTableFilename, FileMode.Create))
-            {
-                foreach (AllTable item in atRows)
-                {
-                    Helper.SerializeAllTableRecord(fs, item);
-                }
-            }
-            stripText.Text = $"Saved {_allTableFilename}";
-        }
+        //private void SaveAllTable()
+        //{
+        //    using (FileStream fs = new FileStream(_allTableFilename, FileMode.Create))
+        //    {
+        //        foreach (AllTable item in atRows)
+        //        {
+        //            Helper.SerializeAllTableRecord(fs, item);
+        //        }
+        //    }
+        //    stripText.Text = $"Saved {_allTableFilename}";
+        //}
 
-        internal void HandleCalculationClick(object sender, EventArgs e)
-        {
-            string calculation = (string)((Button)sender).Tag;
-            var auditLines = new string[] { "" };
-            Cursor.Current = Cursors.WaitCursor;
-            switch (calculation)
-            {
-                case "Identify Lazy Shares":
-                    Calculations.LazyShare(atRows, CalcLazyShareParam, 9362, 10401,  out auditLines);
-                    calcAuditTextBox.Lines = auditLines;
-                    break;
-                case "Make Slow (Five minutes) Prices SP":
-                    Calculations.MakeSlowPrices(ref atRows, CalcSlowPriceParam, 2, 10401, out auditLines);
-                    calcAuditTextBox.Lines = auditLines;
-                    // atRows must be re-bound to the DataGridView
-                    BindDataGridViewToResults(determineVerticalMode());
-                    MarkRowOne();
-                    break;
-                case "Make Five minutes Price Gradients PG":
-                    Calculations.MakeFiveMinutesPriceGradients(ref atRows, 2, 10401, out auditLines);
-                    calcAuditTextBox.Lines = auditLines;
-                    // atRows must be re-bound to the DataGridView
-                    BindDataGridViewToResults(determineVerticalMode());
-                    MarkRowOne();
-                    break;
-                case "Find direction and Turning":
-                    Calculations.FindDirectionAndTurning(ref atRows, CalcDirectionAndTurningParam, 10298, 10401, out auditLines);
-                    calcAuditTextBox.Lines = auditLines;
-                    // atRows must be re-bound to the DataGridView
-                    BindDataGridViewToResults(determineVerticalMode());
-                    MarkRowOne();
-                    break;
-                case "Find Five minutes Gradients Figure PGF":
-                    Calculations.FindFiveMinsGradientsFigurePGF(ref atRows, CalcFiveMinsGradientFigureParam, 10298, 10401, out auditLines);
-                    calcAuditTextBox.Lines = auditLines;
-                    // atRows must be re-bound to the DataGridView
-                    BindDataGridViewToResults(determineVerticalMode());
-                    MarkRowOne();
-                    break;
-                case "Related volume Figure (RPGFV) of biggest PGF":
-                    Calculations.RelatedVolumeFigureOfBiggestPGF(ref atRows, 10298, 10401, out auditLines);
-                    calcAuditTextBox.Lines = auditLines;
-                    // atRows must be re-bound to the DataGridView
-                    BindDataGridViewToResults(determineVerticalMode());
-                    MarkRowOne();
-                    break;
-                case "Make High Line HL":
-                    Calculations.MakeHighLineHL(ref atRows, CalcHighLineParam, 1, 10401, out auditLines);
-                    calcAuditTextBox.Lines = auditLines;
-                    // atRows must be re-bound to the DataGridView
-                    BindDataGridViewToResults(determineVerticalMode());
-                    MarkRowOne();
-                    break;
+        //Perform a calculation based on parameter setting in the form
+        //internal void HandleCalculationClick(object sender, EventArgs e)
+        //{
+        //    string calculation = (string)((Button)sender).Tag;
+        //    var auditLines = new string[] { "" };
+        //    Cursor.Current = Cursors.WaitCursor;
+        //    switch (calculation)
+        //    {
+        //        case "Identify Lazy Shares":
+        //            Calculations.LazyShare(atRows, CalcLazyShareParam, 9362, 10401,  out auditLines);
+        //            calcAuditTextBox.Lines = auditLines;
+        //            break;
+        //        case "Make Slow (Five minutes) Prices SP":
+        //            Calculations.MakeSlowPrices(ref atRows, CalcSlowPriceParam, 2, 10401, out auditLines);
+        //            calcAuditTextBox.Lines = auditLines;
+        //            // atRows must be re-bound to the DataGridView
+        //            BindDataGridViewToResults(determineVerticalMode());
+        //            MarkRowOne();
+        //            break;
+        //        case "Make Five minutes Price Gradients PG":
+        //            Calculations.MakeFiveMinutesPriceGradients(ref atRows, 2, 10401, out auditLines);
+        //            calcAuditTextBox.Lines = auditLines;
+        //            // atRows must be re-bound to the DataGridView
+        //            BindDataGridViewToResults(determineVerticalMode());
+        //            MarkRowOne();
+        //            break;
+        //        case "Find direction and Turning":
+        //            Calculations.FindDirectionAndTurning(ref atRows, CalcDirectionAndTurningParam, 10298, 10401, out auditLines);
+        //            calcAuditTextBox.Lines = auditLines;
+        //            // atRows must be re-bound to the DataGridView
+        //            BindDataGridViewToResults(determineVerticalMode());
+        //            MarkRowOne();
+        //            break;
+        //        case "Find Five minutes Gradients Figure PGF":
+        //            Calculations.FindFiveMinsGradientsFigurePGF(ref atRows, CalcFiveMinsGradientFigureParam, 10298, 10401, out auditLines);
+        //            calcAuditTextBox.Lines = auditLines;
+        //            // atRows must be re-bound to the DataGridView
+        //            BindDataGridViewToResults(determineVerticalMode());
+        //            MarkRowOne();
+        //            break;
+        //        case "Related volume Figure (RPGFV) of biggest PGF":
+        //            Calculations.RelatedVolumeFigureOfBiggestPGF(ref atRows, 10298, 10401, out auditLines);
+        //            calcAuditTextBox.Lines = auditLines;
+        //            // atRows must be re-bound to the DataGridView
+        //            BindDataGridViewToResults(determineVerticalMode());
+        //            MarkRowOne();
+        //            break;
+        //        case "Make High Line HL":
+        //            Calculations.MakeHighLineHL(ref atRows, CalcHighLineParam, 1, 10401, out auditLines);
+        //            calcAuditTextBox.Lines = auditLines;
+        //            // atRows must be re-bound to the DataGridView
+        //            BindDataGridViewToResults(determineVerticalMode());
+        //            MarkRowOne();
+        //            break;
+        //        case "Make Low Line LL":
+        //            Calculations.MakeLowLineLL(ref atRows, CalcLowLineParam, 1, 10401, out auditLines);
+        //            calcAuditTextBox.Lines = auditLines;
+        //            // atRows must be re-bound to the DataGridView
+        //            BindDataGridViewToResults(determineVerticalMode());
+        //            MarkRowOne();
+        //            break;
 
-                case "Make Low Line LL":
-                    break;
-                case "Make Slow Volumes SV":
-                    break;
-                case "Slow Volume Figure SVFac":
-                    break;
-                case "Slow Volume Figure SVFbd":
-                    break;
-                default:
-                    break;
-            }
-            Cursor.Current = Cursors.Default;
-        }
+
+
+        //        case "Make Slow Volumes SV":
+        //            break;
+        //        case "Slow Volume Figure SVFac":
+        //            break;
+        //        case "Slow Volume Figure SVFbd":
+        //            break;
+        //        default:
+        //            break;
+        //    }
+        //    Cursor.Current = Cursors.Default;
+        //}
 
         private TextBox AuditTextBox(string[] auditOutcome)
         {
@@ -704,7 +734,7 @@ namespace ShareViewer
             //duck away if we're doing a 'calc to here' run
             if (_calculatingToHere) return;
 
-            var affirmNumRows = $"There are {atRows.Count()} records in this All-Table";
+            var affirmNumRows = $"There are {atRows.Count()} records in this All-Table. Tweak parameters, 'Save and Calculate' to see the effect. Only parameters are saved, not All-Table changes!";
             stripText.Text = affirmNumRows;
 
             groupBoxParams.Controls.Clear();
@@ -736,16 +766,13 @@ namespace ShareViewer
                     //show a bound params property grid with init values taken from current LazyShareParam settings
                     CalcLazyShareParam = new LazyShareParam(CurrLazyShareParam.From, CurrLazyShareParam.To, CurrLazyShareParam.Setting);
                     var propGridLazy = LazyShareUI.PropertyGridParams(CalcLazyShareParam, groupBoxParams.Height - 20);
-                    var btnPairLazy = LazyShareUI.CalcAndSaveBtns(calculation, HandleCalculationClick, HandleParameterSaveClick);
+                    var btnPairLazy = LazyShareUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick); // HandleCalculationClick
                     calcAuditTextBox = AuditTextBox(new string[] { "Adjust settings then press 'Calculate' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridLazy);
                     groupBoxParams.Controls.Add(btnPairLazy[0]);
                     groupBoxParams.Controls.Add(btnPairLazy[1]);
                     groupBoxParams.Controls.Add(calcAuditTextBox);
-                    //move to row 9362 (10 days from end of range)
-                    //dgViewBindingSource.Position = 9362;
-                    //dgView.FirstDisplayedScrollingRowIndex = 9362;
                     break;
 
                 case "Make Slow (Five minutes) Prices SP":
@@ -757,7 +784,7 @@ namespace ShareViewer
                     CalcSlowPriceParam.Yc = CurrSlowPriceParam.Yc;
                     CalcSlowPriceParam.Yd = CurrSlowPriceParam.Yd;
                     var propGridSlow = SlowPriceUI.PropertyGridParams(CalcSlowPriceParam, groupBoxParams.Height - 20);
-                    var btnPairSlow = SlowPriceUI.CalcAndSaveBtns(calculation, HandleCalculationClick, HandleParameterSaveClick);
+                    var btnPairSlow = SlowPriceUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
                     calcAuditTextBox = AuditTextBox(new string[] { "Adjust settings then press 'Calculate' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridSlow);
@@ -767,7 +794,7 @@ namespace ShareViewer
                     break;
                 case "Make Five minutes Price Gradients PG":
                     var propGridPg = FiveMinutesPriceGradientsUI.PropertyGridParams(groupBoxParams.Height - 20);
-                    var btnPg = FiveMinutesPriceGradientsUI.CalcAndSaveBtns(calculation, HandleCalculationClick, HandleParameterSaveClick);
+                    var btnPg = FiveMinutesPriceGradientsUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
                     calcAuditTextBox = AuditTextBox(new string[] { "There are NO parameters for this calclation. Press 'Calculate' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridPg);
@@ -778,7 +805,7 @@ namespace ShareViewer
                 case "Find direction and Turning":
                     CalcDirectionAndTurningParam = new DirectionAndTurningParam(CurrDirectionAndTurningParam.From,CurrDirectionAndTurningParam.To, CurrDirectionAndTurningParam.PGcThreshold, CurrDirectionAndTurningParam.Z);
                     var propGridDandT = DirectionAndTurningUI.PropertyGridParams(CalcDirectionAndTurningParam, groupBoxParams.Height - 20);
-                    var btnPairDandT = DirectionAndTurningUI.CalcAndSaveBtns(calculation, HandleCalculationClick, HandleParameterSaveClick);
+                    var btnPairDandT = DirectionAndTurningUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
                     calcAuditTextBox = AuditTextBox(new string[] { "Adjust setting then press 'Calculate' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridDandT);
@@ -801,7 +828,7 @@ namespace ShareViewer
                         CurrFiveMinsGradientFigureParam.YMax,
                         CurrFiveMinsGradientFigureParam.Y);
                     var propGridFiveMinsPGF = FiveMinsGradientFigureUI.PropertyGridParams(CalcFiveMinsGradientFigureParam, groupBoxParams.Height - 20);
-                    var btnPairFiveMinsPGF = FiveMinsGradientFigureUI.CalcAndSaveBtns(calculation, HandleCalculationClick, HandleParameterSaveClick);
+                    var btnPairFiveMinsPGF = FiveMinsGradientFigureUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
                     calcAuditTextBox = AuditTextBox(new string[] { "Adjust setting then press 'Calculate' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridFiveMinsPGF);
@@ -814,7 +841,7 @@ namespace ShareViewer
                     break;
                 case "Related volume Figure (RPGFV) of biggest PGF":
                     var propGridRv = RelatedVolumeFigureOfBiggestPGFUI.PropertyGridParams(groupBoxParams.Height - 20);
-                    var btnRv = FiveMinutesPriceGradientsUI.CalcAndSaveBtns(calculation, HandleCalculationClick, HandleParameterSaveClick);
+                    var btnRv = FiveMinutesPriceGradientsUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
                     calcAuditTextBox = AuditTextBox(new string[] { "There are NO parameters for this calclation. Press 'Calculate' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridRv);
@@ -825,7 +852,7 @@ namespace ShareViewer
                 case "Make High Line HL":
                     CalcHighLineParam = new MakeHighLineParam(CurrHighLineParam.ZMin,CurrHighLineParam.ZMax,CurrHighLineParam.Z);
                     var propGridMakeHL = MakeHighLineParamUI.PropertyGridParams(CalcHighLineParam, groupBoxParams.Height - 20);
-                    var btnPairMakeHL = MakeHighLineParamUI.CalcAndSaveBtns(calculation, HandleCalculationClick, HandleParameterSaveClick);
+                    var btnPairMakeHL = MakeHighLineParamUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
                     calcAuditTextBox = AuditTextBox(new string[] { "Adjust setting then press 'Calculate' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridMakeHL);
@@ -833,12 +860,32 @@ namespace ShareViewer
                     groupBoxParams.Controls.Add(btnPairMakeHL[1]);
                     groupBoxParams.Controls.Add(calcAuditTextBox);
                     break;
-
-
                 case "Make Low Line LL":
+                    CalcLowLineParam = new MakeLowLineParam(CurrLowLineParam.ZMin, CurrLowLineParam.ZMax, CurrLowLineParam.Z);
+                    var propGridMakeLL = MakeLowLineParamUI.PropertyGridParams(CalcLowLineParam, groupBoxParams.Height - 20);
+                    var btnPairMakeLL = MakeLowLineParamUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
+                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust setting then press 'Calculate' to (re)evaluate" });
+                    //add params property grid and calc button to groupBox panel
+                    groupBoxParams.Controls.Add(propGridMakeLL);
+                    groupBoxParams.Controls.Add(btnPairMakeLL[0]);
+                    groupBoxParams.Controls.Add(btnPairMakeLL[1]);
+                    groupBoxParams.Controls.Add(calcAuditTextBox);
                     break;
                 case "Make Slow Volumes SV":
+                    CalcSlowVolumeParam = 
+                        new MakeSlowVolumeParam(CurrSlowVolumeParam.YMin, CurrSlowVolumeParam.YMax,
+                                   CurrSlowVolumeParam.Ya, CurrSlowVolumeParam.Yb, CurrSlowVolumeParam.Yc, CurrSlowVolumeParam.Yd);
+                    var propGridSV = MakeSlowVolumeUI.PropertyGridParams(CalcSlowVolumeParam, groupBoxParams.Height - 20);
+                    var btnPairSV = MakeSlowVolumeUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
+                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust setting then press 'Calculate' to (re)evaluate" });
+                    //add params property grid and calc button to groupBox panel
+                    groupBoxParams.Controls.Add(propGridSV);
+                    groupBoxParams.Controls.Add(btnPairSV[0]);
+                    groupBoxParams.Controls.Add(btnPairSV[1]);
+                    groupBoxParams.Controls.Add(calcAuditTextBox);
                     break;
+
+
                 case "Slow Volume Figure SVFac":
                     break;
                 case "Slow Volume Figure SVFbd":
@@ -848,14 +895,18 @@ namespace ShareViewer
             }
         }
 
-        private async void linkLabelCalcToHere_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void linkLabelCalcToHere_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            RecalcToSelectedCalc();
+        }
+
+        private void RecalcToSelectedCalc()
         {
             //stripText.Text = "";
             _calculatingToHere = true;
             int currSelectedIndex = listBoxVariables.SelectedIndex;
             int calcsPerformed = 0;
-            int scrollToPos = 0;
-            for (int i = 1; i < currSelectedIndex; i++)
+            for (int i = 1; i <= currSelectedIndex; i++)
             {
                 listBoxVariables.SelectedIndex = i;
                 string[] auditLines;
@@ -864,53 +915,52 @@ namespace ShareViewer
                 switch (calculation)
                 {
                     case "Identify Lazy Shares":
-                        stripText.Text = $"{i}...";
-                        await Task.Run(() => Calculations.LazyShare(atRows, Helper.GetAppUserSettings().ParamsLazyShare, 9362, 10401, out auditLines));
-                        stripText.Text += $"{i} done, ";
+                        stripText.Text = $"";
+                        Calculations.LazyShare(atRows, Helper.GetAppUserSettings().ParamsLazyShare, 9362, 10401, out auditLines);
+                        stripText.Text += $"{calculation}, ";
                         calcsPerformed++;
-                        scrollToPos = 9362;
                         break;
                     case "Make Slow (Five minutes) Prices SP":
-                        stripText.Text += $"{i}...";
-                        await Task.Run(()=>Calculations.MakeSlowPrices(ref atRows, Helper.GetAppUserSettings().ParamsSlowPrice, 2, 10401, out auditLines));
-                        stripText.Text += $"{i} done, ";
+                        Calculations.MakeSlowPrices(ref atRows, Helper.GetAppUserSettings().ParamsSlowPrice, 2, 10401, out auditLines);
+                        stripText.Text += $"{calculation}, ";
                         calcsPerformed++;
                         break;
                     case "Make Five minutes Price Gradients PG":
-                        stripText.Text += $"{i}...";
-                        await Task.Run(()=>Calculations.MakeFiveMinutesPriceGradients(ref atRows, 2, 10401, out auditLines));
-                        stripText.Text += $"{i} done, ";
+                        Calculations.MakeFiveMinutesPriceGradients(ref atRows, 2, 10401, out auditLines);
+                        stripText.Text += $"{calculation}, ";
                         calcsPerformed++;
                         break;
                     case "Find direction and Turning":
-                        stripText.Text += $"{i}...";
-                        await Task.Run(()=>Calculations.FindDirectionAndTurning(ref atRows, Helper.GetAppUserSettings().ParamsDirectionAndTurning, 10298, 10401, out auditLines));
-                        stripText.Text += $"{i} done, ";
+                        Calculations.FindDirectionAndTurning(ref atRows, Helper.GetAppUserSettings().ParamsDirectionAndTurning, 10298, 10401, out auditLines);
+                        stripText.Text += $"{calculation}, ";
                         break;
                     case "Find Five minutes Gradients Figure PGF":
-                        stripText.Text += $"{i}...";
-                        await Task.Run(()=>Calculations.FindFiveMinsGradientsFigurePGF(ref atRows, Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure, 10298, 10401, out auditLines));
-                        stripText.Text += $"{i} done, ";
+                        Calculations.FindFiveMinsGradientsFigurePGF(ref atRows, Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure, 10298, 10401, out auditLines);
+                        stripText.Text += $"{calculation}, ";
                         calcsPerformed++;
                         break;
                     case "Related volume Figure (RPGFV) of biggest PGF":
-                        stripText.Text += $"{i}...";
-                        await Task.Run(() => Calculations.RelatedVolumeFigureOfBiggestPGF(ref atRows, 10298, 10401, out auditLines));
-                        stripText.Text += $"{i} done, ";
+                        Calculations.RelatedVolumeFigureOfBiggestPGF(ref atRows, 10298, 10401, out auditLines);
+                        stripText.Text += $"{calculation}, ";
                         calcsPerformed++;
                         break;
                     case "Make High Line HL":
-                        stripText.Text += $"{i}...";
-                        await Task.Run(() => Calculations.MakeHighLineHL(ref atRows, Helper.GetAppUserSettings().ParamsMakeHighLine, 2, 10401, out auditLines));
-                        stripText.Text += $"{i} done, ";
+                        Calculations.MakeHighLineHL(ref atRows, Helper.GetAppUserSettings().ParamsMakeHighLine, 2, 10401, out auditLines);
+                        stripText.Text += $"{calculation}, ";
+                        calcsPerformed++;
+                        break;
+                    case "Make Low Line LL":
+                        Calculations.MakeLowLineLL(ref atRows, Helper.GetAppUserSettings().ParamsMakeLowLine, 2, 10401, out auditLines);
+                        stripText.Text += $"{calculation}, ";
+                        calcsPerformed++;
+                        break;
+                    case "Make Slow Volumes SV":
+                        Calculations.MakeSlowVolume(ref atRows, Helper.GetAppUserSettings().ParamsMakeSlowVolume, 2, 10401, out auditLines);
+                        stripText.Text += $"{calculation}, ";
                         calcsPerformed++;
                         break;
 
 
-                    case "Make Low Line LL":
-                        break;
-                    case "Make Slow Volumes SV":
-                        break;
                     case "Slow Volume Figure SVFac":
                         break;
                     case "Slow Volume Figure SVFbd":
@@ -922,12 +972,11 @@ namespace ShareViewer
             if (calcsPerformed > 0)
             {
                 BindDataGridViewToResults(determineVerticalMode());
-                dgViewBindingSource.Position = scrollToPos;
-                dgView.FirstDisplayedScrollingRowIndex = scrollToPos;
+                stripText.Text = stripText.Text.TrimEnd(new char[] { ',', ' ' }) + " DONE";
             }
             else
             {
-                stripText.Text = "No calculations performed.";
+                stripText.Text = "Select a calculation. All calculations will be carried out up to and including the selected one.";
             }
             _calculatingToHere = false;
         }

@@ -66,5 +66,11 @@
     <Setting Name="ParamsMakeHighLine" Type="ShareViewer.MakeHighLineParam" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="ParamsMakeLowLine" Type="ShareViewer.MakeLowLineParam" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ParamsMakeSlowVolume" Type="ShareViewer.MakeSlowVolumeParam" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

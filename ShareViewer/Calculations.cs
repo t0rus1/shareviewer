@@ -43,7 +43,18 @@ namespace ShareViewer
                 aus.ParamsMakeHighLine = new MakeHighLineParam(0, 0.001, 0.0005);
                 shouldSave = true;
             }
-
+            if (aus.ParamsMakeLowLine == null)
+            {
+                //not yet set
+                aus.ParamsMakeLowLine = new MakeLowLineParam(0, 0.01, 0.005);
+                shouldSave = true;
+            }
+            if (aus.ParamsMakeSlowVolume == null)
+            {
+                //not yet set
+                aus.ParamsMakeSlowVolume = new MakeSlowVolumeParam(0, 0.9999, 0.1, 0.1, 0.1, 0.1);
+                shouldSave = true;
+            }
             if (shouldSave)
             {
                 aus.Save();
@@ -374,6 +385,161 @@ Result:
 
         }
 
+
+        internal static void MakeLowLineLL(ref AllTable[] atRows, MakeLowLineParam calcLowLineParam, int startRow, int endRow, out string[] auditSummary)
+        {
+            auditSummary = new string[] { };
+
+            //1) prefill LLc and LLd columns 39 & 43 with 1's
+            for (int i = startRow; i <= endRow; i++)  // 10298 -> 10401
+            {
+                atRows[i].LLc = 1;
+                atRows[i].LLd = 1;
+                atRows[i].PtsLLc = 0;
+                atRows[i].PtsLLd = 0;
+            }
+
+            //1) make two LLs
+            for (int i = startRow + 1; i <= endRow; i++)  // 10298 -> 10401
+            {
+                atRows[i].LLc = atRows[i - 1].LLc * atRows[i].PGc * (1 + calcLowLineParam.Z);
+                if (atRows[i].LLc > atRows[i].FP)
+                {
+                    // 2) and 3)
+                    atRows[i].LLc = atRows[i].FP;
+                    atRows[i].PtsLLc += 5;
+                }
+                atRows[i].LLd = atRows[i - 1].LLd * atRows[i].PGd * (1 + calcLowLineParam.Z);
+                if (atRows[i].LLd > atRows[i].FP)
+                {
+                    // 2) and 3)
+                    atRows[i].LLd = atRows[i].FP;
+                    atRows[i].PtsLLd += 5;
+                }
+                //4) Distance HL to FP
+                if (atRows[i].FP > 0)
+                {
+                    atRows[i].DLLFPc = atRows[i].LLc / atRows[i].FP;
+                    atRows[i].DLLFPd = atRows[i].LLd / atRows[i].FP;
+                }
+            }
+
+            auditSummary = $"LLc, LLd, PtsLLc, PtsLLd, DLLFPc and DLLFPd computed from row {startRow}-{endRow}.\nPlease inspect the view".Split('\n');
+
+        }
+
+        internal static void MakeSlowVolume(ref AllTable[] atRows, MakeSlowVolumeParam svp, int startRow, int endRow, out string[] auditSummary)
+        {
+            double diffTerm;
+            double powTerm;
+
+            auditSummary = new string[] { };
+
+            //1) prefill SVa,SVb,SVc,SVd with 1
+            for (int i = startRow; i <= endRow; i++)  // 2 -> 10401
+            {
+                atRows[i].SVa = 1;
+                atRows[i].SVb = 1;
+                atRows[i].SVc = 1;
+                atRows[i].SVd = 1;
+            }
+            for (int i = startRow+1; i <= endRow; i++)  // 2 -> 10401
+            {
+                if (atRows[i-1].SVa < atRows[i].FV)
+                {
+                    if (i < 10401)
+                    {
+                        //case 1, SVa
+                        diffTerm = atRows[i].FV - atRows[i - 1].SVa;
+                        powTerm = Math.Pow(diffTerm, svp.Ya);
+                        atRows[i].SVa = atRows[i - 1].SVa + Convert.ToUInt32(powTerm);
+                        //       SVb
+                        diffTerm = atRows[i].FV - atRows[i - 1].SVb;
+                        powTerm = Math.Pow(diffTerm, svp.Yb);
+                        atRows[i].SVb = atRows[i - 1].SVb + Convert.ToUInt32(powTerm);
+                        //       SVc
+                        diffTerm = atRows[i].FV - atRows[i - 1].SVc;
+                        powTerm = Math.Pow(diffTerm, svp.Yc);
+                        atRows[i].SVc = atRows[i - 1].SVc + Convert.ToUInt32(powTerm);
+                        //       SVd
+                        diffTerm = atRows[i].FV - atRows[i - 1].SVd;
+                        powTerm = Math.Pow(diffTerm, svp.Yd);
+                        atRows[i].SVd = atRows[i - 1].SVd + Convert.ToUInt32(powTerm);
+                    }
+                    else if (i == 10401)
+                    {
+                        //special case i = 10401, use row 10400's FV
+                        //case 1, SVa
+                        diffTerm = atRows[10400].FV - atRows[i - 1].SVa;
+                        powTerm = Math.Pow(diffTerm, svp.Ya);
+                        atRows[i].SVa = atRows[i - 1].SVa + Convert.ToUInt32(powTerm);
+                        //       SVb
+                        diffTerm = atRows[10400].FV - atRows[i - 1].SVb;
+                        powTerm = Math.Pow(diffTerm, svp.Yb);
+                        atRows[i].SVb = atRows[i - 1].SVb + Convert.ToUInt32(powTerm);
+                        //       SVc
+                        diffTerm = atRows[10400].FV - atRows[i - 1].SVc;
+                        powTerm = Math.Pow(diffTerm, svp.Yc);
+                        atRows[i].SVc = atRows[i - 1].SVc + Convert.ToUInt32(powTerm);
+                        //       SVd
+                        diffTerm = atRows[10400].FV - atRows[i - 1].SVd;
+                        powTerm = Math.Pow(diffTerm, svp.Yd);
+                        atRows[i].SVd = atRows[i - 1].SVd + Convert.ToUInt32(powTerm);
+                    }
+                }
+                else if (atRows[i - 1].SVa > atRows[i].FV)
+                {
+                    if (i < 10401)
+                    {
+                        //case 2, SVa
+                        diffTerm = atRows[i - 1].SVa - atRows[i].FV;
+                        powTerm = Math.Pow(diffTerm, svp.Ya);
+                        atRows[i].SVa = atRows[i - 1].SVa - Convert.ToUInt32(powTerm);
+                        //case 2, SVb
+                        diffTerm = atRows[i - 1].SVb - atRows[i].FV;
+                        powTerm = Math.Pow(diffTerm, svp.Yb);
+                        atRows[i].SVb = atRows[i - 1].SVb - Convert.ToUInt32(powTerm);
+                        //case 2, SVc
+                        diffTerm = atRows[i - 1].SVc - atRows[i].FV;
+                        powTerm = Math.Pow(diffTerm, svp.Yc);
+                        atRows[i].SVc = atRows[i - 1].SVc - Convert.ToUInt32(powTerm);
+                        //case 2, SVd
+                        diffTerm = atRows[i - 1].SVd - atRows[i].FV;
+                        powTerm = Math.Pow(diffTerm, svp.Yd);
+                        atRows[i].SVd = atRows[i - 1].SVd - Convert.ToUInt32(powTerm);
+                    }
+                    else if (i == 10401)
+                    {
+                        //case 2, SVa
+                        diffTerm = atRows[i - 1].SVa - atRows[10400].FV;
+                        powTerm = Math.Pow(diffTerm, svp.Ya);
+                        atRows[i].SVa = atRows[i - 1].SVa - Convert.ToUInt32(powTerm);
+                        //case 2, SVb
+                        diffTerm = atRows[i - 1].SVb - atRows[10400].FV;
+                        powTerm = Math.Pow(diffTerm, svp.Yb);
+                        atRows[i].SVb = atRows[i - 1].SVb - Convert.ToUInt32(powTerm);
+                        //case 2, SVc
+                        diffTerm = atRows[i - 1].SVc - atRows[10400].FV;
+                        powTerm = Math.Pow(diffTerm, svp.Yc);
+                        atRows[i].SVc = atRows[i - 1].SVc - Convert.ToUInt32(powTerm);
+                        //case 2, SVd
+                        diffTerm = atRows[i - 1].SVd - atRows[10400].FV;
+                        powTerm = Math.Pow(diffTerm, svp.Yd);
+                        atRows[i].SVd = atRows[i - 1].SVd - Convert.ToUInt32(powTerm);
+                    }
+                }
+
+            }
+            auditSummary = $"SVa,SVb,SVc,SVd computed from row {startRow}-{endRow}.\nPlease inspect the view".Split('\n');
+        }
+
+
+
+
+
+
+
+
         // Performs the full series of Calculations
         internal static void PerformShareCalculations(Share share, AllTable[] atSegment)
         {
@@ -392,7 +558,12 @@ Result:
 
             var highLineParam = Helper.GetAppUserSettings().ParamsMakeHighLine;
             Calculations.MakeHighLineHL(ref atSegment, highLineParam, 2, 10401, out auditSummary);
-           
+
+            var lowLineParam = Helper.GetAppUserSettings().ParamsMakeLowLine;
+            Calculations.MakeLowLineLL(ref atSegment, lowLineParam, 2, 10401, out auditSummary);
+
+            var slowVolumeParam = Helper.GetAppUserSettings().ParamsMakeSlowVolume;
+            Calculations.MakeSlowVolume(ref atSegment, slowVolumeParam, 2, 10401, out auditSummary);
 
         }
 

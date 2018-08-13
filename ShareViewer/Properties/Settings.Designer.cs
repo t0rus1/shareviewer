@@ -232,5 +232,27 @@ namespace ShareViewer.Properties {
                 this["ParamsMakeHighLine"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::ShareViewer.MakeLowLineParam ParamsMakeLowLine {
+            get {
+                return ((global::ShareViewer.MakeLowLineParam)(this["ParamsMakeLowLine"]));
+            }
+            set {
+                this["ParamsMakeLowLine"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::ShareViewer.MakeSlowVolumeParam ParamsMakeSlowVolume {
+            get {
+                return ((global::ShareViewer.MakeSlowVolumeParam)(this["ParamsMakeSlowVolume"]));
+            }
+            set {
+                this["ParamsMakeSlowVolume"] = value;
+            }
+        }
     }
 }

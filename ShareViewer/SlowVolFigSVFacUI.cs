@@ -8,10 +8,10 @@ using System.Windows.Forms;
 
 namespace ShareViewer
 {
-    internal static class DirectionAndTurningUI
+    internal static class SlowVolFigSVFacUI
     {
         // CALCULATION HANDLING
-        internal static PropertyGrid PropertyGridParams(DirectionAndTurningParam param, int height)
+        internal static PropertyGrid PropertyGridParams(SlowVolFigSVFacParam param, int height)
         {
             var pg = new PropertyGrid();
             pg.ToolbarVisible = false;
@@ -27,17 +27,17 @@ namespace ShareViewer
         private static void OnParamSettingChange(object sender, EventArgs e)
         {
             //var pg = (PropertyGrid)sender;
-            //var param = ((DirectionAndTurningParam)pg.SelectedObject);
-            //var newVal = param.Z;
+            //var param = ((SlowPriceParam)pg.SelectedObject);
+            //var newVal = param.Setting;
             //var lowerLimit = param.From;
             //var upperLimit = param.To;
             //if (newVal < lowerLimit)
             //{
-            //    param.Z = lowerLimit;
+            //    param.Setting = lowerLimit;
             //}
             //else if (newVal > upperLimit)
             //{
-            //    param.Z = upperLimit;
+            //    param.Setting = upperLimit;
             //}
         }
 
@@ -79,8 +79,6 @@ namespace ShareViewer
 
             return buttons;
         }
-
-
 
     }
 

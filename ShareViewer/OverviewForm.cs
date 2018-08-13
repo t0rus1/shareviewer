@@ -35,6 +35,8 @@ namespace ShareViewer
         internal DirectionAndTurningParam CurrDirectionAndTurningParam { get => Helper.GetAppUserSettings().ParamsDirectionAndTurning; }
         internal FiveMinsGradientFigureParam CurrFiveMinsGradientFigureParam { get => Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure; }
         internal MakeHighLineParam CurrHighLineParam { get => Helper.GetAppUserSettings().ParamsMakeHighLine; }
+        internal MakeLowLineParam CurrLowLineParam { get => Helper.GetAppUserSettings().ParamsMakeLowLine;  }
+        internal MakeSlowVolumeParam CurrSlowVolumeParam { get => Helper.GetAppUserSettings().ParamsMakeSlowVolume; }
 
 
         //CALCULATION properties (we bind these to a property grid)
@@ -43,11 +45,16 @@ namespace ShareViewer
         DirectionAndTurningParam calcDirectionAndTurningParam;
         FiveMinsGradientFigureParam calcFiveMinsGradientFigureParam;
         MakeHighLineParam calcHighLineParam;
+        MakeLowLineParam calcLowLineParam;
+        private MakeSlowVolumeParam calcSlowVolumeParam;
         internal LazyShareParam CalcLazyShareParam { get => calcLazyShareParam; set => calcLazyShareParam = value; }
         internal SlowPriceParam CalcSlowPriceParam { get => calcSlowPriceParam; set => calcSlowPriceParam = value; }
         internal DirectionAndTurningParam CalcDirectionAndTurningParam { get => calcDirectionAndTurningParam; set => calcDirectionAndTurningParam = value; }
         internal FiveMinsGradientFigureParam CalcFiveMinsGradientFigureParam { get => calcFiveMinsGradientFigureParam; set => calcFiveMinsGradientFigureParam = value; }
         internal MakeHighLineParam CalcHighLineParam { get => calcHighLineParam; set => calcHighLineParam = value; }
+        internal MakeLowLineParam CalcLowLineParam { get => calcLowLineParam; set => calcLowLineParam = value; }
+        internal MakeSlowVolumeParam CalcSlowVolumeParam { get => calcSlowVolumeParam; set => calcSlowVolumeParam = value; }
+
 
         public OverviewForm()
         {
@@ -631,12 +638,26 @@ namespace ShareViewer
                     groupBoxParams.Controls.Add(btnPairHL[0]);
                     groupBoxParams.Controls.Add(btnPairHL[1]);
                     break;
-
-
                 case "Make Low Line LL":
+                    CalcLowLineParam = new MakeLowLineParam(CurrLowLineParam.ZMin, CurrLowLineParam.ZMax, CurrLowLineParam.Z);
+                    var propGridLL = MakeLowLineParamUI.PropertyGridParams(CalcLowLineParam, groupBoxParams.Height - 20);
+                    var btnPairLL = MakeLowLineParamUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
+                    //add params property grid and calc button to groupBox panel
+                    groupBoxParams.Controls.Add(propGridLL);
+                    groupBoxParams.Controls.Add(btnPairLL[0]);
+                    groupBoxParams.Controls.Add(btnPairLL[1]);
                     break;
                 case "Make Slow Volumes SV":
+                    CalcSlowVolumeParam = new MakeSlowVolumeParam(0, 0.9999, 0.1, 0.1, 0.1, 0.1);
+                    var propGridSV = MakeSlowVolumeUI.PropertyGridParams(CalcSlowVolumeParam, groupBoxParams.Height - 20);
+                    var btnPairSV = MakeSlowVolumeUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
+                    //add params property grid and calc button to groupBox panel
+                    groupBoxParams.Controls.Add(propGridSV);
+                    groupBoxParams.Controls.Add(btnPairSV[0]);
+                    groupBoxParams.Controls.Add(btnPairSV[1]);
                     break;
+
+
                 case "Slow Volume Figure SVFac":
                     break;
                 case "Slow Volume Figure SVFbd":

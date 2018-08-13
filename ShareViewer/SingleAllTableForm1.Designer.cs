@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle28 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle29 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle30 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panelLeft = new System.Windows.Forms.Panel();
             this.listBoxCols = new System.Windows.Forms.ListBox();
             this.dgView = new System.Windows.Forms.DataGridView();
@@ -48,19 +48,15 @@
             this.radio5mins = new System.Windows.Forms.RadioButton();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBoxCalculations = new System.Windows.Forms.GroupBox();
+            this.linkLabelCalcToHere = new System.Windows.Forms.LinkLabel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBoxParams = new System.Windows.Forms.GroupBox();
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
-            this.groupBoxMisc = new System.Windows.Forms.GroupBox();
-            this.checkBoxLastDay = new System.Windows.Forms.CheckBox();
-            this.checkBoxOverwriteAPs = new System.Windows.Forms.CheckBox();
-            this.groupBoxScope = new System.Windows.Forms.GroupBox();
-            this.radioButtonThisShare = new System.Windows.Forms.RadioButton();
-            this.radioButtonAllShares = new System.Windows.Forms.RadioButton();
             this.listBoxVariables = new System.Windows.Forms.ListBox();
-            this.linkLabelCalcToHere = new System.Windows.Forms.LinkLabel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.panelLeft.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgView)).BeginInit();
             this.panelTop.SuspendLayout();
@@ -68,8 +64,7 @@
             this.groupBoxCalculations.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBoxParams.SuspendLayout();
-            this.groupBoxMisc.SuspendLayout();
-            this.groupBoxScope.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelLeft
@@ -96,28 +91,28 @@
             // 
             this.dgView.AllowUserToDeleteRows = false;
             this.dgView.AllowUserToResizeRows = false;
-            dataGridViewCellStyle28.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            this.dgView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle28;
-            dataGridViewCellStyle29.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle29.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle29.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle29.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle29.NullValue = null;
-            dataGridViewCellStyle29.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle29.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle29.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle29;
+            dataGridViewCellStyle10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.dgView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle11.NullValue = null;
+            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle11;
             this.dgView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle30.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle30.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle30.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle30.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle30.Format = "N3";
-            dataGridViewCellStyle30.NullValue = null;
-            dataGridViewCellStyle30.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle30.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle30.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgView.DefaultCellStyle = dataGridViewCellStyle30;
+            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle12.Format = "N3";
+            dataGridViewCellStyle12.NullValue = null;
+            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgView.DefaultCellStyle = dataGridViewCellStyle12;
             this.dgView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgView.EnableHeadersVisualStyles = false;
             this.dgView.Location = new System.Drawing.Point(130, 211);
@@ -283,11 +278,10 @@
             // 
             this.groupBoxCalculations.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxCalculations.Controls.Add(this.toolStrip1);
             this.groupBoxCalculations.Controls.Add(this.linkLabelCalcToHere);
             this.groupBoxCalculations.Controls.Add(this.statusStrip1);
             this.groupBoxCalculations.Controls.Add(this.groupBoxParams);
-            this.groupBoxCalculations.Controls.Add(this.groupBoxMisc);
-            this.groupBoxCalculations.Controls.Add(this.groupBoxScope);
             this.groupBoxCalculations.Controls.Add(this.listBoxVariables);
             this.groupBoxCalculations.Location = new System.Drawing.Point(294, 3);
             this.groupBoxCalculations.Name = "groupBoxCalculations";
@@ -295,6 +289,19 @@
             this.groupBoxCalculations.TabIndex = 15;
             this.groupBoxCalculations.TabStop = false;
             this.groupBoxCalculations.Text = "Calculations";
+            // 
+            // linkLabelCalcToHere
+            // 
+            this.linkLabelCalcToHere.AutoSize = true;
+            this.linkLabelCalcToHere.Location = new System.Drawing.Point(228, 143);
+            this.linkLabelCalcToHere.Name = "linkLabelCalcToHere";
+            this.linkLabelCalcToHere.Size = new System.Drawing.Size(102, 13);
+            this.linkLabelCalcToHere.TabIndex = 16;
+            this.linkLabelCalcToHere.TabStop = true;
+            this.linkLabelCalcToHere.Text = "Calc Up to Selected";
+            this.toolTip1.SetToolTip(this.linkLabelCalcToHere, "Perform calculations from  the first until the selected one in sequence, using cu" +
+        "rrent values of all the parameters.");
+            this.linkLabelCalcToHere.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelCalcToHere_LinkClicked);
             // 
             // statusStrip1
             // 
@@ -332,77 +339,6 @@
             this.propertyGrid1.TabIndex = 0;
             this.propertyGrid1.ToolbarVisible = false;
             // 
-            // groupBoxMisc
-            // 
-            this.groupBoxMisc.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.groupBoxMisc.Controls.Add(this.checkBoxLastDay);
-            this.groupBoxMisc.Controls.Add(this.checkBoxOverwriteAPs);
-            this.groupBoxMisc.Enabled = false;
-            this.groupBoxMisc.Location = new System.Drawing.Point(231, 112);
-            this.groupBoxMisc.Name = "groupBoxMisc";
-            this.groupBoxMisc.Size = new System.Drawing.Size(112, 62);
-            this.groupBoxMisc.TabIndex = 14;
-            this.groupBoxMisc.TabStop = false;
-            this.groupBoxMisc.Visible = false;
-            // 
-            // checkBoxLastDay
-            // 
-            this.checkBoxLastDay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxLastDay.AutoSize = true;
-            this.checkBoxLastDay.Location = new System.Drawing.Point(10, 37);
-            this.checkBoxLastDay.Name = "checkBoxLastDay";
-            this.checkBoxLastDay.Size = new System.Drawing.Size(90, 17);
-            this.checkBoxLastDay.TabIndex = 13;
-            this.checkBoxLastDay.Text = "Last day Only";
-            this.checkBoxLastDay.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxOverwriteAPs
-            // 
-            this.checkBoxOverwriteAPs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxOverwriteAPs.AutoSize = true;
-            this.checkBoxOverwriteAPs.Location = new System.Drawing.Point(10, 12);
-            this.checkBoxOverwriteAPs.Name = "checkBoxOverwriteAPs";
-            this.checkBoxOverwriteAPs.Size = new System.Drawing.Size(93, 17);
-            this.checkBoxOverwriteAPs.TabIndex = 12;
-            this.checkBoxOverwriteAPs.Text = "Overwrite APs";
-            this.checkBoxOverwriteAPs.UseVisualStyleBackColor = true;
-            // 
-            // groupBoxScope
-            // 
-            this.groupBoxScope.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.groupBoxScope.Controls.Add(this.radioButtonThisShare);
-            this.groupBoxScope.Controls.Add(this.radioButtonAllShares);
-            this.groupBoxScope.Enabled = false;
-            this.groupBoxScope.Location = new System.Drawing.Point(231, 11);
-            this.groupBoxScope.Name = "groupBoxScope";
-            this.groupBoxScope.Size = new System.Drawing.Size(112, 56);
-            this.groupBoxScope.TabIndex = 9;
-            this.groupBoxScope.TabStop = false;
-            this.groupBoxScope.Text = "Scope";
-            this.groupBoxScope.Visible = false;
-            // 
-            // radioButtonThisShare
-            // 
-            this.radioButtonThisShare.AutoSize = true;
-            this.radioButtonThisShare.Checked = true;
-            this.radioButtonThisShare.Location = new System.Drawing.Point(11, 35);
-            this.radioButtonThisShare.Name = "radioButtonThisShare";
-            this.radioButtonThisShare.Size = new System.Drawing.Size(94, 17);
-            this.radioButtonThisShare.TabIndex = 1;
-            this.radioButtonThisShare.TabStop = true;
-            this.radioButtonThisShare.Text = "Just this Share";
-            this.radioButtonThisShare.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonAllShares
-            // 
-            this.radioButtonAllShares.AutoSize = true;
-            this.radioButtonAllShares.Location = new System.Drawing.Point(11, 16);
-            this.radioButtonAllShares.Name = "radioButtonAllShares";
-            this.radioButtonAllShares.Size = new System.Drawing.Size(72, 17);
-            this.radioButtonAllShares.TabIndex = 0;
-            this.radioButtonAllShares.Text = "All Shares";
-            this.radioButtonAllShares.UseVisualStyleBackColor = true;
-            // 
             // listBoxVariables
             // 
             this.listBoxVariables.FormattingEnabled = true;
@@ -414,25 +350,31 @@
         "n same named \'view\'.");
             this.listBoxVariables.SelectedIndexChanged += new System.EventHandler(this.listBoxVariables_SelectedIndexChanged);
             // 
-            // linkLabelCalcToHere
-            // 
-            this.linkLabelCalcToHere.AutoSize = true;
-            this.linkLabelCalcToHere.Location = new System.Drawing.Point(225, 85);
-            this.linkLabelCalcToHere.Name = "linkLabelCalcToHere";
-            this.linkLabelCalcToHere.Size = new System.Drawing.Size(118, 13);
-            this.linkLabelCalcToHere.TabIndex = 16;
-            this.linkLabelCalcToHere.TabStop = true;
-            this.linkLabelCalcToHere.Text = "Calc All to Current Calc.";
-            this.toolTip1.SetToolTip(this.linkLabelCalcToHere, "Perform calculations from  the first until the selected one in sequence, using cu" +
-        "rrent values of all the parameters.");
-            this.linkLabelCalcToHere.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelCalcToHere_LinkClicked);
-            // 
             // toolTip1
             // 
             this.toolTip1.AutoPopDelay = 9000;
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.IsBalloon = true;
             this.toolTip1.ReshowDelay = 100;
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripLabel1});
+            this.toolStrip1.Location = new System.Drawing.Point(229, 16);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(18, 128);
+            this.toolStrip1.TabIndex = 17;
+            this.toolStrip1.Text = "toolStrip1";
+            this.toolStrip1.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(15, 125);
+            this.toolStripLabel1.Text = "---------------------->";
             // 
             // SingleAllTableForm
             // 
@@ -457,10 +399,8 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.groupBoxParams.ResumeLayout(false);
-            this.groupBoxMisc.ResumeLayout(false);
-            this.groupBoxMisc.PerformLayout();
-            this.groupBoxScope.ResumeLayout(false);
-            this.groupBoxScope.PerformLayout();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -482,12 +422,6 @@
         private System.Windows.Forms.LinkLabel linkLabelSaveView;
         private System.Windows.Forms.GroupBox groupBoxParams;
         private System.Windows.Forms.ListBox listBoxVariables;
-        private System.Windows.Forms.GroupBox groupBoxScope;
-        private System.Windows.Forms.RadioButton radioButtonThisShare;
-        private System.Windows.Forms.RadioButton radioButtonAllShares;
-        private System.Windows.Forms.GroupBox groupBoxMisc;
-        private System.Windows.Forms.CheckBox checkBoxLastDay;
-        private System.Windows.Forms.CheckBox checkBoxOverwriteAPs;
         private System.Windows.Forms.GroupBox groupBoxCalculations;
         private System.Windows.Forms.LinkLabel linkLabelLock;
         private System.Windows.Forms.Label labelLazy;
@@ -496,5 +430,7 @@
         private System.Windows.Forms.PropertyGrid propertyGrid1;
         private System.Windows.Forms.LinkLabel linkLabelCalcToHere;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
     }
 }

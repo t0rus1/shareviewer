@@ -8,10 +8,10 @@ using System.Windows.Forms;
 
 namespace ShareViewer
 {
-    internal static class DirectionAndTurningUI
+    internal static class MakeLowLineParamUI
     {
         // CALCULATION HANDLING
-        internal static PropertyGrid PropertyGridParams(DirectionAndTurningParam param, int height)
+        internal static PropertyGrid PropertyGridParams(MakeLowLineParam param, int height)
         {
             var pg = new PropertyGrid();
             pg.ToolbarVisible = false;
@@ -80,8 +80,5 @@ namespace ShareViewer
             return buttons;
         }
 
-
-
     }
-
 }

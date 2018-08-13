@@ -80,6 +80,10 @@
     <Compile Include="LazyShareParam.cs" />
     <Compile Include="MakeHighLineParam.cs" />
     <Compile Include="MakeHighLineParamUI.cs" />
+    <Compile Include="MakeLowLineParam.cs" />
+    <Compile Include="MakeLowLineParamUI.cs" />
+    <Compile Include="MakeSlowVolumeParam.cs" />
+    <Compile Include="MakeSlowVolumeUI.cs" />
     <Compile Include="Overview.cs" />
     <Compile Include="OverviewCalcs.cs" />
     <Compile Include="OverviewFilter.cs" />
@@ -105,6 +109,8 @@
     <Compile Include="Settings.cs" />
     <Compile Include="SlowPriceParam.cs" />
     <Compile Include="SlowPriceUI.cs" />
+    <Compile Include="SlowVolFigSVFacParam.cs" />
+    <Compile Include="SlowVolFigSVFacUI.cs" />
     <Compile Include="SortableBindingList.cs" />
     <Compile Include="TextBoxHeaderCell.cs" />
     <Compile Include="Program.cs" />
