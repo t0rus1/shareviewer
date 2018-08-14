@@ -75,7 +75,7 @@ namespace ShareViewer
             }
             else
             {
-                btnSave.Text = "Save and Calculate";
+                btnSave.Text = "Update";
             }
             btnSave.Tag = calculation;
             btnSave.Click += handleParameterSaveClick;

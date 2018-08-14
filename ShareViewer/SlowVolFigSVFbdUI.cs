@@ -8,21 +8,37 @@ using System.Windows.Forms;
 
 namespace ShareViewer
 {
-    internal static class RelatedVolumeFigureOfBiggestPGFUI
+    internal static class SlowVolFigSVFbdUI
     {
         // CALCULATION HANDLING
-        internal static PropertyGrid PropertyGridParams(int height)
+        internal static PropertyGrid PropertyGridParams(SlowVolFigSVFbdParam param, int height)
         {
-            //this calculation has no parameters!!!!
-            //so put up an empty property grid
             var pg = new PropertyGrid();
             pg.ToolbarVisible = false;
             pg.PropertySort = PropertySort.NoSort;
             pg.Size = new Size(150, height);
             pg.Location = new Point(20, 12);
-            //pg.SelectedObject = param;
-            //pg.PropertyValueChanged += OnParamSettingChange;
+            pg.SelectedObject = param;
+            pg.PropertyValueChanged += OnParamSettingChange;
             return pg;
+        }
+
+        // Check that new param setting remains within allowed bounds
+        private static void OnParamSettingChange(object sender, EventArgs e)
+        {
+            //var pg = (PropertyGrid)sender;
+            //var param = ((SlowPriceParam)pg.SelectedObject);
+            //var newVal = param.Setting;
+            //var lowerLimit = param.From;
+            //var upperLimit = param.To;
+            //if (newVal < lowerLimit)
+            //{
+            //    param.Setting = lowerLimit;
+            //}
+            //else if (newVal > upperLimit)
+            //{
+            //    param.Setting = upperLimit;
+            //}
         }
 
         internal static Button[] CalcAndSaveBtns(string calculation,
@@ -51,11 +67,11 @@ namespace ShareViewer
             btnSave.Location = new Point(170 + 20, 120);
             if (handleCalculationClick != null)
             {
-                btnSave.Text = "Not implemented";
+                btnSave.Text = "Apply and Save";
             }
             else
             {
-                btnSave.Text = "Not Implemented";
+                btnSave.Text = "Update";
             }
             btnSave.Tag = calculation;
             btnSave.Click += handleParameterSaveClick;
@@ -65,4 +81,5 @@ namespace ShareViewer
         }
 
     }
+
 }

@@ -137,15 +137,16 @@ namespace ShareViewer.Properties {
 <ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
   <string>Make Slow (Five minutes) Prices SP,0,2,4,6,7,8,10,11,18,21,24</string>
   <string>Make Five minutes Price Gradients PG,0,2,4,6,7,8,10,11,12,18,19,21,22,24,25</string>
-  <string>Find direction and Turning,0,2,4,6,7,8,10,48</string>
-  <string>Find Five minutes Gradients Figure PGF,0,2,4,6,7,8,10,48</string>
   <string>Related volume Figure (RPGFV) of biggest PGF,0,2,4,6,7,8,10,48</string>
-  <string>Make High Line HL,0,2,4,6,7,8,10,48</string>
-  <string>Make Low Line LL,0,2,4,6,7,8,10,48</string>
-  <string>Make Slow Volumes SV,0,2,4,6,7,8,10,48</string>
-  <string>Slow Volume Figure SVFac,0,2,4,6,7,8,10,48</string>
-  <string>Slow Volume Figure SVFbd,0,2,4,6,7,8,10,48</string>
   <string>Identify Lazy Shares,0,2,4,6,7,8,10,48</string>
+  <string>Columns 70-80,0,2,6,7,10,48,69,70,71,72,73,74,75,76,77,78,79</string>
+  <string>Find direction and Turning,0,2,4,6,7,8,10,11,12,18,19,21,22,24,25,67</string>
+  <string>Find Five minutes Gradients Figure PGF,0,2,4,6,7,8,10,12,13,14,15,16</string>
+  <string>Make High Line HL,0,2,4,6,7,8,10,22,25,28,29,32,33,69,70</string>
+  <string>Make Low Line LL,0,2,4,6,7,8,10,22,25,38,39,42,43,72,73</string>
+  <string>Make Slow Volumes SV,0,2,4,6,7,8,10,48,50,54,58,61</string>
+  <string>Slow Volume Figure SVFac,0,2,4,6,7,8,10,48,50,51,52,58,75</string>
+  <string>Slow Volume Figure SVFbd,0,2,4,6,7,8,10,48,54,55,56,61,76</string>
 </ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection AllTableViews {
             get {
@@ -180,6 +181,22 @@ namespace ShareViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+  <string>2017/12/25 = Christmas</string>
+  <string>2017/12/26 = 2nd Day of Christmas</string>
+  <string>2018/01/01 = New Years Day</string>
+  <string>2018/03/30 = Good Friday</string>
+  <string>2018/04/02 = Easter Monday</string>
+  <string>2018/05/01 = Labour Day</string>
+  <string>2018/05/10 = Ascension Day</string>
+  <string>2018/05/21 = Whit Monday</string>
+  <string>2018/05/31 = Corpus Christi</string>
+  <string>2018/10/03 = Day of German Unity</string>
+  <string>2018/12/25 = Christmas</string>
+  <string>2018/12/26 = 2nd Day of Christmas</string>
+  <string>2019/01/01 = New Years Day</string>
+</ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection Holidays {
             get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["Holidays"]));
@@ -191,6 +208,11 @@ namespace ShareViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+  <string>All Columns,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27</string>
+  <string>Initial,0,1,2,3,4,5</string>
+</ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection OverviewViews {
             get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["OverviewViews"]));
@@ -252,6 +274,28 @@ namespace ShareViewer.Properties {
             }
             set {
                 this["ParamsMakeSlowVolume"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::ShareViewer.SlowVolFigSVFacParam ParamsSlowVolFigSVFac {
+            get {
+                return ((global::ShareViewer.SlowVolFigSVFacParam)(this["ParamsSlowVolFigSVFac"]));
+            }
+            set {
+                this["ParamsSlowVolFigSVFac"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::ShareViewer.SlowVolFigSVFbdParam ParamsSlowVolFigSVFbd {
+            get {
+                return ((global::ShareViewer.SlowVolFigSVFbdParam)(this["ParamsSlowVolFigSVFbd"]));
+            }
+            set {
+                this["ParamsSlowVolFigSVFbd"] = value;
             }
         }
     }

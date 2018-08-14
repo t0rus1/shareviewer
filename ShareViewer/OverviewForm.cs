@@ -37,7 +37,8 @@ namespace ShareViewer
         internal MakeHighLineParam CurrHighLineParam { get => Helper.GetAppUserSettings().ParamsMakeHighLine; }
         internal MakeLowLineParam CurrLowLineParam { get => Helper.GetAppUserSettings().ParamsMakeLowLine;  }
         internal MakeSlowVolumeParam CurrSlowVolumeParam { get => Helper.GetAppUserSettings().ParamsMakeSlowVolume; }
-
+        internal SlowVolFigSVFacParam CurrSlowVolFigSVFacParam { get => Helper.GetAppUserSettings().ParamsSlowVolFigSVFac; }
+        internal SlowVolFigSVFbdParam CurrSlowVolFigSVFbdParam { get => Helper.GetAppUserSettings().ParamsSlowVolFigSVFbd; }
 
         //CALCULATION properties (we bind these to a property grid)
         LazyShareParam calcLazyShareParam;
@@ -47,6 +48,9 @@ namespace ShareViewer
         MakeHighLineParam calcHighLineParam;
         MakeLowLineParam calcLowLineParam;
         private MakeSlowVolumeParam calcSlowVolumeParam;
+        private SlowVolFigSVFacParam calcSlowVolFigSVFacParam;
+        private SlowVolFigSVFbdParam calcSlowVolFigSVFbd;
+
         internal LazyShareParam CalcLazyShareParam { get => calcLazyShareParam; set => calcLazyShareParam = value; }
         internal SlowPriceParam CalcSlowPriceParam { get => calcSlowPriceParam; set => calcSlowPriceParam = value; }
         internal DirectionAndTurningParam CalcDirectionAndTurningParam { get => calcDirectionAndTurningParam; set => calcDirectionAndTurningParam = value; }
@@ -54,7 +58,8 @@ namespace ShareViewer
         internal MakeHighLineParam CalcHighLineParam { get => calcHighLineParam; set => calcHighLineParam = value; }
         internal MakeLowLineParam CalcLowLineParam { get => calcLowLineParam; set => calcLowLineParam = value; }
         internal MakeSlowVolumeParam CalcSlowVolumeParam { get => calcSlowVolumeParam; set => calcSlowVolumeParam = value; }
-
+        internal SlowVolFigSVFacParam CalcSlowVolFigSVFacParam { get => calcSlowVolFigSVFacParam; set => calcSlowVolFigSVFacParam = value; }
+        internal SlowVolFigSVFbdParam CalcSlowVolFigSVFbdParam { get => calcSlowVolFigSVFbd; set => calcSlowVolFigSVFbd = value; }
 
         public OverviewForm()
         {
@@ -648,7 +653,9 @@ namespace ShareViewer
                     groupBoxParams.Controls.Add(btnPairLL[1]);
                     break;
                 case "Make Slow Volumes SV":
-                    CalcSlowVolumeParam = new MakeSlowVolumeParam(0, 0.9999, 0.1, 0.1, 0.1, 0.1);
+                    CalcSlowVolumeParam = new MakeSlowVolumeParam(
+                        CurrSlowVolumeParam.YMin, CurrSlowVolumeParam.YMax, CurrSlowVolumeParam.Ya,
+                        CurrSlowVolumeParam.Yb, CurrSlowVolumeParam.Yc, CurrSlowVolumeParam.Yd);
                     var propGridSV = MakeSlowVolumeUI.PropertyGridParams(CalcSlowVolumeParam, groupBoxParams.Height - 20);
                     var btnPairSV = MakeSlowVolumeUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
                     //add params property grid and calc button to groupBox panel
@@ -656,12 +663,32 @@ namespace ShareViewer
                     groupBoxParams.Controls.Add(btnPairSV[0]);
                     groupBoxParams.Controls.Add(btnPairSV[1]);
                     break;
-
-
                 case "Slow Volume Figure SVFac":
+                    CalcSlowVolFigSVFacParam = new SlowVolFigSVFacParam(
+                        CurrSlowVolFigSVFacParam.XMin, CurrSlowVolFigSVFacParam.XMax, CurrSlowVolFigSVFacParam.X,
+                        CurrSlowVolFigSVFacParam.YMin, CurrSlowVolFigSVFacParam.YMax, CurrSlowVolFigSVFacParam.Y,
+                        CurrSlowVolFigSVFacParam.ZMin, CurrSlowVolFigSVFacParam.ZMax, CurrSlowVolFigSVFacParam.Z,
+                        CurrSlowVolFigSVFacParam.WMin, CurrSlowVolFigSVFacParam.WMax, CurrSlowVolFigSVFacParam.W);
+                    var propGridSVFac = SlowVolFigSVFacUI.PropertyGridParams(CalcSlowVolFigSVFacParam, groupBoxParams.Height - 20);
+                    var btnPairSVFac = SlowVolFigSVFacUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
+                    //add params property grid and calc button to groupBox panel
+                    groupBoxParams.Controls.Add(propGridSVFac);
+                    groupBoxParams.Controls.Add(btnPairSVFac[0]);
+                    groupBoxParams.Controls.Add(btnPairSVFac[1]);
                     break;
                 case "Slow Volume Figure SVFbd":
+                    CalcSlowVolFigSVFbdParam = new SlowVolFigSVFbdParam(
+                        CurrSlowVolFigSVFbdParam.ZMin,CurrSlowVolFigSVFbdParam.ZMax,CurrSlowVolFigSVFbdParam.Z,
+                        CurrSlowVolFigSVFbdParam.YMin,CurrSlowVolFigSVFbdParam.YMax,CurrSlowVolFigSVFbdParam.Y,
+                        CurrSlowVolFigSVFbdParam.WMin,CurrSlowVolFigSVFbdParam.WMax,CurrSlowVolFigSVFbdParam.W);
+                    var propGridSVFbd = SlowVolFigSVFbdUI.PropertyGridParams(CalcSlowVolFigSVFbdParam, groupBoxParams.Height - 20);
+                    var btnPairSVFbd = SlowVolFigSVFbdUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
+                    //add params property grid and calc button to groupBox panel
+                    groupBoxParams.Controls.Add(propGridSVFbd);
+                    groupBoxParams.Controls.Add(btnPairSVFbd[0]);
+                    groupBoxParams.Controls.Add(btnPairSVFbd[1]);
                     break;
+
                 default:
                     break;
             }

@@ -15,54 +15,67 @@ namespace ShareViewer
 
         }
 
-        public SlowVolFigSVFacParam(int zmin, int zmax, int z, double ymin, double ymax, double y)
+        public SlowVolFigSVFacParam(
+            double xmin, double xmax, double x, 
+            double ymin, double ymax, double y, 
+            int zmin, int zmax, int z, 
+            double wmin, double wmax, double w)
         {
-            //assume values will obey the ranges allowed
-            zMin = zmin;
-            zMax = zmax;
-            this.z = z;
+            //values will get coerced
+            XMin = xmin;  XMax = xmax;  this.X = x;
 
-            yMin = ymin;
-            yMax = ymax;
-            this.y = y;
+            YMin = ymin; YMax = ymax; this.Y = y;
+
+            ZMin = zmin; ZMax = zmax; this.Z = z;
+
+            WMin = wmin; WMax = wmax; this.W = w;
         }
 
-        private int z;
-        private int zMin;
-        private int zMax;
+
+        private double x;
+        private double xMin;
+        private double xMax;
+
         private double y;
         private double yMin;
         private double yMax;
 
+        private int z;
+        private int zMin;
+        private int zMax;
 
-        [Category("Parameter")]
-        [Description("Lower limit for Z")]
+        private double wMin;
+        private double wMax;
+        private double w;
+
+
+        [Description("Lower limit for X")]
         [ReadOnly(true)]
-        public int ZMin
+        public double XMin
         {
-            get => zMin; set => zMin = value;
+            get => xMin; set => xMin = value;
         }
 
         [Category("Parameter")]
-        [Description("Upper limit for Z")]
+        [Description("Upper limit for X")]
         [ReadOnly(true)]
-        public int ZMax
+        public double XMax
         {
-            get => zMax;
+            get => xMax;
             set
             {
-                if (value >= zMin) zMax = value;
+                if (value >= xMin) xMax = value; else xMax = xMin;
             }
         }
 
         [Category("Parameter")]
         [Description("Setting")]
-        public int Z
+        public double X
         {
-            get => z;
+            get => x;
             set
             {
-                if (value <= zMax && value >= zMin) z = value;
+                if (value >= xMin && value <= xMax) x = value;
             }
         }
 
@@ -97,9 +110,73 @@ namespace ShareViewer
             }
         }
 
+
+        [Category("Parameter")]
+        [Description("Lower limit for Z")]
+        [ReadOnly(true)]
+        public int ZMin
+        {
+            get => zMin; set => zMin = value;
+        }
+
+        [Category("Parameter")]
+        [Description("Upper limit for Z")]
+        [ReadOnly(true)]
+        public int ZMax
+        {
+            get => zMax;
+            set
+            {
+                if (value >= zMin) zMax = value;
+            }
+        }
+
+        [Category("Parameter")]
+        [Description("Setting")]
+        public int Z
+        {
+            get => z;
+            set
+            {
+                if (value <= zMax && value >= zMin) z = value;
+            }
+        }
+
+        [Category("Parameter")]
+        [Description("Lower limit for W")]
+        [ReadOnly(true)]
+        public double WMin
+        {
+            get => wMin; set => wMin = value;
+        }
+
+        [Category("Parameter")]
+        [Description("Upper limit for W")]
+        [ReadOnly(true)]
+        public double WMax
+        {
+            get => wMax;
+            set
+            {
+                if (value >= wMin) wMax = value; else wMax = wMin;
+            }
+        }
+
+        [Category("Parameter")]
+        [Description("Setting")]
+        public double W
+        {
+            get => w;
+            set
+            {
+                if (value >= wMin && value <= wMax) w = value;
+            }
+        }
+
+
         public bool DiffersFrom(SlowVolFigSVFacParam other)
         {
-            return (this.Y != other.Y || this.Z != other.Z);
+            return (this.X != other.X || this.Y != other.Y || this.Z != other.Z || this.W != other.W);
         }
 
     }

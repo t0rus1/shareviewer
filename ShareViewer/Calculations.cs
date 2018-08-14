@@ -55,6 +55,18 @@ namespace ShareViewer
                 aus.ParamsMakeSlowVolume = new MakeSlowVolumeParam(0, 0.9999, 0.1, 0.1, 0.1, 0.1);
                 shouldSave = true;
             }
+            if (aus.ParamsSlowVolFigSVFac == null)
+            {
+                //not yet set
+                aus.ParamsSlowVolFigSVFac = new SlowVolFigSVFacParam(1.0, 5.0, 1, 0, 0.005, 0.1, 104, 999,104, 1000, 99000,1000);
+                shouldSave = true;
+            }
+            if (aus.ParamsSlowVolFigSVFbd == null)
+            {
+                //not yet set
+                aus.ParamsSlowVolFigSVFbd = new SlowVolFigSVFbdParam(104, 2000, 104, 0, 0.005, 0, 1000, 99000, 1000);
+                shouldSave = true;
+            }
             if (shouldSave)
             {
                 aus.Save();
@@ -533,12 +545,126 @@ Result:
             auditSummary = $"SVa,SVb,SVc,SVd computed from row {startRow}-{endRow}.\nPlease inspect the view".Split('\n');
         }
 
+        internal static void SlowVolumeFigureSVFac(ref AllTable[] atRows, SlowVolFigSVFacParam svf, int startRow, int endRow, out string[] auditSummary)
+        {
+            double denom;
+            auditSummary = new string[] { };
+
+            //1) prefill
+            for (int i = startRow; i <= endRow; i++)  // 2 -> 10401
+            {
+                atRows[i].APSVac = 1;
+            }
+            // calculate SVFac
+            for (int i = startRow; i <= endRow; i++)  // 2 -> 10401
+            {
+                denom = (atRows[i].SVc * atRows[i].APSVac);
+                if (denom > 0)
+                {
+                    atRows[i].SVFac = atRows[i].SVa / denom;
+                }
+            }
+            // look for biggest SVFac
+            double big = Double.MinValue;
+            int bigRow = -1;
+            for (int i = endRow-svf.Z; i <= endRow; i++)
+            {
+                if (atRows[i].SVFac > big)
+                {
+                    big = atRows[i].SVFac;
+                    bigRow = i;
+                }
+            }
+            // biggest SVFac > 1 ?
+            if ((bigRow != -1) && (big > 1))
+            {
+                //yes, increase APSVac onwards
+                for (int i = bigRow; i <=endRow ; i++)
+                {
+                    atRows[i].APSVac *= (1 + svf.Y);
+                    if (big > svf.W)
+                    {
+                        atRows[i].PtsVola += big;
+                    }
+                }
+            }
+            else if ((bigRow != -1) && (big <= 1))
+            {
+                //no, decrease APSVac onwards
+                for (int i = bigRow; i <= endRow; i++)
+                {
+                    atRows[i].APSVac *= Math.Pow(1 - svf.Y,svf.X);
+                    //not sure if this is necessary
+                    if (big > svf.W)
+                    {
+                        atRows[i].PtsVola += big;
+                    }
+                }
+            }
+            auditSummary = $"SVFac computed for {startRow}-{endRow}.Biggest {big}, row {bigRow}\nPlease inspect the view".Split('\n');
+        }
 
 
+        internal static void SlowVolumeFigureSVFbd(ref AllTable[] atRows, SlowVolFigSVFbdParam svf, int startRow, int endRow, out string[] auditSummary)
+        {
+            double denom;
+            auditSummary = new string[] { };
 
+            //1) prefill
+            for (int i = startRow; i <= endRow; i++)  // 2 -> 10401
+            {
+                atRows[i].APSVbd = 1;
+            }
 
+            // calculate SVFbd
+            for (int i = startRow; i <= endRow; i++)  // 2 -> 10401
+            {
+                denom = (atRows[i].SVd * atRows[i].APSVbd);
+                if (denom > 0)
+                {
+                    atRows[i].SVFbd = atRows[i].SVb / denom;
+                }
+            }
+            //look for biggest SVFbd
+            double big = Double.MinValue;
+            int bigRow = -1;
+            for (int i = endRow - svf.Z; i <= endRow; i++)
+            {
+                if (atRows[i].SVFbd > big)
+                {
+                    big = atRows[i].SVFbd;
+                    bigRow = i;
+                }
+            }
+            // biggest SVFbd > 1 ?
+            if ((bigRow != -1) && (big > 1))
+            {
+                //yes, increase APSVbd onwards
+                for (int i = bigRow; i <= endRow; i++)
+                {
+                    atRows[i].APSVbd *= (1 + svf.Y);
+                    if (big > svf.W)
+                    {
+                        atRows[i].PtsVolb += big;
+                    }
+                }
+            }
+            else if ((bigRow != -1) && (big <= 1))
+            {
+                //no, decrease APSVbd onwards
+                for (int i = bigRow; i <= endRow; i++)
+                {
+                    atRows[i].APSVbd *= 1 - svf.Y;
+                    //not sure if this is necessary
+                    if (big > svf.W)
+                    {
+                        atRows[i].PtsVolb += big;
+                    }
+                }
+            }
+            auditSummary = $"SVFbd computed for {startRow}-{endRow}.Biggest {big}, row {bigRow}\nPlease inspect the view".Split('\n');
 
-
+        }
 
         // Performs the full series of Calculations
         internal static void PerformShareCalculations(Share share, AllTable[] atSegment)
@@ -564,6 +690,12 @@ Result:
 
             var slowVolumeParam = Helper.GetAppUserSettings().ParamsMakeSlowVolume;
             Calculations.MakeSlowVolume(ref atSegment, slowVolumeParam, 2, 10401, out auditSummary);
+
+            var slowVolFigSVFacParam = Helper.GetAppUserSettings().ParamsSlowVolFigSVFac;
+            Calculations.SlowVolumeFigureSVFac(ref atSegment, slowVolFigSVFacParam, 2, 10401, out auditSummary);
+
+            var slowVolFigSVFbdParam = Helper.GetAppUserSettings().ParamsSlowVolFigSVFbd;
+            Calculations.SlowVolumeFigureSVFbd(ref atSegment, slowVolFigSVFbdParam, 2, 10401, out auditSummary);
 
         }
 

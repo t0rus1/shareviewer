@@ -111,6 +111,8 @@
     <Compile Include="SlowPriceUI.cs" />
     <Compile Include="SlowVolFigSVFacParam.cs" />
     <Compile Include="SlowVolFigSVFacUI.cs" />
+    <Compile Include="SlowVolFigSVFbdParam.cs" />
+    <Compile Include="SlowVolFigSVFbdUI.cs" />
     <Compile Include="SortableBindingList.cs" />
     <Compile Include="TextBoxHeaderCell.cs" />
     <Compile Include="Program.cs" />

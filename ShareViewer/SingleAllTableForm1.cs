@@ -43,6 +43,8 @@ namespace ShareViewer
         internal MakeHighLineParam CurrHighLineParam { get => Helper.GetAppUserSettings().ParamsMakeHighLine; }
         internal MakeLowLineParam CurrLowLineParam { get => Helper.GetAppUserSettings().ParamsMakeLowLine; }
         internal MakeSlowVolumeParam CurrSlowVolumeParam { get => Helper.GetAppUserSettings().ParamsMakeSlowVolume; }
+        internal SlowVolFigSVFacParam CurrSlowVolFigSVFacParam { get => Helper.GetAppUserSettings().ParamsSlowVolFigSVFac; }
+        internal SlowVolFigSVFbdParam CurrSlowVolFigSVFbdParam { get => Helper.GetAppUserSettings().ParamsSlowVolFigSVFbd; }
 
         //CALCULATION properties (we bind these to a property grid)
         private LazyShareParam calcLazyShareParam;
@@ -62,9 +64,15 @@ namespace ShareViewer
 
         private MakeLowLineParam calcLowLineParam;
         internal MakeLowLineParam CalcLowLineParam { get => calcLowLineParam; set => calcLowLineParam = value; }
+
         private MakeSlowVolumeParam calcSlowVolumeParam;
         internal MakeSlowVolumeParam CalcSlowVolumeParam { get => calcSlowVolumeParam; set => calcSlowVolumeParam = value; }
 
+        private SlowVolFigSVFacParam calcSlowVolFigSVFacParam;
+        internal SlowVolFigSVFacParam CalcSlowVolFigSVFacParam { get => calcSlowVolFigSVFacParam; set => calcSlowVolFigSVFacParam = value; }
+
+        private SlowVolFigSVFbdParam calcSlowVolFigSVFbdParam;
+        internal SlowVolFigSVFbdParam CalcSlowVolFigSVFbdParam { get => calcSlowVolFigSVFbdParam; set => calcSlowVolFigSVFbdParam = value; }
 
 
         //ctor
@@ -612,11 +620,17 @@ namespace ShareViewer
                     aus.Save();
                     RecalcToSelectedCalc();
                     break;
-
                 case "Slow Volume Figure SVFac":
+                    aus.ParamsSlowVolFigSVFac = CalcSlowVolFigSVFacParam;
+                    aus.Save();
+                    RecalcToSelectedCalc();
                     break;
                 case "Slow Volume Figure SVFbd":
+                    aus.ParamsSlowVolFigSVFbd = CalcSlowVolFigSVFbdParam;
+                    aus.Save();
+                    RecalcToSelectedCalc();
                     break;
+
                 default:
                     break;
             }
@@ -734,7 +748,7 @@ namespace ShareViewer
             //duck away if we're doing a 'calc to here' run
             if (_calculatingToHere) return;
 
-            var affirmNumRows = $"There are {atRows.Count()} records in this All-Table. Tweak parameters, 'Save and Calculate' to see the effect. Only parameters are saved, not All-Table changes!";
+            var affirmNumRows = $"There are {atRows.Count()} records in this All-Table. Tweak parameters, 'Update' will recalculate up to the point in question. Only the parameters get saved, not the recalculated All-Table!";
             stripText.Text = affirmNumRows;
 
             groupBoxParams.Controls.Clear();
@@ -767,7 +781,7 @@ namespace ShareViewer
                     CalcLazyShareParam = new LazyShareParam(CurrLazyShareParam.From, CurrLazyShareParam.To, CurrLazyShareParam.Setting);
                     var propGridLazy = LazyShareUI.PropertyGridParams(CalcLazyShareParam, groupBoxParams.Height - 20);
                     var btnPairLazy = LazyShareUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick); // HandleCalculationClick
-                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust settings then press 'Calculate' to (re)evaluate" });
+                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust settings then press 'Update' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridLazy);
                     groupBoxParams.Controls.Add(btnPairLazy[0]);
@@ -785,7 +799,7 @@ namespace ShareViewer
                     CalcSlowPriceParam.Yd = CurrSlowPriceParam.Yd;
                     var propGridSlow = SlowPriceUI.PropertyGridParams(CalcSlowPriceParam, groupBoxParams.Height - 20);
                     var btnPairSlow = SlowPriceUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
-                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust settings then press 'Calculate' to (re)evaluate" });
+                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust settings then press 'Update' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridSlow);
                     groupBoxParams.Controls.Add(btnPairSlow[0]);
@@ -795,7 +809,7 @@ namespace ShareViewer
                 case "Make Five minutes Price Gradients PG":
                     var propGridPg = FiveMinutesPriceGradientsUI.PropertyGridParams(groupBoxParams.Height - 20);
                     var btnPg = FiveMinutesPriceGradientsUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
-                    calcAuditTextBox = AuditTextBox(new string[] { "There are NO parameters for this calclation. Press 'Calculate' to (re)evaluate" });
+                    calcAuditTextBox = AuditTextBox(new string[] { "There are NO parameters for this calclation. Press 'Update' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridPg);
                     groupBoxParams.Controls.Add(btnPg[0]);
@@ -806,7 +820,7 @@ namespace ShareViewer
                     CalcDirectionAndTurningParam = new DirectionAndTurningParam(CurrDirectionAndTurningParam.From,CurrDirectionAndTurningParam.To, CurrDirectionAndTurningParam.PGcThreshold, CurrDirectionAndTurningParam.Z);
                     var propGridDandT = DirectionAndTurningUI.PropertyGridParams(CalcDirectionAndTurningParam, groupBoxParams.Height - 20);
                     var btnPairDandT = DirectionAndTurningUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
-                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust setting then press 'Calculate' to (re)evaluate" });
+                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust setting then press 'Update' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridDandT);
                     groupBoxParams.Controls.Add(btnPairDandT[0]);
@@ -829,7 +843,7 @@ namespace ShareViewer
                         CurrFiveMinsGradientFigureParam.Y);
                     var propGridFiveMinsPGF = FiveMinsGradientFigureUI.PropertyGridParams(CalcFiveMinsGradientFigureParam, groupBoxParams.Height - 20);
                     var btnPairFiveMinsPGF = FiveMinsGradientFigureUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
-                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust setting then press 'Calculate' to (re)evaluate" });
+                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust setting then press 'Update' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridFiveMinsPGF);
                     groupBoxParams.Controls.Add(btnPairFiveMinsPGF[0]);
@@ -841,8 +855,8 @@ namespace ShareViewer
                     break;
                 case "Related volume Figure (RPGFV) of biggest PGF":
                     var propGridRv = RelatedVolumeFigureOfBiggestPGFUI.PropertyGridParams(groupBoxParams.Height - 20);
-                    var btnRv = FiveMinutesPriceGradientsUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
-                    calcAuditTextBox = AuditTextBox(new string[] { "There are NO parameters for this calclation. Press 'Calculate' to (re)evaluate" });
+                    var btnRv = RelatedVolumeFigureOfBiggestPGFUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
+                    calcAuditTextBox = AuditTextBox(new string[] { "NOT YET IMPLEMENTED" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridRv);
                     groupBoxParams.Controls.Add(btnRv[0]);
@@ -853,7 +867,7 @@ namespace ShareViewer
                     CalcHighLineParam = new MakeHighLineParam(CurrHighLineParam.ZMin,CurrHighLineParam.ZMax,CurrHighLineParam.Z);
                     var propGridMakeHL = MakeHighLineParamUI.PropertyGridParams(CalcHighLineParam, groupBoxParams.Height - 20);
                     var btnPairMakeHL = MakeHighLineParamUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
-                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust setting then press 'Calculate' to (re)evaluate" });
+                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust setting then press 'Update' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridMakeHL);
                     groupBoxParams.Controls.Add(btnPairMakeHL[0]);
@@ -864,7 +878,7 @@ namespace ShareViewer
                     CalcLowLineParam = new MakeLowLineParam(CurrLowLineParam.ZMin, CurrLowLineParam.ZMax, CurrLowLineParam.Z);
                     var propGridMakeLL = MakeLowLineParamUI.PropertyGridParams(CalcLowLineParam, groupBoxParams.Height - 20);
                     var btnPairMakeLL = MakeLowLineParamUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
-                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust setting then press 'Calculate' to (re)evaluate" });
+                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust setting then press 'Update' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridMakeLL);
                     groupBoxParams.Controls.Add(btnPairMakeLL[0]);
@@ -877,18 +891,39 @@ namespace ShareViewer
                                    CurrSlowVolumeParam.Ya, CurrSlowVolumeParam.Yb, CurrSlowVolumeParam.Yc, CurrSlowVolumeParam.Yd);
                     var propGridSV = MakeSlowVolumeUI.PropertyGridParams(CalcSlowVolumeParam, groupBoxParams.Height - 20);
                     var btnPairSV = MakeSlowVolumeUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
-                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust setting then press 'Calculate' to (re)evaluate" });
+                    calcAuditTextBox = AuditTextBox(new string[] { "Adjust setting then press 'Update' to (re)evaluate" });
                     //add params property grid and calc button to groupBox panel
                     groupBoxParams.Controls.Add(propGridSV);
                     groupBoxParams.Controls.Add(btnPairSV[0]);
                     groupBoxParams.Controls.Add(btnPairSV[1]);
                     groupBoxParams.Controls.Add(calcAuditTextBox);
                     break;
-
-
                 case "Slow Volume Figure SVFac":
+                    CalcSlowVolFigSVFacParam = new SlowVolFigSVFacParam(
+                        CurrSlowVolFigSVFacParam.XMin, CurrSlowVolFigSVFacParam.XMax, CurrSlowVolFigSVFacParam.X,
+                        CurrSlowVolFigSVFacParam.YMin, CurrSlowVolFigSVFacParam.YMax, CurrSlowVolFigSVFacParam.Y,
+                        CurrSlowVolFigSVFacParam.ZMin, CurrSlowVolFigSVFacParam.ZMax, CurrSlowVolFigSVFacParam.Z,
+                        CurrSlowVolFigSVFacParam.WMin, CurrSlowVolFigSVFacParam.WMax, CurrSlowVolFigSVFacParam.W);
+                    var propGridSVFac = SlowVolFigSVFacUI.PropertyGridParams(CalcSlowVolFigSVFacParam, groupBoxParams.Height - 20);
+                    var btnPairSVFac = SlowVolFigSVFacUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
+                    //add params property grid and calc button to groupBox panel
+                    groupBoxParams.Controls.Add(propGridSVFac);
+                    groupBoxParams.Controls.Add(btnPairSVFac[0]);
+                    groupBoxParams.Controls.Add(btnPairSVFac[1]);
+                    groupBoxParams.Controls.Add(calcAuditTextBox);
                     break;
                 case "Slow Volume Figure SVFbd":
+                    CalcSlowVolFigSVFbdParam = new SlowVolFigSVFbdParam(
+                        CurrSlowVolFigSVFbdParam.ZMin, CurrSlowVolFigSVFbdParam.ZMax, CurrSlowVolFigSVFbdParam.Z,
+                        CurrSlowVolFigSVFbdParam.YMin, CurrSlowVolFigSVFbdParam.YMax, CurrSlowVolFigSVFbdParam.Y,
+                        CurrSlowVolFigSVFbdParam.WMin, CurrSlowVolFigSVFbdParam.WMax, CurrSlowVolFigSVFbdParam.W);
+                    var propGridSVFbd = SlowVolFigSVFbdUI.PropertyGridParams(CalcSlowVolFigSVFbdParam, groupBoxParams.Height - 20);
+                    var btnPairSVFbd = SlowVolFigSVFbdUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
+                    //add params property grid and calc button to groupBox panel
+                    groupBoxParams.Controls.Add(propGridSVFbd);
+                    groupBoxParams.Controls.Add(btnPairSVFbd[0]);
+                    groupBoxParams.Controls.Add(btnPairSVFbd[1]);
+                    groupBoxParams.Controls.Add(calcAuditTextBox);
                     break;
                 default:
                     break;
@@ -959,12 +994,17 @@ namespace ShareViewer
                         stripText.Text += $"{calculation}, ";
                         calcsPerformed++;
                         break;
-
-
                     case "Slow Volume Figure SVFac":
+                        Calculations.SlowVolumeFigureSVFac(ref atRows, Helper.GetAppUserSettings().ParamsSlowVolFigSVFac, 2, 10401, out auditLines);
+                        stripText.Text += $"{calculation}, ";
+                        calcsPerformed++;
                         break;
                     case "Slow Volume Figure SVFbd":
+                        Calculations.SlowVolumeFigureSVFbd(ref atRows, Helper.GetAppUserSettings().ParamsSlowVolFigSVFbd, 2, 10401, out auditLines);
+                        stripText.Text += $"{calculation}, ";
+                        calcsPerformed++;
                         break;
+
                     default:
                         break;
                 }

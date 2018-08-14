@@ -34,15 +34,16 @@
 &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
   &lt;string&gt;Make Slow (Five minutes) Prices SP,0,2,4,6,7,8,10,11,18,21,24&lt;/string&gt;
   &lt;string&gt;Make Five minutes Price Gradients PG,0,2,4,6,7,8,10,11,12,18,19,21,22,24,25&lt;/string&gt;
-  &lt;string&gt;Find direction and Turning,0,2,4,6,7,8,10,48&lt;/string&gt;
-  &lt;string&gt;Find Five minutes Gradients Figure PGF,0,2,4,6,7,8,10,48&lt;/string&gt;
   &lt;string&gt;Related volume Figure (RPGFV) of biggest PGF,0,2,4,6,7,8,10,48&lt;/string&gt;
-  &lt;string&gt;Make High Line HL,0,2,4,6,7,8,10,48&lt;/string&gt;
-  &lt;string&gt;Make Low Line LL,0,2,4,6,7,8,10,48&lt;/string&gt;
-  &lt;string&gt;Make Slow Volumes SV,0,2,4,6,7,8,10,48&lt;/string&gt;
-  &lt;string&gt;Slow Volume Figure SVFac,0,2,4,6,7,8,10,48&lt;/string&gt;
-  &lt;string&gt;Slow Volume Figure SVFbd,0,2,4,6,7,8,10,48&lt;/string&gt;
   &lt;string&gt;Identify Lazy Shares,0,2,4,6,7,8,10,48&lt;/string&gt;
+  &lt;string&gt;Columns 70-80,0,2,6,7,10,48,69,70,71,72,73,74,75,76,77,78,79&lt;/string&gt;
+  &lt;string&gt;Find direction and Turning,0,2,4,6,7,8,10,11,12,18,19,21,22,24,25,67&lt;/string&gt;
+  &lt;string&gt;Find Five minutes Gradients Figure PGF,0,2,4,6,7,8,10,12,13,14,15,16&lt;/string&gt;
+  &lt;string&gt;Make High Line HL,0,2,4,6,7,8,10,22,25,28,29,32,33,69,70&lt;/string&gt;
+  &lt;string&gt;Make Low Line LL,0,2,4,6,7,8,10,22,25,38,39,42,43,72,73&lt;/string&gt;
+  &lt;string&gt;Make Slow Volumes SV,0,2,4,6,7,8,10,48,50,54,58,61&lt;/string&gt;
+  &lt;string&gt;Slow Volume Figure SVFac,0,2,4,6,7,8,10,48,50,51,52,58,75&lt;/string&gt;
+  &lt;string&gt;Slow Volume Figure SVFbd,0,2,4,6,7,8,10,48,54,55,56,61,76&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="ParamsLazyShare" Type="ShareViewer.LazyShareParam" Scope="User">
@@ -52,10 +53,29 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="Holidays" Type="System.Collections.Specialized.StringCollection" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;2017/12/25 = Christmas&lt;/string&gt;
+  &lt;string&gt;2017/12/26 = 2nd Day of Christmas&lt;/string&gt;
+  &lt;string&gt;2018/01/01 = New Years Day&lt;/string&gt;
+  &lt;string&gt;2018/03/30 = Good Friday&lt;/string&gt;
+  &lt;string&gt;2018/04/02 = Easter Monday&lt;/string&gt;
+  &lt;string&gt;2018/05/01 = Labour Day&lt;/string&gt;
+  &lt;string&gt;2018/05/10 = Ascension Day&lt;/string&gt;
+  &lt;string&gt;2018/05/21 = Whit Monday&lt;/string&gt;
+  &lt;string&gt;2018/05/31 = Corpus Christi&lt;/string&gt;
+  &lt;string&gt;2018/10/03 = Day of German Unity&lt;/string&gt;
+  &lt;string&gt;2018/12/25 = Christmas&lt;/string&gt;
+  &lt;string&gt;2018/12/26 = 2nd Day of Christmas&lt;/string&gt;
+  &lt;string&gt;2019/01/01 = New Years Day&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="OverviewViews" Type="System.Collections.Specialized.StringCollection" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;All Columns,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27&lt;/string&gt;
+  &lt;string&gt;Initial,0,1,2,3,4,5&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="ParamsDirectionAndTurning" Type="ShareViewer.DirectionAndTurningParam" Scope="User">
       <Value Profile="(Default)" />
@@ -70,6 +90,12 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="ParamsMakeSlowVolume" Type="ShareViewer.MakeSlowVolumeParam" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ParamsSlowVolFigSVFac" Type="ShareViewer.SlowVolFigSVFacParam" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ParamsSlowVolFigSVFbd" Type="ShareViewer.SlowVolFigSVFbdParam" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

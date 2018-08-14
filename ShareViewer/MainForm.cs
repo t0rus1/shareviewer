@@ -15,7 +15,7 @@ namespace ShareViewer
 {
     public partial class MainForm : Form
     {
-        public const String Version = "0.0.10";
+        public const String Version = "1.0.0";
         internal Properties.Settings appUserSettings;
         bool initializing = true;
         bool SuppressDaysBackChangeHandling = false; // when true, suppresses OnChangehandling
@@ -465,13 +465,29 @@ namespace ShareViewer
             }
         }
 
+        private bool BleatForFullTradingSpan()
+        {
+            if (daysBack.Value != 100)
+            {
+                var msg = $"A full 100 trading days span must be specified.";
+                MessageBox.Show(msg, $"Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         private bool BleatForDataFilesNeeded()
         {
             //warn user if data files need to be downloaded
             int missingCount = Helper.UntickedDayDataEntries("listBoxInhalt");
-            if (missingCount > 0)
+            var lastDayCheckFile = calendarTo.SelectionStart.ToString("yyyy_MM_dd.TXT");
+            var fullCheckFile = Helper.GetAppUserSettings().ExtraFolder + @"\" + lastDayCheckFile;
+            if (missingCount > 0 || !File.Exists(fullCheckFile))
             {
-                var msg = $"Not all data files have been downloaded for the requested period";
+                var msg = $"Not all data files have been downloaded for the requested period.\nDownload the missing files or adjust the period.";
                 MessageBox.Show(msg, $"Downloads needed!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return true;
             }
@@ -530,7 +546,7 @@ namespace ShareViewer
                         //finally, we can tell user how many new days data he is trying to add
                         var lastDayOnHandDT = Helper.ConvertCompressedDateToDateTime(lastDayOnHand);
                         int addDays = (calendarTo.SelectionStart - lastDayOnHandDT).Days;
-                        var msg = $"Add new trading data for the {addDays} calendar day(s) beyond last data on hand in the All-Tables ({lastDayOnHand}) ?";
+                        var msg = $"Add new trading data for the {addDays} calendar day(s) beyond last data on hand ({lastDayOnHand})?\n(Allow approx. 6 minutes before any feedback)";
                         if (MessageBox.Show(msg, "Add New Data to All-Tables", MessageBoxButtons.OKCancel, MessageBoxIcon.Question,MessageBoxDefaultButton.Button1) == DialogResult.OK)
                         {
                             return false; // user can proceed to next check
@@ -576,6 +592,7 @@ namespace ShareViewer
         // CREATE ALL NEW ALL_TABLES
         private void OnMakeNewAllTables(object sender, EventArgs e)
         {
+            if (BleatForFullTradingSpan()) return;
             if (BleatForDataFilesListEmpty()) return;
             if (BleatForDataFilesNeeded()) return;
 
