@@ -665,7 +665,7 @@ namespace ShareViewer
 
         internal static void PerformAllTableCalculation(Share share, string atFilename)
         {
-            AllTable[] atSegment = new AllTable[10401];
+            AllTable[] atSegment = new AllTable[10402];
             atSegment = AllTable.GetAllTableRows(atFilename, 10402);
             Calculations.PerformShareCalculations(share, atSegment);
             AllTable.SaveAllTable(atFilename, atSegment);

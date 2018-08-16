@@ -127,6 +127,7 @@ namespace ShareViewer
             oview.DayBeforePrice = atSegment[10401 - 104].FP;
             //col 6: Price of row 10401 / Price of row 10297
             if (oview.DayBeforePrice > 0) { oview.PriceFactor = oview.LastPrice / oview.DayBeforePrice; }
+            Helper.Log("DEBUG", $"{share.Name} oview.LastPrice / oview.DayBeforePrice = {oview.LastPrice} / {oview.DayBeforePrice} = {oview.PriceFactor}");
             // col 7: Price-Gradient PGc of row 1040 (23)
             oview.LastPGc = atSegment[10401].PGc;
             // col 8: 26 Price - Gradient PGd of row 10401

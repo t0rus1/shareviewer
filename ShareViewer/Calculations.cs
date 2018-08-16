@@ -58,7 +58,7 @@ namespace ShareViewer
             if (aus.ParamsSlowVolFigSVFac == null)
             {
                 //not yet set
-                aus.ParamsSlowVolFigSVFac = new SlowVolFigSVFacParam(1.0, 5.0, 1, 0, 0.005, 0.1, 104, 999,104, 1000, 99000,1000);
+                aus.ParamsSlowVolFigSVFac = new SlowVolFigSVFacParam(1.0, 5.0, 1, 0, 0.005, 0.1, 104, 999,104, 1.000, 99.000,1.000);
                 shouldSave = true;
             }
             if (aus.ParamsSlowVolFigSVFbd == null)

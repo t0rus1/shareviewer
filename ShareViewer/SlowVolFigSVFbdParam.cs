@@ -42,7 +42,7 @@ namespace ShareViewer
 
         [Category("Parameter")]
         [Description("Lower limit for Z")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public int ZMin
         {
             get => zMin; set => zMin = value;
@@ -50,7 +50,7 @@ namespace ShareViewer
 
         [Category("Parameter")]
         [Description("Upper limit for Z")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public int ZMax
         {
             get => zMax;
@@ -73,7 +73,7 @@ namespace ShareViewer
 
         [Category("Parameter")]
         [Description("Lower limit for Y")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double YMin
         {
             get => yMin; set => yMin = value;
@@ -81,7 +81,7 @@ namespace ShareViewer
 
         [Category("Parameter")]
         [Description("Upper limit for Y")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double YMax
         {
             get => yMax;
@@ -104,7 +104,7 @@ namespace ShareViewer
 
         [Category("Parameter")]
         [Description("Lower limit for W")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double WMin
         {
             get => wMin; set => wMin = value;
@@ -112,7 +112,7 @@ namespace ShareViewer
 
         [Category("Parameter")]
         [Description("Upper limit for W")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double WMax
         {
             get => wMax;

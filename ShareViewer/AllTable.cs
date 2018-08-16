@@ -397,6 +397,73 @@ namespace ShareViewer
         [Hint("The same as column 83, but when transfer it to the Overview, it is another treatment.")]
         public double SameAs83DiffTreatment { get => sameAs83DiffTreatment; set => sameAs83DiffTreatment = value; }
 
+        private void PreFill()
+        {
+            //this.Row=1
+            this.Col_2 = 1;
+            //this.Date = 1;
+            this.Col_4 = 1;
+            //this.Day=1
+            //this.Col_6=1
+            //this.TimeFrom=1
+            //this.TimeTo=1
+            //this.F=1
+            this.Col_10 = 1;
+            //this.FP=1
+            this.SPa = 1;
+            this.PGa = 1;
+            this.APpg = 1;
+            this.PGFrowx15 = 1;
+            this.PGFrowx16 = 1;
+            this.PGFrowx17 = 1;
+            this.BigPGF = 1;
+            this.SPb = 1;
+            this.PGb = 1;
+            this.Col_21 = 1;
+            this.SPc = 1;
+            this.PGc = 1;
+            this.Col_24 = 1;
+            this.SPd = 1;
+            this.PGd = 1;
+            this.Col_27 = 1;
+            this.Col_28 = 1;
+            this.HLc = 1;
+            this.DHLFPc = 1;
+            this.Col_31 = 1;
+            this.Col_32 = 1;
+            this.HLd = 1;
+            this.DHLFPd = 1;
+            this.Col_35 = 1;
+            this.Col_36 = 1;
+            this.Col_37 = 1;
+            this.Col_38 = 1;
+            this.LLc = 1;
+            this.DLLFPc = 1;
+            this.Col_41 = 1;
+            this.Col_42 = 1;
+            this.LLd = 1;
+            this.DLLFPd = 1;
+            this.Col_45 = 1;
+            this.Col_46 = 1;
+            this.Col_47 = 1;
+            this.Col_48 = 1;
+            this.FV = 1;
+            this.Col_50 = 1;
+            this.SVa = 1;
+            this.APSVac = 1;
+            this.SVFac = 1;
+            this.Col_54 = 1;
+            this.SVb = 1;
+            this.APSVbd = 1;
+            this.SVFbd = 1;
+            this.Col_58 = 1;
+            this.SVc = 1;
+            this.RPGFV = 1;
+            this.Col_61 = 1;
+            this.SVd = 1;
+            this.Col_63 = 1;
+        }
+
         public override String ToString()
         {
             return $"{date},{f},{fP},{fV}";
@@ -414,6 +481,99 @@ namespace ShareViewer
                 NameToIndex("FP"),
                 NameToIndex("FV"),
             };
+        }
+
+        public static string IndexToName(int index)
+        {
+            switch (index)
+            {
+                case 0: return "Row";
+                case 1: return "Col_2";
+                case 2: return "Date";
+                case 3: return "Col_4";
+                case 4: return "Day";
+                case 5: return "Col_6";
+                case 6: return "TimeFrom";
+                case 7: return "TimeTo";
+                case 8: return "F";
+                case 9: return "Col_10";
+                case 10: return "FP";
+                case 11: return "SPa";
+                case 12: return "PGa";
+                case 13: return "APpg";
+                case 14: return "PGFrowx15";
+                case 15: return "PGFrowx16";
+                case 16: return "PGFrowx17";
+                case 17: return "BigPGF";
+                case 18: return "SPb";
+                case 19: return "PGb";
+                case 20: return "Col_21";
+                case 21: return "SPc";
+                case 22: return "PGc";
+                case 23: return "Col_24";
+                case 24: return "SPd";
+                case 25: return "PGd";
+                case 26: return "Col_27";
+                case 27: return "Col_28";
+                case 28: return "HLc";
+                case 29: return "DHLFPc";
+                case 30: return "Col_31";
+                case 31: return "Col_32";
+                case 32: return "HLd";
+                case 33: return "DHLFPd";
+                case 34: return "Col_35";
+                case 35: return "Col_36";
+                case 36: return "Col_37";
+                case 37: return "Col_38";
+                case 38: return "LLc";
+                case 39: return "DLLFPc";
+                case 40: return "Col_41";
+                case 41: return "Col_42";
+                case 42: return "LLd";
+                case 43: return "DLLFPd";
+                case 44: return "Col_45";
+                case 45: return "Col_46";
+                case 46: return "Col_47";
+                case 47: return "Col_48";
+                case 48: return "FV";
+                case 49: return "Col_50";
+                case 50: return "SVa";
+                case 51: return "APSVac";
+                case 52: return "SVFac";
+                case 53: return "Col_54";
+                case 54: return "SVb";
+                case 55: return "APSVbd";
+                case 56: return "SVFbd";
+                case 57: return "Col_58";
+                case 58: return "SVc";
+                case 59: return "RPGFV";
+                case 60: return "Col_61";
+                case 61: return "SVd";
+                case 62: return "Col_63";
+                case 63: return "PtsGradA";
+                case 64: return "Col_65";
+                case 65: return "PtsGradB";
+                case 66: return "Col_67";
+                case 67: return "PtsGradC";
+                case 68: return "Col_69";
+                case 69: return "PtsHLc";
+                case 70: return "PtsHLd";
+                case 71: return "Col_72";
+                case 72: return "PtsLLc";
+                case 73: return "PtsLLd";
+                case 74: return "Col_75";
+                case 75: return "PtsVola";
+                case 76: return "PtsVolb";
+                case 77: return "PtsVolc";
+                case 78: return "PtsVold";
+                case 79: return "Col_80";
+                case 80: return "Col_81";
+                case 81: return "Col_82";
+                case 82: return "SumRow1Only";
+                case 83: return "SameAs83DiffTreatment";
+                default: return "unknown";
+            }
+
         }
 
         public static int NameToIndex(string colName)
