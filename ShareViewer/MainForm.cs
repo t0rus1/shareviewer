@@ -15,7 +15,7 @@ namespace ShareViewer
 {
     public partial class MainForm : Form
     {
-        public const String Version = "1.0.3";
+        public const String Version = "1.0.5";
         internal Properties.Settings appUserSettings;
         bool initializing = true;
         bool SuppressDaysBackChangeHandling = false; // when true, suppresses OnChangehandling
@@ -510,7 +510,7 @@ namespace ShareViewer
             var wantedStartDate = Helper.GetCompressedDate(calendarFrom.SelectionStart);
             var wantedEndDate = Helper.GetCompressedDate(calendarTo.SelectionStart);
 
-            var onhandShareSummary = LocalStore.GetAllTableSummaryForShare(1);
+            var onhandShareSummary = LocalStore.GetAllTableSummaryForShare(2);
             var firstDayOnHand = onhandShareSummary.FirstDay;
             var lastDayOnHand = onhandShareSummary.LastDay;
 
@@ -558,14 +558,25 @@ namespace ShareViewer
             }
         }
 
-        private void CreateOrTopupAllTables(bool topUp)
+        private void CreateOrTopupAllTables(bool topUp, List<string> selectedShares)
         {
-            //prepare structures needed for the run
-            //ensure AlTables subfolder exists
+            //Prepare structures needed for the run
+            //Ensure AlTables subfolder exists
             var alltablesPath = Helper.GetAppUserSettings().AllTablesFolder;
             if (!Directory.Exists(alltablesPath)) Directory.CreateDirectory(alltablesPath);
+
             //get the All-Shares list into array form
-            var allShareArray = LocalStore.CreateShareArrayFromShareList();
+            string[] allShareArray;
+            if (selectedShares == null)
+            {
+                //usual case, we're doing ALL shares
+                allShareArray = LocalStore.CreateShareArrayFromShareList();
+            }
+            else
+            {
+                //selective shares (fixing suspect All-Tables)
+                allShareArray = selectedShares.ToArray();
+            }
 
             if (allShareArray.Count() > 0)
             {
@@ -577,7 +588,7 @@ namespace ShareViewer
                 var msg = $"{createOrTopup} All-tables for the {tradingSpan} trading days up to {endDate.ToShortDateString()} (inclusive)?";
                 string preserveOrNew = topUp ? "Existing data in the range will be preserved, NEW data will be added." : "All-Table data will be created from scratch.";
                 var extraMsg = $"\n\n{preserveOrNew}\n\nWarning: This may take time!";
-                if ((MessageBox.Show(msg + extraMsg, "All-Tables",
+                if ((MessageBox.Show(msg + extraMsg, $"{allShareArray.Count()} All-Tables will be effected",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes))
                 {
                     //put some buttons on hold, make progress bar visible etc..
@@ -596,9 +607,20 @@ namespace ShareViewer
             if (BleatForDataFilesListEmpty()) return;
             if (BleatForDataFilesNeeded()) return;
 
-            CreateOrTopupAllTables(false); // not a top up, full blown set of new all-tables
+            CreateOrTopupAllTables(false,null); // not a top up, full blown set of new all-tables
 
         }
+
+        private void RepairSelectedAllTables(List<string> selectedShares)
+        {
+            if (BleatForFullTradingSpan()) return;
+            if (BleatForDataFilesListEmpty()) return;
+            if (BleatForDataFilesNeeded()) return;
+
+            CreateOrTopupAllTables(false, selectedShares); // just selected shares, non top up
+
+        }
+
 
         // TOP UP ALL-TABLES
         private void OnTopupAllTables(object sender, EventArgs e)
@@ -608,7 +630,7 @@ namespace ShareViewer
 
             if (BleatForSpan()) return;
 
-            CreateOrTopupAllTables(true); // just a top up
+            CreateOrTopupAllTables(true,null); // just a top up
 
         }
 
@@ -817,11 +839,13 @@ namespace ShareViewer
         //Single Day reload
         private void linkLabelSingleDayLoad_Click(object sender, EventArgs e)
         {
+            if (true) return; // DISABLE FOR NOW
+
             //user want to reload for a single day
             var reloadDate = Helper.GetCompressedDate(calendarTo.SelectionStart);
             var onhandSummary = LocalStore.GetAllTableSummaryForShare(1);
 
-            if ((String.Compare(onhandSummary.FirstDay,reloadDate) <= 0) && 
+            if ((String.Compare(onhandSummary.FirstDay, reloadDate) <= 0) &&
                 (String.Compare(onhandSummary.LastDay, reloadDate) >= 0))
             {
                 //check for data file availability
@@ -830,7 +854,8 @@ namespace ShareViewer
                 var mm = reloadDate.Substring(2, 2);
                 var dd = reloadDate.Substring(4, 2);
                 var pattern = $"20{yy}_{mm}_{dd}.TXT";
-                if (!Directory.EnumerateFiles(path,pattern).Any()) {
+                if (!Directory.EnumerateFiles(path, pattern).Any())
+                {
                     var msg = $"The required Datafile '{pattern}' is not present, cannot reload!";
                     MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -869,7 +894,7 @@ namespace ShareViewer
             else
             {
                 var msg = $"Reload Date '{reloadDate}' is not in current All-Table range ('{onhandSummary.FirstDay}' -> '{onhandSummary.LastDay}')";
-                MessageBox.Show(msg,"Error",MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
 
@@ -880,5 +905,30 @@ namespace ShareViewer
             var overviewForm = new OverviewForm();
             overviewForm.Show();
         }
+
+        private void linkLabelRepair_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            List<string> selectedShares = new List<string>();
+
+            var repairForm = new AllTableRepairForm();
+            var dlgResult = repairForm.ShowDialog();
+            if (dlgResult == DialogResult.Yes && 
+                repairForm.listBoxRepairShares.DataSource != null && repairForm.listBoxRepairShares.SelectedIndices.Count > 0)
+            {
+                var msg = $"Create New AllTables for the {repairForm.listBoxRepairShares.SelectedIndices.Count} selected Shares?";
+                dlgResult = MessageBox.Show(msg, "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (dlgResult == DialogResult.Yes)
+                {
+                    foreach (string item in repairForm.listBoxRepairShares.SelectedItems)
+                    {
+                        selectedShares.Add(item);
+                    }
+                    RepairSelectedAllTables(selectedShares);
+                }
+            }
+
+        }
+
+
     }
 }

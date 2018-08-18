@@ -33,7 +33,8 @@ namespace ShareViewer
             this.good = regMatch.Success;
             if (this.good)
             {
-                this.price = Convert.ToDouble(regMatch.Groups[5].Value);
+                //this.price = Convert.ToDouble(regMatch.Groups[5].Value);
+                this.price = Convert.ToDouble(regMatch.Groups[5].Value.Replace(",", "."), System.Globalization.CultureInfo.InvariantCulture);
                 this.volume = Convert.ToUInt32(regMatch.Groups[6].Value);
                 this.cumVolume = Convert.ToUInt32(regMatch.Groups[7].Value);
                 int hr, min, sec, totalsecs; ;

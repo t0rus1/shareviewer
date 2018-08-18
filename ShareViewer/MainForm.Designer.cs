@@ -33,6 +33,7 @@
             this.tabControlMain = new System.Windows.Forms.TabControl();
             this.tabPageImportation = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.linkLabelRepair = new System.Windows.Forms.LinkLabel();
             this.linkLabelSingleDayLoad = new System.Windows.Forms.LinkLabel();
             this.linkLabelAllowNew = new System.Windows.Forms.LinkLabel();
             this.buttonAddToAllTables = new System.Windows.Forms.Button();
@@ -99,6 +100,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.daysBack)).BeginInit();
             this.tabPageCalendar.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControlMain
@@ -130,6 +132,7 @@
             // panel2
             // 
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.linkLabelRepair);
             this.panel2.Controls.Add(this.linkLabelSingleDayLoad);
             this.panel2.Controls.Add(this.linkLabelAllowNew);
             this.panel2.Controls.Add(this.buttonAddToAllTables);
@@ -150,6 +153,19 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(994, 490);
             this.panel2.TabIndex = 4;
+            // 
+            // linkLabelRepair
+            // 
+            this.linkLabelRepair.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.linkLabelRepair.AutoSize = true;
+            this.linkLabelRepair.Location = new System.Drawing.Point(497, 102);
+            this.linkLabelRepair.Name = "linkLabelRepair";
+            this.linkLabelRepair.Size = new System.Drawing.Size(132, 13);
+            this.linkLabelRepair.TabIndex = 23;
+            this.linkLabelRepair.TabStop = true;
+            this.linkLabelRepair.Text = "Repair Selected All-Tables";
+            this.toolTipShareList.SetToolTip(this.linkLabelRepair, resources.GetString("linkLabelRepair.ToolTip"));
+            this.linkLabelRepair.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelRepair_LinkClicked);
             // 
             // linkLabelSingleDayLoad
             // 
@@ -820,6 +836,8 @@
             // 
             // statusStrip
             // 
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.stripText});
             this.statusStrip.Location = new System.Drawing.Point(0, 739);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(1008, 22);
@@ -856,6 +874,8 @@
             this.tabPageCalendar.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -921,8 +941,10 @@
         private System.Windows.Forms.LinkLabel linkLabelSummary;
         private System.Windows.Forms.LinkLabel linkLabelAllowNew;
         private System.Windows.Forms.LinkLabel linkLabelSingleDayLoad;
-        internal System.Windows.Forms.ToolStripStatusLabel stripText;
+        //internal System.Windows.Forms.ToolStripStatusLabel stripText;
         private System.Windows.Forms.Button buttonOverview;
+        private System.Windows.Forms.LinkLabel linkLabelRepair;
+        internal System.Windows.Forms.ToolStripStatusLabel stripText;
     }
 }
 

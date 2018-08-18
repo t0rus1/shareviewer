@@ -49,6 +49,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllTable.cs" />
+    <Compile Include="AllTableRepairForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AllTableRepairForm.Designer.cs">
+      <DependentUpon>AllTableRepairForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="AllTableSummaryForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -127,6 +133,9 @@
     </Compile>
     <Compile Include="TaskMaster.cs" />
     <Compile Include="Trade.cs" />
+    <EmbeddedResource Include="AllTableRepairForm.resx">
+      <DependentUpon>AllTableRepairForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AllTableSummaryForm.resx">
       <DependentUpon>AllTableSummaryForm.cs</DependentUpon>
     </EmbeddedResource>

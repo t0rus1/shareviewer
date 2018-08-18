@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OverviewForm));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
             this.panelLeft = new System.Windows.Forms.Panel();
@@ -126,7 +126,7 @@
             // 
             this.linkLabelNotes.AutoSize = true;
             this.linkLabelNotes.Enabled = false;
-            this.linkLabelNotes.Location = new System.Drawing.Point(207, 190);
+            this.linkLabelNotes.Location = new System.Drawing.Point(207, 134);
             this.linkLabelNotes.Name = "linkLabelNotes";
             this.linkLabelNotes.Size = new System.Drawing.Size(33, 13);
             this.linkLabelNotes.TabIndex = 25;
@@ -149,11 +149,11 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(5, 195);
+            this.label2.Location = new System.Drawing.Point(3, 192);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(136, 13);
+            this.label2.Size = new System.Drawing.Size(235, 13);
             this.label2.TabIndex = 23;
-            this.label2.Text = "\\/ double click for All-Table";
+            this.label2.Text = "\\/ dbl click: full All-Table, Rt-Click: See Last Day";
             this.toolTip1.SetToolTip(this.label2, "Double click on the far left of the row to pop up the corresponding All-Table");
             // 
             // groupBoxCalculations
@@ -320,7 +320,7 @@
             this.comboBoxViews.FormattingEnabled = true;
             this.comboBoxViews.Items.AddRange(new object[] {
             "Initial"});
-            this.comboBoxViews.Location = new System.Drawing.Point(3, 151);
+            this.comboBoxViews.Location = new System.Drawing.Point(6, 154);
             this.comboBoxViews.Name = "comboBoxViews";
             this.comboBoxViews.Size = new System.Drawing.Size(219, 24);
             this.comboBoxViews.Sorted = true;
@@ -364,20 +364,21 @@
             // dgOverview
             // 
             this.dgOverview.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgOverview.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgOverview.DefaultCellStyle = dataGridViewCellStyle3;
             this.dgOverview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgOverview.Location = new System.Drawing.Point(165, 211);
             this.dgOverview.Name = "dgOverview";
             this.dgOverview.Size = new System.Drawing.Size(992, 454);
             this.dgOverview.TabIndex = 6;
             this.dgOverview.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgOverview_ColumnHeaderMouseClick);
+            this.dgOverview.RowHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgOverview_RowHeaderMouseClick);
             this.dgOverview.RowHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgOverview_RowHeaderMouseDoubleClick);
             this.dgOverview.SelectionChanged += new System.EventHandler(this.dgOverview_SelectionChanged);
             // 

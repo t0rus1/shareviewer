@@ -298,7 +298,7 @@ namespace ShareViewer
         internal void GenerateOverview(Action<Share> progress)
         {
             var allTablesFolder = Helper.GetAppUserSettings().AllTablesFolder;
-            var shareLines = LocalStore.CreateShareArrayFromShareList().Skip(1);
+            var shareLines = LocalStore.CreateShareArrayFromShareList();
             AllTable[] atSegment = new AllTable[10401];
 
             sharesOverview.Clear();
@@ -801,6 +801,8 @@ namespace ShareViewer
                         //disallow user to view notes
                         _curOverviewLoadname = "";
                         linkLabelNotes.Enabled = false;
+                        //set window title
+                        this.Text = $"Viewing a quick-saved overview dated {fileInfo.LastWriteTime.ToLocalTime()}.";
                     }
                 }
             }
@@ -1309,6 +1311,7 @@ namespace ShareViewer
                 //StreamReader sr = new StreamReader(openFileDialog1.FileName);
                 //MessageBox.Show(sr.ReadToEnd());
                 //sr.Close();
+                FileInfo fileInfo = new FileInfo(openFileDialog1.FileName);                
 
                 Cursor.Current = Cursors.WaitCursor;
                 dgViewBindingSource.Clear();
@@ -1328,6 +1331,8 @@ namespace ShareViewer
                     //allow user to view notes
                     _curOverviewLoadname = openFileDialog1.FileName;
                     linkLabelNotes.Enabled = true;
+                    this.Text = $"Viewing an overview named {fileInfo.Name}, dated {fileInfo.LastWriteTime.ToLocalTime()}.";
+
                 }
 
 
@@ -1383,6 +1388,18 @@ namespace ShareViewer
                 Process.Start("notepad.exe", _curOverviewLoadname + ":hidden.txt");
             }
 
+        }
+
+        private void dgOverview_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                Overview ov = (Overview)dgOverview.Rows[e.RowIndex].DataBoundItem;
+                var summary = LocalStore.GetAllTableSummaryForShare(ov.ShareNumber);
+                var msg = "In the All-Table for this share currently:";
+                msg += $"\n\nLast day: {summary.LastDay}";
+                MessageBox.Show(msg, $"{ov.ShareName}");
+            }
         }
     }
 }

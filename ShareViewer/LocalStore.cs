@@ -157,6 +157,21 @@ namespace ShareViewer
 
         }
 
+        internal static String[] ShareListByName()
+        {
+            var appUserSettings = Helper.GetAppUserSettings();
+            var shareListFilename = appUserSettings.ExtraFolder + @"\ShareList.txt";
+            try
+            {
+                var allShares = File.ReadAllLines(shareListFilename).OrderBy(s => s).Where(s => !s.StartsWith("["));
+                return allShares.ToArray();
+            }
+            catch (FileNotFoundException)
+            {
+                return null;
+            }
+        }
+
         internal static void GetDayDataRange(out DateTime newest, out DateTime oldest)
         {
             var appUserSettings = Helper.GetAppUserSettings();
@@ -210,19 +225,19 @@ namespace ShareViewer
         // values of 'alreadyHave' remaining false. 
         // These will be the dates for which new All-Table records will need to be appended
         private static void PrepareAllTables(ref TopupInformation topupInfo, DateTime startDate, 
-            int tradingSpan, string[] allShares, bool topUpOnly, Action<int> progress)
+            int tradingSpan, string[] allShares, bool topUpOnly, Action<string> progress)
         {
             var atPath = Helper.GetAppUserSettings().AllTablesFolder;
 
-            Helper.Log("Info", $"deleting/preparing all *.at files");
-            var shares = allShares.Skip(1);
-            foreach (string share in shares)
+            Helper.Log("Info", $"Preparing all *.at files");
+            //var shares = allShares;
+            foreach (string share in allShares)
             {
                 Match m = Regex.Match(share, @"(.+)\s(\d+)$");
                 if (m.Success)
                 {
                     var shareName = m.Groups[1].Value.TrimEnd();
-                    var shareNum = Convert.ToInt16(m.Groups[2].Value);
+                    var shareNum = Convert.ToInt32(m.Groups[2].Value);
                     var allTableFile = atPath + @"\" + $"alltable_{shareNum}.at";
                     var tmpFile = allTableFile + ".tmp";
                     if (File.Exists(allTableFile))
@@ -270,7 +285,7 @@ namespace ShareViewer
                             {
                                 File.Delete(allTableFile);
                                 File.Move(tmpFile, allTableFile);
-                                progress(shareNum);
+                                progress($"AllTable prepared, (share {shareNum})");
                             }
                         }
                         else
@@ -293,7 +308,7 @@ namespace ShareViewer
                     }
                 }
             }
-            Helper.Log("Info", $"{shares.Count()} '.at' files participating");
+            Helper.Log("Info", $"{allShares.Count()} '.at' files participating");
         }
 
         private static void LogHeaderForGenerateSingleAllTable(string allTableFile, DateTime startDate, bool topUpOnly, string reloadDate)
@@ -508,7 +523,7 @@ namespace ShareViewer
                     {
                         //skip opening up the datafile if we already have the data in the All-Table
                         var topUpInfoKey = $"{tradeDate},{shareNum}";
-                        if (!tradingDatesInfo.DatesData[topUpInfoKey].AlreadyHave) {
+                        if (tradingDatesInfo.DatesData.ContainsKey(topUpInfoKey) &&  !tradingDatesInfo.DatesData[topUpInfoKey].AlreadyHave) {
                             AddUpdateTradeHash(shareName, shareNum, tradeHash, tradeDate, dayFile);
                         }
                     }
@@ -533,7 +548,7 @@ namespace ShareViewer
         {
             using (FileStream fs = File.Open(dayFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                using (BufferedStream bs = new BufferedStream(fs))
+                using (BufferedStream bs = new BufferedStream(fs,1048576))
                 {
                     using (StreamReader sr = new StreamReader(bs))
                     {
@@ -586,16 +601,16 @@ namespace ShareViewer
         //NOTE: if topUpOnly then existing allTable files must be preserved and simply appended to
         //      if reloadOnly then just one day's worth of timebands within the existing all-table must be overwritten
         private static void UpdateAllTables(TopupInformation topUpInfo, DateTime startDate, int tradingSpan, 
-            string[] allShares, bool topUpOnly, string reloadDate)
+            string[] allShares, bool topUpOnly, string reloadDate, Action<string> progresscallBack)
         {
             var appUserSettings = Helper.GetAppUserSettings();
             var atPath = appUserSettings.AllTablesFolder;
 
             //skip 1st informational line of sharelist and sweep thru the rest of the shares
             //building new All-table files
-            int numShares = allShares.Count() - 1;
+            int numShares = allShares.Count();
             int sharesDone = 0;
-            foreach (string share in allShares.Skip(1))
+            foreach (string share in allShares)
             {
                 Match m = Regex.Match(share, @"(.+)\s(\d+)$");
                 if (m.Success)
@@ -608,7 +623,9 @@ namespace ShareViewer
                     TaskMaster.CtsStack.Push(tokenSource);
                     CancellationToken ct = tokenSource.Token;
 
-                    Helper.Log("Info", $"Queuing All-Table job for share {shareNum}...");
+                    var progressMessage = $"Please wait, All-Table jobs being queued...";
+                    progresscallBack(progressMessage);
+                    Helper.Log("Info", progressMessage);
                     var genTask = Task.Run(() =>
                     {
                         //build the dictionary which helps us in filling the alltables with price and volume info
@@ -678,12 +695,12 @@ namespace ShareViewer
         //Initially 'wants' the data for every trading day in the range, and sets 'have' to false
         internal static TopupInformation InitializeTopupInfo(DateTime startDate, int tradingSpan, string[] allShares)
         {
-            Helper.Log("Info", $"InitializeTopupInfo...{startDate.ToShortDateString()} for {tradingSpan} days for {allShares.Count()-1} shares");
+            Helper.Log("Info", $"InitializeTopupInfo...{startDate.ToShortDateString()} for {tradingSpan} days for {allShares.Count()} shares");
             var topupInfo = new TopupInformation();
 
-            foreach (string shareLine in allShares.Skip(1))
+            foreach (string shareLine in allShares)
             {
-                //extract share number from each shareLine (1st line is a heading, so skip it)
+                //extract share number from each shareLine
                 int shareNum = Helper.GetDigitsAtEnd(shareLine);
                 if (shareNum != 0)
                 {
@@ -741,7 +758,8 @@ namespace ShareViewer
 
             try
             {
-                allSharesArray = File.ReadAllLines(shareListFilePath);
+                //grab all shares from ShareList.txt except the line starting "["
+                allSharesArray = File.ReadAllLines(shareListFilePath).AsEnumerable().Where(s=>!s.StartsWith("[")).ToArray();
             }
             catch (FileNotFoundException exc)
             {
@@ -761,20 +779,22 @@ namespace ShareViewer
             if (reloadDate=="")
             {
                 //prepare trimmed AllTable files (if topping up) and delete Audit files
-                var task = Task.Run(() => PrepareAllTables(ref topupInfo, startDate, tradingSpan, allSharesArray, topUpOnly, PrepareAllTablesProgress));
+                var task = Task.Run(() => PrepareAllTables(ref topupInfo, startDate, tradingSpan, allSharesArray, topUpOnly, AllTablesProgressCallback));
                 var awaiter = task.GetAwaiter();
-                awaiter.OnCompleted(() => UpdateAllTables(topupInfo, startDate, tradingSpan, allSharesArray, topUpOnly, ""));
+                awaiter.OnCompleted(() => UpdateAllTables(topupInfo, startDate, tradingSpan, allSharesArray, topUpOnly, "", AllTablesProgressCallback));
             }
             else
             {
-                UpdateAllTables(topupInfo, startDate, tradingSpan, allSharesArray, false, reloadDate);
+                //disabled for now
+                //UpdateAllTables(topupInfo, startDate, tradingSpan, allSharesArray, false, reloadDate,AllTablesProgressCallback);
             }
 
         }
 
-        internal static void PrepareAllTablesProgress(int shareNum)
+        //Progress Callback
+        internal static void AllTablesProgressCallback(string message)
         {
-            Helper.Status($"Preparing All-Table for share {shareNum}...");
+            Helper.Status(message);
         }
 
         // accesses AllTable for passed in share number and determines the 

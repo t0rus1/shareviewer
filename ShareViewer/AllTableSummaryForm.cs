@@ -128,7 +128,7 @@ namespace ShareViewer
         internal void GenerateAllTableSummaryForGrid(Action<int> progress, List<AllTableSummary> summaries)
         {
             var allTablesFolder = Helper.GetAppUserSettings().AllTablesFolder;
-            var shareLines = LocalStore.CreateShareArrayFromShareList().Skip(1);
+            var shareLines = LocalStore.CreateShareArrayFromShareList();
             int shareCount = 0;
             foreach (string line in shareLines)
             {
