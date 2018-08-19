@@ -193,7 +193,8 @@
             this.linkLabelAllowNew.TabIndex = 20;
             this.linkLabelAllowNew.TabStop = true;
             this.linkLabelAllowNew.Text = "unlock";
-            this.toolTipShareList.SetToolTip(this.linkLabelAllowNew, resources.GetString("linkLabelAllowNew.ToolTip"));
+            this.toolTipShareList.SetToolTip(this.linkLabelAllowNew, "This button is normally disabled since the generation of a whole new set of All-T" +
+        "ables is a significant action and needs to be deliberately required.\r\n");
             this.linkLabelAllowNew.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelAllowNew_LinkClicked);
             // 
             // buttonAddToAllTables

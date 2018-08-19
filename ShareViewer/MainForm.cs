@@ -15,7 +15,7 @@ namespace ShareViewer
 {
     public partial class MainForm : Form
     {
-        public const String Version = "1.0.5";
+        public const String Version = "1.1.0";
         internal Properties.Settings appUserSettings;
         bool initializing = true;
         bool SuppressDaysBackChangeHandling = false; // when true, suppresses OnChangehandling
@@ -816,11 +816,21 @@ namespace ShareViewer
             summaryForm.Show();
         }
 
+        //Toggle lock/unlock status of 'Generate New AllTables' button
         private void linkLabelAllowNew_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             buttonNewAllTables.Enabled = !buttonNewAllTables.Enabled;
             //label text must be based on state of button
             linkLabelAllowNew.Text = buttonNewAllTables.Enabled ? "lock" : "unlock";
+            //when the user re-locks the GenerateNewAllTables button
+            if (linkLabelAllowNew.Text == "unlock")
+            {
+                //we can restore operational buttons
+                Helper.HoldWhileGeneratingNewAllTables(false, false);
+                stripText.Text = "Ok";
+            }
+
+
         }
 
         //Reveal the linkLabelSingleDayLoad button if both calendars are indicating the same, single day

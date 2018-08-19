@@ -150,21 +150,21 @@ namespace ShareViewer
         //log to log file only
         internal static void Log(string level, string msg)
         {
-            switch (level)
+            switch (level.ToLower())
             {
-                case "Error":
+                case "error":
                     Program.log.Error(msg);
                     break;
-                case "Warn":
+                case "warn":
                     Program.log.Warn(msg);
                     break;
-                case "Info":
+                case "info":
                     Program.log.Info(msg);
                     break;
-                case "Debug":
+                case "debug":
                     Program.log.Debug(msg);
                     break;
-                case "Fatal":
+                case "fatal":
                     Program.log.Fatal(msg);
                     break;
                 default:

@@ -125,11 +125,6 @@
 !!!Caution!!!
 A full 100 trading days (which MUST correspond to the same trading day range of the other All-Tables and must  ALREADY be set on the calendars) </value>
   </data>
-  <data name="linkLabelAllowNew.ToolTip" xml:space="preserve">
-    <value>This button is normally disabled since the generation of a whole new set of All-Tables is infrequently needed. 
-Once the initial 100 trading days set of All-Tables is generated, you can simply 'Add new data' on an ongoing basis.
-</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="buttonAddToAllTables.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

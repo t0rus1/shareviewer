@@ -102,9 +102,10 @@ namespace ShareViewer
                             int shareCount = 0;
                             while ((line = sr.ReadLine()) != null)
                             {
-                                lineCount++;                                
+                                lineCount++;
                                 //WERTPAPIER;04.07.2018;TELECOM ITALIA RNC;120471.ETR
-                                Match m = Regex.Match(line, @"^WERTPAPIER;\d{2}\.\d{2}\.\d{4};(.+);\d+\.ETR$");
+                                //WERTPAPIER;20.03.2018;I.XTRA.RUS.2000 1C LS;A13PH6.ETR
+                                Match m = Regex.Match(line, @"^WERTPAPIER;\d{2}\.\d{2}\.\d{4};(.+);\w+\.ETR$");
                                 if (m.Success) {
                                     shareCount++;
                                     shares[m.Groups[1].Value] = shareCount;
@@ -343,10 +344,11 @@ namespace ShareViewer
         //If reloadOffset is non zero, we skip that number of AllTable records into the AllTable file and then overwrite
         //the succeeding 104 bands (i.e. one days worth)
         //The passed in tradeHash holds the raw trading information needed to create each AllTable record. 
-        //tradeHash: Key: 'YYMMDD,bandNum' e.g. "180722,1" band 1 is from 09:00:00 to 09:04:59 
-        //           Value: Trade object with properties shareNum,tradeDate,line
-        private static void GenerateSingleAllTable(CancellationToken ct, string allTableFile, int shareNum, DateTime startDate, 
-            int tradingSpan, Dictionary<string, Trade> tradeHash, bool topUpOnly, TopupInformation topupInfo, string reloadDate)
+        //tradeHash: Key: 'ShareName,YYMMDD,bandNum' e.g. "B+S BANKSYSTEME AG O.N.,180722,1" band 1 is from 09:00:00 to 09:04:59 
+        //           Value: Trade object with properties shareName,shareNum,tradeDate,line   ... but shareNum at this stage may be 0
+        private static void GenerateSingleAllTable(
+            CancellationToken ct, string allTableFile, int shareNum, string shareName, DateTime startDate, int tradingSpan, 
+            ref Dictionary<string, Trade> tradeHash, bool topUpOnly, TopupInformation topupInfo, string reloadDate)
         {
             LogHeaderForGenerateSingleAllTable(allTableFile, startDate, topUpOnly, reloadDate);
 
@@ -439,7 +441,7 @@ namespace ShareViewer
                                 atRec = AllTableFactory.InitialRow(rowNum++, rowDate, rowDay, timeFrom, timeTo);
                                 atRec.FP = lastPrice;
                                 // now fill from passed in tradeHash
-                                lastPrice = FillAllTableRowFromTradehash(atRec, timeBand + 1, tradeHash, lastPrice);
+                                lastPrice = FillAllTableRowFromTradehash(shareNum, atRec, timeBand + 1, tradeHash, lastPrice);
                                 //save AllTable row record to disk - this will be overwriting of reloadDate has been set
                                 Helper.SerializeAllTableRecord(fs, atRec);
                             }
@@ -467,11 +469,11 @@ namespace ShareViewer
         //updates prices and volumes from hash for given alltable and if able to find 
         //trades for the band, returns price just assigned
         //else returns the price it carried in
-        private static double FillAllTableRowFromTradehash(AllTable atRec, int timeBand, 
-            Dictionary<string, Trade> tradeHash, double carryInPrice)
+        private static double FillAllTableRowFromTradehash(
+            int shareNum, AllTable atRec, int timeBand, Dictionary<string, Trade> tradeHash, double carryInPrice)
         {
             //find the AllTable price and volume data we need for this date & band in the tradehash
-            string key = $"{atRec.Date},{timeBand}";
+            string key = $"{shareNum},{atRec.Date},{timeBand}";
             if (tradeHash.ContainsKey(key))
             {                
                 atRec.FP = tradeHash[key].Price;
@@ -481,15 +483,15 @@ namespace ShareViewer
             return carryInPrice;
         }
 
-        //Build the dictionary for a particular share and date span which helps us in filling the alltables with price and volume info
+
+        //Build the dictionary which helps us in filling the alltables with price and volume info
         //We must also take note of the dates for which we already hold computed all-table records
-        private static Dictionary<string, Trade> BuildTradeHash(CancellationToken ct, string shareName, int shareNum, 
-            DateTime startDate, int tradingSpan, TopupInformation tradingDatesInfo)
+        private static Dictionary<string, Trade> BuildTradeHashForAllShares(
+            Dictionary<string, int> name2Number, DateTime startDate, int tradingSpan, 
+            TopupInformation tradingDatesInfo, Action<string> progressCallback)
         {
             //traverse Extra folder opening each day-data file which falls into the date range.
-            //read each line and skip over trades which do not belong to passed in share name
-            //as soon as a desired share is encountered on a WERTPAPIER leading line, note the date.
-            //for the subsequent trade untils a new WERTPAPIER is encountered, add/update entries to the Hash
+            //for each WERTPAPIER section, add/update entries to the Hash
             //day-data file excerpt:
             //...
             //WERTPAPIER; 09.07.2018; TMC CONTENT GR.AG INH.SF1; 121527.ETR
@@ -503,12 +505,12 @@ namespace ShareViewer
 
             var tradeHash = new Dictionary<string, Trade>();
 
-            Helper.Log("Info", $"Building Trade Hash for {shareName} ({shareNum})");
+            Helper.Log("Info", $"Building Trade Hash...");
 
             var runDate = startDate.AddDays(0); // start at startDate with a new runDate object
             int tradingDayCounter = 0;
             //cover the entire span of days, but we skip forward if we already have data
-            while (!ct.IsCancellationRequested && tradingDayCounter < tradingSpan)
+            while (tradingDayCounter < tradingSpan)
             {
                 //string dateTest = runDate.ToShortDateString().Replace("/", ""); // YYYYMMDD in en-ZA culture
                 string dateTest = runDate.ToString("yyyyMMdd");
@@ -522,64 +524,89 @@ namespace ShareViewer
                     if (File.Exists(dayFile))
                     {
                         //skip opening up the datafile if we already have the data in the All-Table
-                        var topUpInfoKey = $"{tradeDate},{shareNum}";
-                        if (tradingDatesInfo.DatesData.ContainsKey(topUpInfoKey) &&  !tradingDatesInfo.DatesData[topUpInfoKey].AlreadyHave) {
-                            AddUpdateTradeHash(shareName, shareNum, tradeHash, tradeDate, dayFile);
-                        }
+                        //var topUpInfoKey = $"{tradeDate},{shareNum}";
+                        //if (tradingDatesInfo.DatesData.ContainsKey(topUpInfoKey) && !tradingDatesInfo.DatesData[topUpInfoKey].AlreadyHave)
+                        //{
+                            progressCallback($"Processing {dayFilename} (XETRA trades only) ...");
+                            AddUpdateAllShareTradeHash(ref tradeHash, name2Number ,tradeDate, dayFile);
+                        //}
                     }
                     tradingDayCounter++;
                 }
                 runDate = runDate.AddDays(1);
             }
-            if (ct.IsCancellationRequested)
-            {
-                Helper.Log("Info", $"Trade Hash build for {shareName} ({shareNum}) CANCELLED");
-            }
-            else
-            {
-                Helper.Log("Info", $"Trade Hash for {shareName} ({shareNum}) has {tradeHash.Count} entries");
-            }
+
+            var progressMsg = $"Trade Hash built...{tradeHash.Count} keys";
+            progressCallback(progressMsg);
+            Helper.Log("Info", progressMsg);
+
             return tradeHash;
+
         }
 
-        //updates/adds to tradehash for passed in shareName and a day's trades file
-        private static void AddUpdateTradeHash(string shareName, int shareNum, Dictionary<string, Trade> tradeHash, 
-            string tradeDate, string dayFile)
+        //updates/adds to tradehash for passed in day's trades file
+        private static void AddUpdateAllShareTradeHash(
+            ref Dictionary<string, Trade> tradeHash, Dictionary<string, int> name2num, string tradeDate, string dayFile)
         {
+            Helper.Log("Info", $"AddUpdateAllShareTradeHash for '{tradeDate}'");
+            int ignoredTrades = 0;
+            int lineCount = 0;
             using (FileStream fs = File.Open(dayFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                using (BufferedStream bs = new BufferedStream(fs,1048576))
+                using (BufferedStream bs = new BufferedStream(fs, 1048576))
                 {
                     using (StreamReader sr = new StreamReader(bs))
                     {
-                        bool ourTrades = false;
+                        string ourShare = "";
+                        int ourShareNum = 0;
                         string line;
                         while ((line = sr.ReadLine()) != null)
                         {
+                            lineCount++;
                             //look for lines starting WERTPAPIER and containing share name
                             if (line.StartsWith("WERTPAPIER"))
                             {
-                                string pattern = @"^WERTPAPIER;\d{2}\.\d{2}\.\d{4};" + shareName + @";\d+\.(ETR|FFM)$";
-                                ourTrades = Regex.Match(line, pattern).Success;
+                                //a new share
+                                ourShare = ""; //if we fail to extract share from the below pattern, this entire run of trades gets ignored
+                                string pattern = @"^WERTPAPIER;\d{2}\.\d{2}\.\d{4};(.+);\w+\.ETR$";
+                                var m = Regex.Match(line, pattern);
+                                if (m.Success)
+                                {
+                                    ourShare = m.Groups[1].Value.TrimEnd(); // we don't want trailing whitespace
+                                    if (name2num.Keys.Contains(ourShare))
+                                    {
+                                        ourShareNum = name2num[ourShare];
+                                        //Helper.Log("debug", $"starting run, line {lineCount}, for share {ourShareNum}: {ourShare}");
+                                    }
+                                    else
+                                    {
+                                        Helper.Log("info", $"Unwanted {ourShare}");
+                                        ourShare = "";
+                                    }
+                                }
+                                else
+                                {
+                                    //Helper.Log("debug", $"ignoring starting run line {lineCount} = {line}");
+                                }
                             }
                             else
                             {
-                                //ignore all trades not belonging to the share of interest
-                                if (ourTrades)
+                                //normal trading info - are we in a run for a share?
+                                if (ourShare.Length > 0)
                                 {
-                                    //one of our trades, build/update a Trade object eg 13:29:55;4,7;1069;1884
+                                    //one of the trades, build/update a Trade object eg 13:29:55;4,7;1069;1884
                                     var bandNum = Helper.ComputeTimeBand(line); // returns 0 if out of band
                                     //ignore the trade if not in our time bands
                                     if (bandNum != 0)
                                     {
-                                        var newTrade = new Trade(shareNum, tradeDate, line);
-                                        var hashKey = $"{tradeDate},{bandNum}";
+                                        var newTrade = new Trade(ourShareNum, tradeDate, line);
+                                        var hashKey = $"{ourShareNum},{tradeDate},{bandNum}";
                                         if (tradeHash.ContainsKey(hashKey))
                                         {
                                             tradeHash[hashKey].Price = newTrade.Price;
                                             tradeHash[hashKey].Volume += newTrade.Volume;
-                                            //and for Audit, addd this new ticker
-                                            tradeHash[hashKey].Tickers.Add(line);
+                                            //and for Audit, add this new ticker
+                                            //tradeHash[hashKey].Tickers.Add(line);
                                         }
                                         else
                                         {
@@ -587,20 +614,35 @@ namespace ShareViewer
                                         }
                                     }
                                 }
+                                else
+                                {
+                                    ignoredTrades++;
+                                }
                             }
                         }
                     }
                 }
 
             } //using FileStream
+            Helper.Log("Info", $"TradeHash segment for '{tradeDate}' : {tradeHash.Count} keys, {ignoredTrades} ignored trades out of {lineCount} lines = {(100*ignoredTrades)/lineCount} %");
         }
 
+        //build dictionary relating share and date to trades for allshares over the required trading span
+        private static Dictionary<string,Trade> BuildComprehensiveTradeHash(
+            Dictionary<string,int> name2Number, TopupInformation topUpInfo, DateTime startDate, 
+            int tradingSpan, bool topUpOnly, Action<string> progresscallBack)
+        {
+            var tradeHash = BuildTradeHashForAllShares(name2Number, startDate, tradingSpan, topUpInfo, progresscallBack);
+            //SaveTradehashForAudit(tradeHash);
+            return tradeHash;
+        }
 
         //Iterates over the allShares array passed in and instantiates queued async Tasks 
         //which individually create an AllTable file for each share
         //NOTE: if topUpOnly then existing allTable files must be preserved and simply appended to
         //      if reloadOnly then just one day's worth of timebands within the existing all-table must be overwritten
-        private static void UpdateAllTables(TopupInformation topUpInfo, DateTime startDate, int tradingSpan, 
+        private static void UpdateAllTables(
+            Dictionary<string,Trade> tradeHash, TopupInformation topUpInfo, DateTime startDate, int tradingSpan, 
             string[] allShares, bool topUpOnly, string reloadDate, Action<string> progresscallBack)
         {
             var appUserSettings = Helper.GetAppUserSettings();
@@ -617,25 +659,20 @@ namespace ShareViewer
                 {
                     var shareName = m.Groups[1].Value.TrimEnd();
                     var shareNum = Convert.ToInt16(m.Groups[2].Value);
+
                     var allTableFile = atPath + @"\" + $"alltable_{shareNum}.at";
 
                     var tokenSource = new CancellationTokenSource();
                     TaskMaster.CtsStack.Push(tokenSource);
                     CancellationToken ct = tokenSource.Token;
 
-                    var progressMessage = $"Please wait, All-Table jobs being queued...";
+                    var progressMessage = $"Please wait, All-Table files being written...";
                     progresscallBack(progressMessage);
                     Helper.Log("Info", progressMessage);
                     var genTask = Task.Run(() =>
                     {
-                        //build the dictionary which helps us in filling the alltables with price and volume info
-                        var tradeHash = BuildTradeHash(ct, shareName, shareNum, startDate, tradingSpan, topUpInfo);
-                        //save for audit purposes (TODO: perhaps rather leave up to user to generate singly, on demand?)
-                        SaveTradehashAudit(tradeHash, shareName, shareNum);
-                        
                         //generate an all-table
-                        GenerateSingleAllTable(ct, allTableFile, shareNum, startDate, tradingSpan, tradeHash, topUpOnly, topUpInfo, reloadDate);
-
+                        GenerateSingleAllTable(ct, allTableFile, shareNum, shareName, startDate, tradingSpan, ref tradeHash, topUpOnly, topUpInfo, reloadDate);
                     }, tokenSource.Token);
                     
                     var awaiter = genTask.GetAwaiter();
@@ -645,10 +682,8 @@ namespace ShareViewer
                         PerformAllTableCalculation(new Share(shareName, shareNum), allTableFile);
 
                         sharesDone++;
-                        Helper.SetProgressBar("progressBarGenNewAllTables", sharesDone, numShares);
-                        var progressMsg = $"All-Table done. (Share {shareName})";
-                        Helper.UpdateAllTableProgress(progressMsg);
-                        Helper.Log("Info", progressMsg);
+                        var progressMsg = $"Written All-Table for share {shareName} ...";
+                        Helper.LogStatus("Info", progressMsg);
                         if (sharesDone == numShares)
                         {
                             //end of run, ALL shares done (or task was cancelled)
@@ -658,7 +693,7 @@ namespace ShareViewer
                                 //run tasks were cancelled
                                 var msg = "All-Tables Run was cancelled.";
                                 Helper.LogStatus("Info",msg);
-                                Helper.ContinueEnableAllTableGeneration();
+                                //Helper.ContinueEnableAllTableGeneration();
                                 MessageBox.Show(msg, "CANCELLED", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
                             else
@@ -668,12 +703,9 @@ namespace ShareViewer
                                 appUserSettings.AllTableDataStart = startDate.ToString("yyyy/MM/dd"); // culture independent
                                 appUserSettings.AllTableTradingSpan = tradingSpan.ToString();
                                 appUserSettings.Save();
-                                Helper.LogStatus("Info", $"{sharesDone} All-Table updates complete.");
+                                Helper.LogStatus("Info", $"{sharesDone} All-Tables COMPLETE. ===> Please click 'unlock' followed by 'lock' to restore normal buttons <===");
                             }
-                            //re-enable buttons, hide progress bar etc
-                            Helper.HoldWhileGeneratingNewAllTables(false,topUpOnly);
                         }    
-
                     });
                 }
             }
@@ -730,24 +762,25 @@ namespace ShareViewer
             return topupInfo;
         }
 
-        private static void SaveTradehashAudit(Dictionary<String, Trade> tradeHash, string shareName, short shareNum)
+        //writes out the entire tradehash
+        private static void SaveTradehashForAudit(Dictionary<String, Trade> tradeHash)
         {
             var appUserSettings = Helper.GetAppUserSettings();
             var auditPath = appUserSettings.AllTablesFolder + @"\Audit";
             Directory.CreateDirectory(auditPath);
 
-            var auditFile = auditPath + @"\" + $"{shareNum.ToString("000")}.txt";
+            var auditFile = auditPath + @"\" + $"TradesAudit.txt";
             using (StreamWriter sw = new StreamWriter(auditFile, false))
             {
-                sw.WriteLine($"{shareName} ({shareNum})");
                 foreach (string key in tradeHash.Keys)
                 {
                     var trade = tradeHash[key];
-                    sw.WriteLine(trade.DateAndBand());
-                    sw.WriteLine(trade.AllTickers());
-                }                
+                    sw.WriteLine(trade.NumberDateAndBand());
+                    //sw.WriteLine(trade.AllTickers());
+                }
             };
         }
+
 
         internal static string[] CreateShareArrayFromShareList()
         {
@@ -768,10 +801,29 @@ namespace ShareViewer
             return allSharesArray;
         }
 
+        //Given a string array of shares (with numbers at the end), return a Dictionary
+        //keyed on share (with numbers at end stripped) with value = the share Number
+        internal static Dictionary<string, int> CreateShareName2NumberHash(string[] shareList)
+        {
+            Dictionary<string, int> name2num = new Dictionary<string, int>();
+
+            foreach (var shareLine in shareList)
+            {
+                if (!shareLine.StartsWith("["))
+                {
+                    var share = Helper.CreateShareFromLine(shareLine);
+                    //name has no trailing spaces
+                    name2num[share.Name] = share.Number;
+                }
+            }
+            return name2num;
+        }
+
+
         //Entrypoint for the generation/update of a complete batch of fresh new AllTables
         //based on the ShareList, creating one AllTable for each share, populated with initial values.
-        internal static void RefreshNewAllTables(DateTime startDate, int tradingSpan, string[] allSharesArray, 
-                                                        bool topUpOnly, string reloadDate)
+        internal static void RefreshNewAllTables(
+            DateTime startDate, int tradingSpan, string[] allSharesArray,  bool topUpOnly, string reloadDate)
         {
             //initialize the topupInfo structure which will hold the info we need to enable us to do a topup run
             var topupInfo = LocalStore.InitializeTopupInfo(startDate, tradingSpan, allSharesArray);
@@ -779,9 +831,7 @@ namespace ShareViewer
             if (reloadDate=="")
             {
                 //prepare trimmed AllTable files (if topping up) and delete Audit files
-                var task = Task.Run(() => PrepareAllTables(ref topupInfo, startDate, tradingSpan, allSharesArray, topUpOnly, AllTablesProgressCallback));
-                var awaiter = task.GetAwaiter();
-                awaiter.OnCompleted(() => UpdateAllTables(topupInfo, startDate, tradingSpan, allSharesArray, topUpOnly, "", AllTablesProgressCallback));
+                var task = Task.Run(() => PrepareThenUpdateAllTables(ref topupInfo, startDate, tradingSpan, allSharesArray, topUpOnly, reloadDate, AllTablesProgressCallback));
             }
             else
             {
@@ -789,6 +839,22 @@ namespace ShareViewer
                 //UpdateAllTables(topupInfo, startDate, tradingSpan, allSharesArray, false, reloadDate,AllTablesProgressCallback);
             }
 
+        }
+
+        internal static void PrepareThenUpdateAllTables(
+            ref TopupInformation topUpInfo, DateTime startDate, int tradingSpan, string[] allShares, 
+            bool topUpOnly, string reloadDate, Action<string> progresscallBack)
+        {
+            //Delete every AllTable and Audit file corresponding to the ShareList (case not topUpOnly)
+            //else chops off first bit of each AllTable (the data which must fall away), leaving a shortened
+            //AllTable file to which new data must be added
+            PrepareAllTables(ref topUpInfo, startDate, tradingSpan, allShares, topUpOnly, progresscallBack);
+            //We're gonna need to be able to look up a share number from a name
+            var shareName2Number = CreateShareName2NumberHash(allShares);
+            //Construct hash which holds all trading info for every date in the trading range
+            var tradeHash = BuildComprehensiveTradeHash(shareName2Number, topUpInfo, startDate, tradingSpan, topUpOnly, progresscallBack);
+            //Generate/Update an AllTable for each share
+            UpdateAllTables(tradeHash, topUpInfo, startDate, tradingSpan, allShares, topUpOnly, reloadDate, progresscallBack);
         }
 
         //Progress Callback
