@@ -70,7 +70,7 @@
             this.textBoxUsername = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
+            this.labelShareList = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.daysBack = new System.Windows.Forms.NumericUpDown();
             this.labelBackFrom = new System.Windows.Forms.Label();
@@ -91,6 +91,7 @@
             this.toolTipShareList = new System.Windows.Forms.ToolTip(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
+            this.labelNumShares = new System.Windows.Forms.Label();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -158,12 +159,12 @@
             // 
             this.linkLabelRepair.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.linkLabelRepair.AutoSize = true;
-            this.linkLabelRepair.Location = new System.Drawing.Point(497, 102);
+            this.linkLabelRepair.Location = new System.Drawing.Point(474, 102);
             this.linkLabelRepair.Name = "linkLabelRepair";
-            this.linkLabelRepair.Size = new System.Drawing.Size(132, 13);
+            this.linkLabelRepair.Size = new System.Drawing.Size(157, 13);
             this.linkLabelRepair.TabIndex = 23;
             this.linkLabelRepair.TabStop = true;
-            this.linkLabelRepair.Text = "Repair Selected All-Tables";
+            this.linkLabelRepair.Text = "Regenerate Selected All-Tables";
             this.toolTipShareList.SetToolTip(this.linkLabelRepair, resources.GetString("linkLabelRepair.ToolTip"));
             this.linkLabelRepair.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelRepair_LinkClicked);
             // 
@@ -211,6 +212,7 @@
             this.buttonAddToAllTables.Text = "Add new Data";
             this.buttonAddToAllTables.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             this.buttonAddToAllTables.UseVisualStyleBackColor = true;
+            this.buttonAddToAllTables.Visible = false;
             this.buttonAddToAllTables.Click += new System.EventHandler(this.OnTopupAllTables);
             // 
             // buttonBusyAllTables
@@ -289,7 +291,7 @@
             this.buttonNewAllTables.FlatAppearance.BorderSize = 2;
             this.buttonNewAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonNewAllTables.Image = ((System.Drawing.Image)(resources.GetObject("buttonNewAllTables.Image")));
-            this.buttonNewAllTables.Location = new System.Drawing.Point(380, 116);
+            this.buttonNewAllTables.Location = new System.Drawing.Point(380, 118);
             this.buttonNewAllTables.Name = "buttonNewAllTables";
             this.buttonNewAllTables.Size = new System.Drawing.Size(249, 47);
             this.buttonNewAllTables.TabIndex = 15;
@@ -382,6 +384,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.labelNumShares);
             this.panel1.Controls.Add(this.buttonOverview);
             this.panel1.Controls.Add(this.linkLabelSummary);
             this.panel1.Controls.Add(this.listBoxSpannedHolidays);
@@ -395,7 +398,7 @@
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.groupBoxSource);
             this.panel1.Controls.Add(this.groupBox2);
-            this.panel1.Controls.Add(this.label7);
+            this.panel1.Controls.Add(this.labelShareList);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.daysBack);
             this.panel1.Controls.Add(this.labelBackFrom);
@@ -628,16 +631,16 @@
             this.label5.TabIndex = 0;
             this.label5.Text = "user";
             // 
-            // label7
+            // labelShareList
             // 
-            this.label7.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(718, 193);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(81, 20);
-            this.label7.TabIndex = 9;
-            this.label7.Text = "Share List";
+            this.labelShareList.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.labelShareList.AutoSize = true;
+            this.labelShareList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelShareList.Location = new System.Drawing.Point(718, 193);
+            this.labelShareList.Name = "labelShareList";
+            this.labelShareList.Size = new System.Drawing.Size(81, 20);
+            this.labelShareList.TabIndex = 9;
+            this.labelShareList.Text = "Share List";
             // 
             // label1
             // 
@@ -850,6 +853,15 @@
             this.stripText.Size = new System.Drawing.Size(22, 17);
             this.stripText.Text = "Ok";
             // 
+            // labelNumShares
+            // 
+            this.labelNumShares.AutoSize = true;
+            this.labelNumShares.Location = new System.Drawing.Point(808, 198);
+            this.labelNumShares.Name = "labelNumShares";
+            this.labelNumShares.Size = new System.Drawing.Size(16, 13);
+            this.labelNumShares.TabIndex = 23;
+            this.labelNumShares.Text = "...";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -900,7 +912,7 @@
         private System.Windows.Forms.Button buttonExplorer;
         private System.Windows.Forms.Button buttonLogfile;
         private System.Windows.Forms.Button buttonNewShareList;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label labelShareList;
         private System.Windows.Forms.Button buttonLogin;
         private System.Windows.Forms.GroupBox groupBoxSource;
         private System.Windows.Forms.RadioButton radioButton2;
@@ -946,6 +958,7 @@
         private System.Windows.Forms.Button buttonOverview;
         private System.Windows.Forms.LinkLabel linkLabelRepair;
         internal System.Windows.Forms.ToolStripStatusLabel stripText;
+        private System.Windows.Forms.Label labelNumShares;
     }
 }
 

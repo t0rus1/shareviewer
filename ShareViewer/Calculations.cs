@@ -371,14 +371,14 @@ Result:
             //1) make two HLs
             for (int i = startRow + 1; i <= endRow; i++)  // 10298 -> 10401
             {
-                atRows[i].HLc = atRows[i - 1].HLc * atRows[i].PGc * (1 - calcHighLineParam.Z);
+                atRows[i].HLc = atRows[i - 1].HLc * atRows[i].PGc * (1 - 0.01*calcHighLineParam.Z);
                 if (atRows[i].HLc < atRows[i].FP)
                 {
                     // 2) and 3)
                     atRows[i].HLc = atRows[i].FP;
                     atRows[i].PtsHLc += 5;
                 }
-                atRows[i].HLd = atRows[i - 1].HLd * atRows[i].PGd * (1 - calcHighLineParam.Z);
+                atRows[i].HLd = atRows[i - 1].HLd * atRows[i].PGd * (1 - 0.01*calcHighLineParam.Z);
                 if (atRows[i].HLd < atRows[i].FP)
                 {
                     // 2) and 3)
@@ -414,14 +414,14 @@ Result:
             //1) make two LLs
             for (int i = startRow + 1; i <= endRow; i++)  // 10298 -> 10401
             {
-                atRows[i].LLc = atRows[i - 1].LLc * atRows[i].PGc * (1 + calcLowLineParam.Z);
+                atRows[i].LLc = atRows[i - 1].LLc * atRows[i].PGc * (1 + 0.01*calcLowLineParam.Z);
                 if (atRows[i].LLc > atRows[i].FP)
                 {
                     // 2) and 3)
                     atRows[i].LLc = atRows[i].FP;
                     atRows[i].PtsLLc += 5;
                 }
-                atRows[i].LLd = atRows[i - 1].LLd * atRows[i].PGd * (1 + calcLowLineParam.Z);
+                atRows[i].LLd = atRows[i - 1].LLd * atRows[i].PGd * (1 + 0.01*calcLowLineParam.Z);
                 if (atRows[i].LLd > atRows[i].FP)
                 {
                     // 2) and 3)

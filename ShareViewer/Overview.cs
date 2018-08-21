@@ -167,9 +167,9 @@ namespace ShareViewer
                 case "LastPrice": return "N3";                  //3;
                 case "DayBeforePrice": return "N3";             //4;
                 case "PriceFactor": return "N3";                //5;
-                case "LastPGc": return "N3";                    //6;
-                case "LastPGd": return "N3";                    //7;
-                case "BigLastDayPGa": return "N3";              //8;
+                case "LastPGc": return "N5";                    //6;
+                case "LastPGd": return "N6";                    //7;
+                case "BigLastDayPGa": return "N5";              //8;
                 case "BigLastDayPGF": return "N3";              //9;
                 case "LastDHLFPc": return "N3";                 //10;
                 case "LastDHLFPd": return "N3";                 //11;

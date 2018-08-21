@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OverviewForm));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
             this.panelLeft = new System.Windows.Forms.Panel();
@@ -60,6 +60,8 @@
             this.dgOverview = new System.Windows.Forms.DataGridView();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.saveShareListtoolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             this.panelLeft.SuspendLayout();
             this.panelTop.SuspendLayout();
@@ -237,7 +239,9 @@
             this.toolStripDDBtnSaveAs.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripDDBtnSaveAs.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loadNamedOverviewToolStripMenuItem,
-            this.saveAsToolStripMenuItem});
+            this.saveAsToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.saveShareListtoolStripMenuItem});
             this.toolStripDDBtnSaveAs.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDDBtnSaveAs.Image")));
             this.toolStripDDBtnSaveAs.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDDBtnSaveAs.Name = "toolStripDDBtnSaveAs";
@@ -364,14 +368,14 @@
             // dgOverview
             // 
             this.dgOverview.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgOverview.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgOverview.DefaultCellStyle = dataGridViewCellStyle1;
             this.dgOverview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgOverview.Location = new System.Drawing.Point(165, 211);
             this.dgOverview.Name = "dgOverview";
@@ -389,6 +393,18 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(210, 6);
+            // 
+            // saveShareListtoolStripMenuItem
+            // 
+            this.saveShareListtoolStripMenuItem.Name = "saveShareListtoolStripMenuItem";
+            this.saveShareListtoolStripMenuItem.Size = new System.Drawing.Size(213, 22);
+            this.saveShareListtoolStripMenuItem.Text = "Save as ShareList";
+            this.saveShareListtoolStripMenuItem.Click += new System.EventHandler(this.saveShareListtoolStripMenuItem_Click);
             // 
             // OverviewForm
             // 
@@ -450,5 +466,7 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.LinkLabel linkLabelDeleteSelected;
         private System.Windows.Forms.LinkLabel linkLabelNotes;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem saveShareListtoolStripMenuItem;
     }
 }

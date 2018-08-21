@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -688,7 +689,7 @@ namespace ShareViewer
                 case "SPc": return "N4";
                 case "PGc": return "N5";
                 case "SPd": return "N4";
-                case "PGd": return "N5";
+                case "PGd": return "N6";
                 case "HLc": return "N3";
                 case "DHLFPc": return "N3";
                 case "HLd": return "N3";
@@ -763,17 +764,17 @@ namespace ShareViewer
         //Remember the Row starts at 0.
         //Row 10297 is actually the last timeband of the penultimate day
         //while the remaining rows 10298 thru 10401 represent the 104 five-minute bands of the last day
-        internal static AllTable[] GetAllTableSegment(string allTableFileName, int skip, int take)
-        {
-            AllTable[] sharesSegment = new AllTable[take];
+        //internal static AllTable[] GetAllTableSegment(string allTableFileName, int skip, int take)
+        //{
+        //    AllTable[] sharesSegment = new AllTable[take];
 
-            using (FileStream fs = new FileStream(allTableFileName, FileMode.Open))
-            {
-                //slurp in the last take rows
-                sharesSegment = Helper.DeserializeAllTable<AllTable>(fs).Skip(skip).Take(take).ToArray();
-            }
-            return sharesSegment;
-        }
+        //    using (FileStream fs = new FileStream(allTableFileName, FileMode.Open, FileAccess.Read, FileShare.Read, 1048576))
+        //    {
+        //        //slurp in the last take rows
+        //        sharesSegment = Helper.DeserializeAllTable<AllTable>(fs).Skip(skip).Take(take).ToArray();
+        //    }
+        //    return sharesSegment;
+        //}
 
         internal static AllTable[] GetAllTableRows(string allTableFileName, int take)
         {
@@ -786,6 +787,28 @@ namespace ShareViewer
             }
             return sharesSegment;
         }
+
+        ////Returns the size in the stream of an AllTable item
+        //internal static long SerializedObjectSize(string fileName)
+        //{
+        //    using (FileStream fs = new FileStream(fileName, FileMode.Open))
+        //    {
+        //        var bf = new BinaryFormatter();
+        //        var discardObject = (AllTable)bf.Deserialize(fs);
+        //        return fs.Position;
+        //    }
+        //}
+
+        ////Returns the last AllTable object from within an AllTable file on disk
+        //internal static AllTable GetNthLastRow(string allTablefileName, long recordSize, int n)
+        //{
+        //    using (FileStream fs = new FileStream(allTablefileName, FileMode.Open))
+        //    {
+        //        var bf = new BinaryFormatter();
+        //        fs.Seek(-n*recordSize, SeekOrigin.End);
+        //        return (AllTable)bf.Deserialize(fs);
+        //    }
+        //}
 
 
     }

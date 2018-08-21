@@ -115,8 +115,7 @@ namespace ShareViewer
             return oview;
         }
 
-        //perform calculations based on passed in 10 day (1040 band) array of All-Table objects
-        //i.o.w. atSegment holds zero based Row indices 93 
+        //perform calculations based on passed in array of All-Table objects
         internal static void PerformOverviewCalcs(Share share, ref Overview oview, AllTable[] atSegment)
         {
             //col 3: Sum of volumes (LastDayVolume) (49) 
@@ -127,7 +126,7 @@ namespace ShareViewer
             oview.DayBeforePrice = atSegment[10401 - 104].FP;
             //col 6: Price of row 10401 / Price of row 10297
             if (oview.DayBeforePrice > 0) { oview.PriceFactor = oview.LastPrice / oview.DayBeforePrice; }
-            Helper.Log("DEBUG", $"{share.Name} oview.LastPrice / oview.DayBeforePrice = {oview.LastPrice} / {oview.DayBeforePrice} = {oview.PriceFactor}");
+            //Helper.Log("DEBUG", $"{share.Name} oview.LastPrice / oview.DayBeforePrice = {oview.LastPrice} / {oview.DayBeforePrice} = {oview.PriceFactor}");
             // col 7: Price-Gradient PGc of row 1040 (23)
             oview.LastPGc = atSegment[10401].PGc;
             // col 8: 26 Price - Gradient PGd of row 10401
@@ -172,6 +171,18 @@ namespace ShareViewer
             //col 27: ask Gunther
             //col 28: ask Gunther
 
+        }
+
+        internal static void UpdateFromLastRow(Share share, ref Overview oview, AllTable atLast)
+        {
+            oview.LastPrice = atLast.FP;
+            if (oview.DayBeforePrice > 0) { oview.PriceFactor = oview.LastPrice / oview.DayBeforePrice; }
+            oview.LastPGc = atLast.PGc;
+            oview.LastPGd = atLast.PGd;
+            oview.LastDHLFPc = atLast.DHLFPc;
+            oview.LastDHLFPd = atLast.DHLFPd;
+            oview.LastDLLFPc = atLast.DLLFPc;
+            oview.LastDLLFPd = atLast.DLLFPd;
         }
 
 

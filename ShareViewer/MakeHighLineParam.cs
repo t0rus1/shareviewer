@@ -18,8 +18,10 @@ namespace ShareViewer
         public MakeHighLineParam(double zmin, double zmax, double zDefault)
         {
             zMin = zmin;
-            if (zmax >= zMin) zMax = zmax; else zMax = zMin;
-            if (zDefault >= zMin && zDefault <= zmax) z = zDefault; else z = zMin;
+            //if (zmax >= zMin) zMax = zmax; else zMax = zMin;
+            zMax = zmax;
+            //if (zDefault >= zMin && zDefault <= zmax) z = zDefault; else z = zMin;
+            z = zDefault;
         }
 
 
@@ -29,18 +31,19 @@ namespace ShareViewer
 
         [Category("Parameter")]
         [Description("Lower limit for Z")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double ZMin { get => zMin; set => zMin = value; }
 
         [Category("Parameter")]
         [Description("Upper limit for Z")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double ZMax
         {
             get => zMax;
             set
             {
-                if (value >= zMin) zMax = value;
+                //if (value >= zMin) zMax = value;
+                zMax = value;
             }
         }
 
@@ -50,10 +53,10 @@ namespace ShareViewer
         {
             get => z;
             set {
-                if (z >= zMin && z <= zMax)
-                {
+                //if (z >= zMin && z <= zMax)
+                //{
                     z = value;
-                }
+                //}
             }
         }
 

@@ -15,7 +15,7 @@ namespace ShareViewer
 {
     public partial class MainForm : Form
     {
-        public const String Version = "1.1.0";
+        public const String Version = "1.1.4";
         internal Properties.Settings appUserSettings;
         bool initializing = true;
         bool SuppressDaysBackChangeHandling = false; // when true, suppresses OnChangehandling
@@ -183,9 +183,10 @@ namespace ShareViewer
             labelBackFrom.Text = "ending Today";
             //load ShareList
             listBoxShareList.DataSource = LocalStore.ReadShareList();
+            labelNumShares.Text = $"{listBoxShareList.Items.Count} shares";
             //possibly enable the New AllTables button
             //buttonNewAllTables.Enabled = listBoxShareList.Items.Count > 0;
-            buttonAddToAllTables.Enabled = listBoxShareList.Items.Count > 0; ;
+            //buttonAddToAllTables.Enabled = listBoxShareList.Items.Count > 0; ;
             //
             labelDatafilesCount.Text = "";
 
@@ -432,7 +433,7 @@ namespace ShareViewer
 
                         listBoxShareList.DataSource = LocalStore.WriteShareList(sharesList, selectedDayFile);
                         //buttonNewAllTables.Enabled = listBoxShareList.Items.Count > 0;
-                        buttonAddToAllTables.Enabled = listBoxShareList.Items.Count > 0; ;
+                        //buttonAddToAllTables.Enabled = listBoxShareList.Items.Count > 0; ;
                     }
                 }
                 else

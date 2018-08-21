@@ -291,10 +291,8 @@ namespace ShareViewer
         //    dgOverview.Sort(dgOverview.Columns[e.ColumnIndex], ListSortDirection.Ascending);
         //}
 
-        
 
-
-        //Fills the sharesOverview list of Overview objects (a form field) 
+        //Fills the sharesOverview list of Overview objects(a form field)
         internal void GenerateOverview(Action<Share> progress)
         {
             var allTablesFolder = Helper.GetAppUserSettings().AllTablesFolder;
@@ -324,14 +322,12 @@ namespace ShareViewer
                 sharesOverview.Add(oview);
                 progress(share);
 
-                //TODO comment out!
-                //if (++shareCounter == 20) break;
-
             }
 
             _FullRecalcNeeded = false;
 
         }
+
 
         //User chooses a new view
         private void comboBoxViews_SelectedIndexChanged(object sender, EventArgs e)
@@ -489,24 +485,48 @@ namespace ShareViewer
                     _FullRecalcNeeded = true;
                     break;
                 case "Make High Line HL":
-                    toolStripCalcs.Text = $"{calculation} Parameter saved";
-                    _FullRecalcNeeded = true;
+                    if (aus.ParamsMakeHighLine.DiffersFrom(calcHighLineParam))
+                    {
+                        aus.ParamsMakeHighLine = CalcHighLineParam;
+                        aus.Save();
+                        toolStripCalcs.Text = $"{calculation} Parameter saved";
+                        _FullRecalcNeeded = true;
+                    }
                     break;
                 case "Make Low Line LL":
-                    toolStripCalcs.Text = $"{calculation} Parameter saved";
-                    _FullRecalcNeeded = true;
+                    if (aus.ParamsMakeLowLine.DiffersFrom(calcLowLineParam))
+                    {
+                        aus.ParamsMakeLowLine = CalcLowLineParam;
+                        aus.Save();
+                        toolStripCalcs.Text = $"{calculation} Parameter saved";
+                        _FullRecalcNeeded = true;
+                    }
                     break;
                 case "Make Slow Volumes SV":
-                    toolStripCalcs.Text = $"{calculation} Parameter saved";
-                    _FullRecalcNeeded = true;
+                    if (aus.ParamsMakeSlowVolume.DiffersFrom(calcSlowVolumeParam))
+                    {
+                        aus.ParamsMakeSlowVolume = CalcSlowVolumeParam;
+                        aus.Save();
+                        toolStripCalcs.Text = $"{calculation} Parameter saved";
+                        _FullRecalcNeeded = true;
+                    }
                     break;
                 case "Slow Volume Figure SVFac":
-                    toolStripCalcs.Text = $"{calculation} Parameter saved";
-                    _FullRecalcNeeded = true;
+                    if (aus.ParamsSlowVolFigSVFac.DiffersFrom(calcSlowVolFigSVFacParam)) {
+                        aus.ParamsSlowVolFigSVFac = CalcSlowVolFigSVFacParam;
+                        aus.Save();
+                        toolStripCalcs.Text = $"{calculation} Parameter saved";
+                        _FullRecalcNeeded = true;
+                    }
                     break;
                 case "Slow Volume Figure SVFbd":
-                    toolStripCalcs.Text = $"{calculation} Parameter saved";
-                    _FullRecalcNeeded = true;
+                    if (aus.ParamsSlowVolFigSVFbd.DiffersFrom(calcSlowVolFigSVFbd))
+                    {
+                        aus.ParamsSlowVolFigSVFbd = CalcSlowVolFigSVFbdParam;
+                        aus.Save();
+                        toolStripCalcs.Text = $"{calculation} Parameter saved";
+                        _FullRecalcNeeded = true;
+                    }
                     break;
                 default:
                     break;
@@ -705,7 +725,7 @@ namespace ShareViewer
             string msg;
             if (_FullRecalcNeeded)
             {
-                msg = "A FULL RECALCULATION within All-Tables will be performed since one or more Calculation parameters were changed.\n(~ 10 mins for 400 shares)";
+                msg = "A FULL RECALCULATION within All-Tables will be performed since one or more Calculation parameters were changed.\nTakes a while...";
                 var dlgResult = MessageBox.Show(msg, "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
                 if (dlgResult == DialogResult.Yes)
                 {
@@ -714,7 +734,7 @@ namespace ShareViewer
             }
             else
             {
-                msg = "Compile the Overview from EXISTING All-Tables?\n(~ 4 minutes for 400 shares)";
+                msg = "Compile the Overview from EXISTING All-Tables?\nTakes a while...";
                 var dlgResult = MessageBox.Show(msg, "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button2);
                 if (dlgResult == DialogResult.Yes)
                 {
@@ -1400,6 +1420,12 @@ namespace ShareViewer
                 msg += $"\n\nLast day: {summary.LastDay}";
                 MessageBox.Show(msg, $"{ov.ShareName}");
             }
+        }
+
+        private void saveShareListtoolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //31 chars for ShareName then ShareNum
+            MessageBox.Show("Not yet implemented...");
         }
     }
 }

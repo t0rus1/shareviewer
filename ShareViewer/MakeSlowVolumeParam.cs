@@ -38,7 +38,7 @@ namespace ShareViewer
 
         [Category("Parameter")]
         [Description("Lower limit for Y")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double YMin
         {
             get => yMin;
@@ -47,13 +47,14 @@ namespace ShareViewer
 
         [Category("Parameter")]
         [Description("Upper limit for Y")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double YMax
         {
             get => yMax;
             set
             {
-                if (value >= yMin) yMax = value; else yMax = yMin;
+                //if (value >= yMin) yMax = value; else yMax = yMin;
+                yMax = value;
             }
         }
 
@@ -64,7 +65,8 @@ namespace ShareViewer
             get => ya;
             set
             {
-                if (value >= yMin && value <= yMax) ya = value;
+                //if (value >= yMin && value <= yMax) ya = value;
+                ya = value;
             }
         }
 
@@ -75,7 +77,8 @@ namespace ShareViewer
             get => yb;
             set
             {
-                if (value >= yMin && value <= yMax) yb = value;
+                //if (value >= yMin && value <= yMax) yb = value;
+                yb = value;
             }
         }
 
@@ -86,7 +89,8 @@ namespace ShareViewer
             get => yc;
             set
             {
-                if (value >= yMin && value <= yMax) yc = value;
+                //if (value >= yMin && value <= yMax) yc = value;
+                yc = value;
             }
         }
 
@@ -97,7 +101,8 @@ namespace ShareViewer
             get => yd;
             set
             {
-                if (value >= yMin && value <= yMax) yd = value;
+                //if (value >= yMin && value <= yMax) yd = value;
+                yd = value;
             }
         }
 

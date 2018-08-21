@@ -57,7 +57,7 @@
             this.buttonRepair.Name = "buttonRepair";
             this.buttonRepair.Size = new System.Drawing.Size(173, 107);
             this.buttonRepair.TabIndex = 1;
-            this.buttonRepair.Text = "Regenerate AllTables for selected shares";
+            this.buttonRepair.Text = "Generate AllTables for selected shares";
             this.buttonRepair.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.buttonRepair.UseVisualStyleBackColor = true;
             // 
@@ -100,7 +100,7 @@
             this.MinimizeBox = false;
             this.Name = "AllTableRepairForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Repair AllTable(s)";
+            this.Text = "Generate selected AllTable(s)";
             this.Load += new System.EventHandler(this.AllTableRepairForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
