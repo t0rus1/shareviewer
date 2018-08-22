@@ -50,6 +50,7 @@
             this.listBoxShareList = new System.Windows.Forms.ListBox();
             this.listBoxInhalt = new System.Windows.Forms.ListBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.labelNumShares = new System.Windows.Forms.Label();
             this.buttonOverview = new System.Windows.Forms.Button();
             this.linkLabelSummary = new System.Windows.Forms.LinkLabel();
             this.listBoxSpannedHolidays = new System.Windows.Forms.ListBox();
@@ -91,7 +92,6 @@
             this.toolTipShareList = new System.Windows.Forms.ToolTip(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
-            this.labelNumShares = new System.Windows.Forms.Label();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -409,6 +409,15 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(994, 215);
             this.panel1.TabIndex = 0;
+            // 
+            // labelNumShares
+            // 
+            this.labelNumShares.AutoSize = true;
+            this.labelNumShares.Location = new System.Drawing.Point(808, 198);
+            this.labelNumShares.Name = "labelNumShares";
+            this.labelNumShares.Size = new System.Drawing.Size(16, 13);
+            this.labelNumShares.TabIndex = 23;
+            this.labelNumShares.Text = "...";
             // 
             // buttonOverview
             // 
@@ -853,15 +862,6 @@
             this.stripText.Size = new System.Drawing.Size(22, 17);
             this.stripText.Text = "Ok";
             // 
-            // labelNumShares
-            // 
-            this.labelNumShares.AutoSize = true;
-            this.labelNumShares.Location = new System.Drawing.Point(808, 198);
-            this.labelNumShares.Name = "labelNumShares";
-            this.labelNumShares.Size = new System.Drawing.Size(16, 13);
-            this.labelNumShares.TabIndex = 23;
-            this.labelNumShares.Text = "...";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -870,6 +870,7 @@
             this.ClientSize = new System.Drawing.Size(1008, 761);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.tabControlMain);
+            this.MinimizeBox = false;
             this.Name = "MainForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClose);
             this.Load += new System.EventHandler(this.OnLoad);

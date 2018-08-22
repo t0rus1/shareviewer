@@ -15,7 +15,7 @@ namespace ShareViewer
 {
     public partial class MainForm : Form
     {
-        public const String Version = "1.1.4";
+        public const String Version = "1.1.5";
         internal Properties.Settings appUserSettings;
         bool initializing = true;
         bool SuppressDaysBackChangeHandling = false; // when true, suppresses OnChangehandling

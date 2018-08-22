@@ -16,7 +16,7 @@ namespace ShareViewer
             if (aus.ParamsLazyShare == null)
             {
                 //not been set yet. set it to some defaults and save.
-                aus.ParamsLazyShare = new LazyShareParam(1000, 1000000, 50000);
+                aus.ParamsLazyShare = new LazyShareParam(10, 1000000, 50000);
                 shouldSave = true;
             }
             if (aus.ParamsSlowPrice == null)
@@ -667,7 +667,7 @@ Result:
         }
 
         // Performs the full series of Calculations
-        internal static void PerformShareCalculations(Share share, AllTable[] atSegment)
+        internal static void PerformShareCalculations(Share share, ref AllTable[] atSegment)
         {
             var slowPriceParams = Helper.GetAppUserSettings().ParamsSlowPrice;
             Calculations.MakeSlowPrices(ref atSegment, slowPriceParams, 2, 10401, out string[] auditSummary);
@@ -697,8 +697,75 @@ Result:
             var slowVolFigSVFbdParam = Helper.GetAppUserSettings().ParamsSlowVolFigSVFbd;
             Calculations.SlowVolumeFigureSVFbd(ref atSegment, slowVolFigSVFbdParam, 2, 10401, out auditSummary);
 
+            // we store the results of our Laziness determination in Col_2 row 1 so that the Overview
+            // can initially be compiled without having to recalculate it
+            var lazyShareParam = Helper.GetAppUserSettings().ParamsLazyShare;
+            atSegment[1].Col_2 = OverviewCalcs.isLazyLast10Days(atSegment, lazyShareParam) ? 1.0 : 0;
+
+            //finally, copy row 10401 to row 1
+            AllTable.CopySourceToTargetAllTableRow(ref atSegment, 10401, 1);
+            //fix Row number
+            atSegment[1].Row = 1;
+
         }
 
+        //perform calculations based on passed in array of All-Table objects
+        //MUST be called AFTER PerformShareCalculations
+        internal static void Row1Calcs(Share share, ref AllTable[] atSegment)
+        {
+            //col 3: Sum of volumes (LastDayVolume) (49) 
+            atSegment[1].FV = OverviewCalcs.SumOfVolumes(atSegment, 10298, 104);
+            ////col 4: Price of row 10401 (11) 
+            //oview.LastPrice = atSegment[10401].FP;
+            ////col 5: Store the DayBeforePrice in Col_10 (Price of row 1040-104-1)
+            atSegment[1].Col_10 = atSegment[10401 - 104].FP;
+            ////col 6: Price of row 10401 / Price of row 10297
+            //if (oview.DayBeforePrice > 0) { oview.PriceFactor = oview.LastPrice / oview.DayBeforePrice; }
+            //// col 7: Price-Gradient PGc of row 1040 (23)
+            //oview.LastPGc = atSegment[10401].PGc;
+            //// col 8: 26 Price - Gradient PGd of row 10401
+            //oview.LastPGd = atSegment[10401].PGd;
+            // col 9: 13 The biggest PGa of row 10298 to 10401
+            atSegment[1].PGa = OverviewCalcs.BiggestPGa(atSegment, 10298, 10401);
+            // col 10: 18 The biggest PGF of All-table column 15 to 17, row 10298 to 10401
+            atSegment[1].BigPGF = OverviewCalcs.BiggestPGFinBlock(atSegment, 10298, 10401);
+            //// col 11: 30 The DHLFPc of row 10401
+            //oview.LastDHLFPc = atSegment[10401].DHLFPc;
+            ////col 12: 34 The DHLFPd of row 10401
+            //oview.LastDHLFPd = atSegment[10401].DHLFPd;
+            ////col 13: empty
+
+            ////col 14: 40 The DLLFPc of row 10401
+            //oview.LastDLLFPc = atSegment[10401].DLLFPc;
+            ////col 15: 44 The DLLFPd of row 10401
+            //oview.LastDLLFPd = atSegment[10401].DLLFPd;
+
+            //col 16: 64 Sum of Points Gradient a of row 10298 to 10401
+            atSegment[1].PGa = OverviewCalcs.SumOfPointsGradA(atSegment, 10298, 104);
+            //col 17: 66 Sum of Points Gradient b   of row 10298 to 10401
+            atSegment[1].PGb = OverviewCalcs.SumOfPointsGradB(atSegment, 10298, 104);
+            //col 18: 68 Sum of Points Gradient c of row 10298 to 10401
+            atSegment[1].PGc = OverviewCalcs.SumOfPointsGradC(atSegment, 10298, 104);
+
+            ////col 19: 73 Sum of Points Volume a of row 10298 to 10401
+            //oview.LastDaySumOfPtsVola = SumOfPointsVolA(atSegment, 10298, 104);
+            ////col 20: 75 Sum of Points Volume b of row 10298 to 10401
+            //oview.LastDaySumOfPtsVolb = SumOfPointsVolB(atSegment, 10298, 104);
+            ////col 21: 77 Sum of Points Volume c of row 10298 to 10401
+            //oview.LastDaySumOfPtsVolc = SumOfPointsVolC(atSegment, 10298, 104);
+            ////col 22: 79 Sum of Points Volume d of row 10298 to 10401
+            //oview.LastDaySumOfPtsVold = SumOfPointsVolD(atSegment, 10298, 104);
+
+            //col 23: 70 Sum of Points Points High Line HLc of row 10298 to 10401
+            atSegment[1].PtsHLc = OverviewCalcs.SumOfPointsHLc(atSegment, 10298, 104);
+            //col 24: 71 Sum of Points Points High Line HLd of row 10298 to 10401
+            atSegment[1].PtsHLd = OverviewCalcs.SumOfPointsHLd(atSegment, 10298, 104);
+            ////col 25: duplicate of col 19???
+            ////col 26: duplicate of col 20???
+            ////col 27: ask Gunther
+            ////col 28: ask Gunther
+
+        }
 
 
 

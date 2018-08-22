@@ -47,6 +47,8 @@
             this.toolStripDDBtnSaveAs = new System.Windows.Forms.ToolStripDropDownButton();
             this.loadNamedOverviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.saveShareListtoolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripOverviewNameLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripCalcs = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBoxParams = new System.Windows.Forms.GroupBox();
@@ -60,8 +62,6 @@
             this.dgOverview = new System.Windows.Forms.DataGridView();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.saveShareListtoolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             this.panelLeft.SuspendLayout();
             this.panelTop.SuspendLayout();
@@ -262,6 +262,18 @@
             this.saveAsToolStripMenuItem.Text = "Save as a named Overview";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(210, 6);
+            // 
+            // saveShareListtoolStripMenuItem
+            // 
+            this.saveShareListtoolStripMenuItem.Name = "saveShareListtoolStripMenuItem";
+            this.saveShareListtoolStripMenuItem.Size = new System.Drawing.Size(213, 22);
+            this.saveShareListtoolStripMenuItem.Text = "Save as ShareList";
+            this.saveShareListtoolStripMenuItem.Click += new System.EventHandler(this.saveShareListtoolStripMenuItem_Click);
+            // 
             // toolStripOverviewNameLabel
             // 
             this.toolStripOverviewNameLabel.Font = new System.Drawing.Font("Segoe UI", 9F);
@@ -394,18 +406,6 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(210, 6);
-            // 
-            // saveShareListtoolStripMenuItem
-            // 
-            this.saveShareListtoolStripMenuItem.Name = "saveShareListtoolStripMenuItem";
-            this.saveShareListtoolStripMenuItem.Size = new System.Drawing.Size(213, 22);
-            this.saveShareListtoolStripMenuItem.Text = "Save as ShareList";
-            this.saveShareListtoolStripMenuItem.Click += new System.EventHandler(this.saveShareListtoolStripMenuItem_Click);
-            // 
             // OverviewForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -415,6 +415,7 @@
             this.Controls.Add(this.panelTop);
             this.Controls.Add(this.panelLeft);
             this.Controls.Add(this.statusStrip);
+            this.MinimizeBox = false;
             this.Name = "OverviewForm";
             this.Text = "Overview";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;

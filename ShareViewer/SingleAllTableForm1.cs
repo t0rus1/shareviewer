@@ -277,7 +277,7 @@ namespace ShareViewer
                 atRows = Helper.DeserializeAllTable<AllTable>(fs).ToArray();
 
                 //copy row 10401 (if possible) to row 1 as per Gunther
-                AllTable.CopySourceToTargetAllTableRow(atRows, 10401, 1);
+                //AllTable.CopySourceToTargetAllTableRow(atRows, 10401, 1);
                 //fix Row
                 atRows[1].Row = 1;
 

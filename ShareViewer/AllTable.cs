@@ -124,7 +124,7 @@ namespace ShareViewer
     {
         //cols 1-10
         private int row; // XXXXXX   (runs from row 0 (headings), row 1(special) ... to row 10401) 
-        private double col_2;
+        private double col_2;  //we use this entire column to store Lazy flag in row 1
         private string date; //XXXXXX
         private double col_4;
         private string day; //XXX
@@ -132,7 +132,7 @@ namespace ShareViewer
         private string timeFrom; //XX:XX:XX (from 09:00:00 to 17:35:00 ie 104 5 min ranges per day for 100 days)
         private string timeTo; //XX:XX:XX (from 09:04:49 to 17:24:59...ie 104 5 min ranges per day for 100 days)
         private int f; //X (Five-minutes section no.) its value will be 1 less than Row, so it runs from -1 to 10400
-        private double col_10;
+        private double col_10; // used to store DayBeforeLast share price
         //cols 11-20
         private double fP; // XXX,XXX (Five-minutes last price)
         private double sPa; //XXX,XXXX (Slow price a)
@@ -220,7 +220,7 @@ namespace ShareViewer
         //properties
         [Hint("Row number")]
         public int Row { get => row; set => row = value; }              //0
-        [Hint("")]
+        [Hint("Lazy")] // use entire column to store Lazy flag in row 1
         public double Col_2 { get => col_2; set => col_2 = value; }     //
         [Hint("Date of trade")]
         public string Date { get => date; set => date = value; }        //2
@@ -237,7 +237,7 @@ namespace ShareViewer
         [Hint("Five-minutes section no.")]
         public int F { get => f; set => f = value; }                          //8
         [Hint("")]
-        public double Col_10 { get => col_10; set => col_10 = value; }
+        public double Col_10 { get => col_10; set => col_10 = value; } // used to store DayBeforeLast share price
 
         //11-20
         [Hint("Five-minutes last price")]
@@ -401,7 +401,7 @@ namespace ShareViewer
         private void PreFill()
         {
             //this.Row=1
-            this.Col_2 = 1;
+            this.Col_2 = 1;  // entire column is reserved to indicate Lazy share, but only row 1 is consulted
             //this.Date = 1;
             this.Col_4 = 1;
             //this.Day=1
@@ -409,7 +409,7 @@ namespace ShareViewer
             //this.TimeFrom=1
             //this.TimeTo=1
             //this.F=1
-            this.Col_10 = 1;
+            this.Col_10 = 0;
             //this.FP=1
             this.SPa = 1;
             this.PGa = 1;
@@ -489,7 +489,7 @@ namespace ShareViewer
             switch (index)
             {
                 case 0: return "Row";
-                case 1: return "Col_2";
+                case 1: return "Col_2";  // entire column is used for Lazy flag, but only row 1 is referred to
                 case 2: return "Date";
                 case 3: return "Col_4";
                 case 4: return "Day";
@@ -497,7 +497,7 @@ namespace ShareViewer
                 case 6: return "TimeFrom";
                 case 7: return "TimeTo";
                 case 8: return "F";
-                case 9: return "Col_10";
+                case 9: return "Col_10";// used to store DayBeforeLast share price
                 case 10: return "FP";
                 case 11: return "SPa";
                 case 12: return "PGa";
@@ -582,7 +582,7 @@ namespace ShareViewer
             switch (colName)
             {
                 case "Row": return 0;
-                case "Col_2": return 1;
+                case "Col_2": return 1;  // entire column is used for Lazy flag but only row 1 is referenced
                 case "Date":  return 2;
                 case "Col_4": return 3;
                 case "Day":   return 4;
@@ -590,7 +590,7 @@ namespace ShareViewer
                 case "TimeFrom": return 6;
                 case "TimeTo":  return 7;
                 case "F": return  8;
-                case "Col_10": return  9;
+                case "Col_10": return  9;// used to store DayBeforeLast share price
                 case "FP": return  10;
                 case "SPa": return  11;
                 case "PGa": return  12;
@@ -735,7 +735,7 @@ namespace ShareViewer
             return typeof(AllTable).GetProperty(colName).GetCustomAttribute<HintAttribute>().Hint;
         }
 
-        internal static void SaveAllTable(string _allTableFilename, AllTable[] atRows)
+        internal static void SaveAllTable(string _allTableFilename,ref AllTable[] atRows)
         {
             using (FileStream fs = new FileStream(_allTableFilename, FileMode.Create))
             {
@@ -748,7 +748,7 @@ namespace ShareViewer
 
         //Copies contents of one All-Table row to another. 
         //Note: It may be necessary to 'fix' the target Row property afterwards
-        internal static void CopySourceToTargetAllTableRow(AllTable[] atRows, uint sourceRow, uint targetRow)
+        internal static void CopySourceToTargetAllTableRow(ref AllTable[] atRows, uint sourceRow, uint targetRow)
         {
             if ((atRows.Count() > sourceRow) && (atRows.Count() > targetRow))
             {
@@ -799,6 +799,29 @@ namespace ShareViewer
         //    }
         //}
 
+        //Returns a single AllTable record from a file on disk
+        //NOTE: gets less efficient the deeper into the file we have to read
+        internal static AllTable GetSingleAllTableRow(string allTableFilename, int row)
+        {
+            AllTable wanted;
+
+            using (FileStream fs = new FileStream(allTableFilename, FileMode.Open))
+            {
+                var bf = new BinaryFormatter();
+                int rowCount = 0;
+                do
+                {
+                    wanted = (AllTable)bf.Deserialize(fs);
+                    if (rowCount == row)
+                    {
+                        break;
+                    }
+                }
+                while (++rowCount <= row);
+            }
+            return wanted;            
+        }
+
         ////Returns the last AllTable object from within an AllTable file on disk
         //internal static AllTable GetNthLastRow(string allTablefileName, long recordSize, int n)
         //{
@@ -821,7 +844,7 @@ namespace ShareViewer
 
             //cols 1-10
             at.Row = row; // XXXXXX   (runs from row 0 (headings), row 1(special) ... to row 10401) 
-            at.Col_2 = 1;
+            at.Col_2 = 1; // entire column now used as Lazy flag but only row 1 is referenced
             at.Date = date; //YYMMDD
             at.Col_4 = 1;
             at.Day = day; //XXX

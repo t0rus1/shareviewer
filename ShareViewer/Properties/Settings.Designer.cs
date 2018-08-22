@@ -12,7 +12,7 @@ namespace ShareViewer.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.7.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.8.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -170,17 +170,6 @@ namespace ShareViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::ShareViewer.SlowPriceParam ParamsSlowPrice {
-            get {
-                return ((global::ShareViewer.SlowPriceParam)(this["ParamsSlowPrice"]));
-            }
-            set {
-                this["ParamsSlowPrice"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
 <ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
   <string>2017/12/25 = Christmas</string>
@@ -296,6 +285,17 @@ namespace ShareViewer.Properties {
             }
             set {
                 this["ParamsSlowVolFigSVFbd"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::ShareViewer.SlowPriceParam ParamsSlowPrice {
+            get {
+                return ((global::ShareViewer.SlowPriceParam)(this["ParamsSlowPrice"]));
+            }
+            set {
+                this["ParamsSlowPrice"] = value;
             }
         }
     }

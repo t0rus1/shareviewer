@@ -673,16 +673,19 @@ namespace ShareViewer
                     {
                         //generate an all-table
                         GenerateSingleAllTable(ct, allTableFile, shareNum, shareName, startDate, tradingSpan, ref tradeHash, topUpOnly, topUpInfo, reloadDate);
+                        //update AllTable calculations
+                        PerformAllTableCalculation(new Share(shareName, shareNum), allTableFile);
+
                     }, tokenSource.Token);
                     
                     var awaiter = genTask.GetAwaiter();
                     awaiter.OnCompleted(() =>
                     {
                         //update AllTable calculations
-                        PerformAllTableCalculation(new Share(shareName, shareNum), allTableFile);
+                        //PerformAllTableCalculation(new Share(shareName, shareNum), allTableFile);
 
                         sharesDone++;
-                        var progressMsg = $"Written All-Table for share {shareName} ...";
+                        var progressMsg = $"All-Table {sharesDone} of {numShares}, share {shareName} ...";
                         Helper.LogStatus("Info", progressMsg);
                         if (sharesDone == numShares)
                         {
@@ -716,8 +719,9 @@ namespace ShareViewer
         {
             AllTable[] atSegment = new AllTable[10402];
             atSegment = AllTable.GetAllTableRows(atFilename, 10402);
-            Calculations.PerformShareCalculations(share, atSegment);
-            AllTable.SaveAllTable(atFilename, atSegment);
+            Calculations.PerformShareCalculations(share,ref atSegment);
+            Calculations.Row1Calcs(share, ref atSegment);
+            AllTable.SaveAllTable(atFilename, ref atSegment);
         }
 
         //Create an object with a dictionary enabling a quick lookup of whether a date and share "YYMMDD,shareNum" as stored in all-tables) 

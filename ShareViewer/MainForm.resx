@@ -117,50 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="buttonOverview.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
-        EgAACxIB0t1+/AAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4yMfEgaZUAAAM4SURBVFhHvZbb
-        S1RRFMbnj+ixP6THHnrooWasQBAdDLQC6UHn5I0kIkV8isSuCJH4IiEaMUZEEQU+BYYPXaQkkSCilLzM
-        jDM62P5tzx73mbP2mVGzDz44sy7f2rMva+9YtThT33G0psG7nGhIPYknUwuJpLdtU9uUjxhi/bSDI1Hv
-        HU8kU+nygpUYb/Cek+vL7B2n6lJHlMiYJL4XooGWL1sdTje2HVPT+UMS3BeVFpq+fDTiySsn4klvTRRS
-        bOkYyNY2d+Xaem6uvXv/YQvyjQ2flAPRVIM46ZeRwShdxb1rtzaHRycy5853FmqbugtLyyvFbR98Y8NH
-        DLGShj8IeSZYJ9e03380kX32crpofo8/fbXh1y4Bm/ETS475HaCqIe4J14ZDaH7he6Em6ZkBFFdW1/2y
-        u8CGjxhiyXENglp+2R3sHLVwYPv1wcJWsbjd2TuUt2xZv2YI+EwcOeSiYWwB2kdUn1khSP2L/Me5b6Wp
-        haOPp0prXw58diy5aNi2XabSujhdSwro7ruj13l4dDIg+mZ6ZkVXE4DPjiUXO1q23VB3TN1eBWf6xVs9
-        1Re9/oDo3NfFHHYJ+OxYcrGjZdsNqR2jf0tOpo5k9R2YgZ+/ljGLwGfHKuoZcC6Dqq0aT/higYixiSS7
-        C8IAnHZI7ZjkgK4B/F76o0Ul7HUA0DmA/7IEis4BmE3Y3NoX2IRmYBK+zC8GCl1o7V3F7tqE0DmAnv57
-        +hg+GJkI2PdyDMkFaNl2m85NCPm3h9eIzCZ0HEPYdWOogLDdTk2DkmA3HHKwoWFsIXIMXY3IcGQsnVf/
-        Yl+XEbl+jkjdiFyt2CZC9nU8OfU6NAvYjJ/YSsVh6fFazaOTqbz7cDx3trF9s+7S1dCDBBs+YiKn3ScX
-        oC4OXNexxJb2gUxtU1e2u/d2dmb2U3Fm9nORb2z4pByR5S9m14PkMBh6kICoJ1k5B4fHMuuZ3XcJ39ik
-        2BBdTzIQ9Si1Kd0HUf3eMPJRasDTudIgymcgt5GvOANo8uT3y0SDUVa7HFVRaVX85+Vgnf7FxkTDuebV
-        gOPCmZXEo6l6S/lROwjoWrptq/4tXWDapnzElDpcRcRifwHWhkXLNFzLOAAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="buttonDays.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
-        EgAACxIB0t1+/AAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4yMfEgaZUAAALFSURBVFhHxVZd
-        axNBFM2P8NEf4qMPPvigSUURpLtYEaRCHnQ3pgotpCpSLRRSfSh+gG0FU9BaaIuW4oMo+qD4iVYroaWo
-        BUGxVEuz02WdM9lJNpO7X0lKDhyymXvn3Ls7d+5MIioOdGZ3dmhmOqUZU0ndWE7ppuOlGOM2+MDXndY8
-        Up3m7pRuzKgBw5jUzEeY68rEx74jxg4uUqDE4xAa0HJlo2H/0dO7+OdcpQQbIteCpisfjKSe2ZPUzXVS
-        qAlCkyex1w1DA1luR3BJNwn6S2CdWvrZ/chjkDXRioKLSsRyw5ZR3mq0c6M82NVjTc89Za/eLpQoe80W
-        FXuWcqrSvjh0i+WvF5wgXh4eFf4njEv20soP5nC8+/SVToD3FhEcXYt2qHJ2/lkJYkGwLOZk+vPsVO+Q
-        /ev3mo2xJ89fW4eOZRmlCYqOKdorYfTy778NEeTu5Jwv+wZGWHdmwJa+o4UZnzevErET6N+U0UsJyiap
-        nexj8s1Hbk9uHD5+zqL8ashj88ZTf7ColMBzVzq3lcnla96ug9fIwuKSWPP7048ZPvticSU0AcROUAaV
-        Engem5gVz+cHb25K+8TU/CbG3nz4gqA2fvFf2oMYO4Fs/zDbsm1RF6j29NlB8f/P2rqNZVD9wxg7AfDG
-        +ANRacXlb9bHz0WxQ65cG6t8EQn5P4gNJQC+ePleFByAJLw2Ce+YH2MXoSSq/PvqT7HWPReuNpRAuQib
-        2IZad2/pTC5f12gk1PE6YhtGaUQSlI2iBGXzUjSiKK04Sif0EsAcSsvLyuU17NIZ5SxQgTmUliQOQBEc
-        iHAci9OQeluVd+49dOCLOYpGLdUbc1svJEDbr2RAWy+lErg6b0cS0MSV3w0TDGTZ0uXgWqFvrgLr1IrC
-        hIbvmkcBtgv2LCUeTN5b1K3WDNC1RNvm/Zs6wMQYt8Gn0uFCkUj8BxBsuQKWCWivAAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="daysBack.ToolTip" xml:space="preserve">
-    <value>Sets and indicates the number of trading days represented by the pair of calendars.
-By 'trading days' is meant week days, excluding the public holidays (which fall on a weekday) These must be entered and maintained in the list to the right.
-For normal ongoing operations, this should remain fixed at 100.</value>
-  </data>
   <metadata name="toolTipShareList.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>126, 17</value>
   </metadata>
@@ -169,6 +125,7 @@ For normal ongoing operations, this should remain fixed at 100.</value>
 !!!Caution!!!
 A full 100 trading days (which MUST correspond to the same trading day range of the other All-Tables and must  ALREADY be set on the calendars) </value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="buttonAddToAllTables.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
@@ -284,6 +241,44 @@ A full 100 trading days (which MUST correspond to the same trading day range of 
         0glXCM/7B7/qbqVdeSO+AAAAAElFTkSuQmCC
 </value>
   </data>
+  <data name="buttonOverview.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
+        EgAACxIB0t1+/AAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4yMfEgaZUAAAM4SURBVFhHvZbb
+        S1RRFMbnj+ixP6THHnrooWasQBAdDLQC6UHn5I0kIkV8isSuCJH4IiEaMUZEEQU+BYYPXaQkkSCilLzM
+        jDM62P5tzx73mbP2mVGzDz44sy7f2rMva+9YtThT33G0psG7nGhIPYknUwuJpLdtU9uUjxhi/bSDI1Hv
+        HU8kU+nygpUYb/Cek+vL7B2n6lJHlMiYJL4XooGWL1sdTje2HVPT+UMS3BeVFpq+fDTiySsn4klvTRRS
+        bOkYyNY2d+Xaem6uvXv/YQvyjQ2flAPRVIM46ZeRwShdxb1rtzaHRycy5853FmqbugtLyyvFbR98Y8NH
+        DLGShj8IeSZYJ9e03380kX32crpofo8/fbXh1y4Bm/ETS475HaCqIe4J14ZDaH7he6Em6ZkBFFdW1/2y
+        u8CGjxhiyXENglp+2R3sHLVwYPv1wcJWsbjd2TuUt2xZv2YI+EwcOeSiYWwB2kdUn1khSP2L/Me5b6Wp
+        haOPp0prXw58diy5aNi2XabSujhdSwro7ruj13l4dDIg+mZ6ZkVXE4DPjiUXO1q23VB3TN1eBWf6xVs9
+        1Re9/oDo3NfFHHYJ+OxYcrGjZdsNqR2jf0tOpo5k9R2YgZ+/ljGLwGfHKuoZcC6Dqq0aT/higYixiSS7
+        C8IAnHZI7ZjkgK4B/F76o0Ul7HUA0DmA/7IEis4BmE3Y3NoX2IRmYBK+zC8GCl1o7V3F7tqE0DmAnv57
+        +hg+GJkI2PdyDMkFaNl2m85NCPm3h9eIzCZ0HEPYdWOogLDdTk2DkmA3HHKwoWFsIXIMXY3IcGQsnVf/
+        Yl+XEbl+jkjdiFyt2CZC9nU8OfU6NAvYjJ/YSsVh6fFazaOTqbz7cDx3trF9s+7S1dCDBBs+YiKn3ScX
+        oC4OXNexxJb2gUxtU1e2u/d2dmb2U3Fm9nORb2z4pByR5S9m14PkMBh6kICoJ1k5B4fHMuuZ3XcJ39ik
+        2BBdTzIQ9Si1Kd0HUf3eMPJRasDTudIgymcgt5GvOANo8uT3y0SDUVa7HFVRaVX85+Vgnf7FxkTDuebV
+        gOPCmZXEo6l6S/lROwjoWrptq/4tXWDapnzElDpcRcRifwHWhkXLNFzLOAAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="buttonDays.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
+        EgAACxIB0t1+/AAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4yMfEgaZUAAALFSURBVFhHxVZd
+        axNBFM2P8NEf4qMPPvigSUURpLtYEaRCHnQ3pgotpCpSLRRSfSh+gG0FU9BaaIuW4oMo+qD4iVYroaWo
+        BUGxVEuz02WdM9lJNpO7X0lKDhyymXvn3Ls7d+5MIioOdGZ3dmhmOqUZU0ndWE7ppuOlGOM2+MDXndY8
+        Up3m7pRuzKgBw5jUzEeY68rEx74jxg4uUqDE4xAa0HJlo2H/0dO7+OdcpQQbIteCpisfjKSe2ZPUzXVS
+        qAlCkyex1w1DA1luR3BJNwn6S2CdWvrZ/chjkDXRioKLSsRyw5ZR3mq0c6M82NVjTc89Za/eLpQoe80W
+        FXuWcqrSvjh0i+WvF5wgXh4eFf4njEv20soP5nC8+/SVToD3FhEcXYt2qHJ2/lkJYkGwLOZk+vPsVO+Q
+        /ev3mo2xJ89fW4eOZRmlCYqOKdorYfTy778NEeTu5Jwv+wZGWHdmwJa+o4UZnzevErET6N+U0UsJyiap
+        nexj8s1Hbk9uHD5+zqL8ashj88ZTf7ColMBzVzq3lcnla96ug9fIwuKSWPP7048ZPvticSU0AcROUAaV
+        Engem5gVz+cHb25K+8TU/CbG3nz4gqA2fvFf2oMYO4Fs/zDbsm1RF6j29NlB8f/P2rqNZVD9wxg7AfDG
+        +ANRacXlb9bHz0WxQ65cG6t8EQn5P4gNJQC+ePleFByAJLw2Ce+YH2MXoSSq/PvqT7HWPReuNpRAuQib
+        2IZad2/pTC5f12gk1PE6YhtGaUQSlI2iBGXzUjSiKK04Sif0EsAcSsvLyuU17NIZ5SxQgTmUliQOQBEc
+        iHAci9OQeluVd+49dOCLOYpGLdUbc1svJEDbr2RAWy+lErg6b0cS0MSV3w0TDGTZ0uXgWqFvrgLr1IrC
+        hIbvmkcBtgv2LCUeTN5b1K3WDNC1RNvm/Zs6wMQYt8Gn0uFCkUj8BxBsuQKWCWivAAAAAElFTkSuQmCC
+</value>
+  </data>
   <data name="buttonLogin.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
@@ -298,6 +293,11 @@ A full 100 trading days (which MUST correspond to the same trading day range of 
         ycPTKwmWwdf3D6NlDCTA1EcyYKpDaQaMzpNIgoLLkV+FKQaybPTnkFpjv7kJ2hONTMoV/prpoBJlhlYH
         DnKlVgfoWtS2Zf/mDjB6Jm3wGXW4sfC8X2+l7FCLZJj1AAAAAElFTkSuQmCC
 </value>
+  </data>
+  <data name="daysBack.ToolTip" xml:space="preserve">
+    <value>Sets and indicates the number of trading days represented by the pair of calendars.
+By 'trading days' is meant week days, excluding the public holidays (which fall on a weekday) These must be entered and maintained in the list to the right.
+For normal ongoing operations, this should remain fixed at 100.</value>
   </data>
   <data name="buttonSaveHolidays.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

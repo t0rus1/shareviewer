@@ -86,10 +86,10 @@ namespace ShareViewer
 
             if (numBands == 10402)
             {
-                double totalFV = bands.Skip(9362).Take(1040).Sum(atRec => atRec.FV);
-                double avgDailyVolume = totalFV / 10; //10 days
+                double totalFV = bands.Skip(9362).Take(1040).Sum(atRec => Math.Sqrt(atRec.FV));
+                double avgDailyRootVolume = totalFV / 10; //10 days
                 double effectivePrice = bands[10401].FP;
-                double VP = avgDailyVolume * effectivePrice;
+                double VP = avgDailyRootVolume * effectivePrice;
                 return VP < Z.Setting;
             }
             else
@@ -105,13 +105,13 @@ namespace ShareViewer
 
 
         //Here we instantiate an initial Overview object for a share and determine its Laziness
-        internal static Overview CreateInitialOverviewForShare(Share share, AllTable[] atSegment)
+        internal static Overview CreateInitialOverviewForShare(Share share, AllTable atRow1)
         {
             var lazyShareParams = Helper.GetAppUserSettings().ParamsLazyShare;
             // col 2. Instantiate an Overview object and assign Name of share
             Overview oview = new Overview(share.Name, share.Number);
-            // Lazy flag
-            oview.Lazy = isLazyLast10Days(atSegment, lazyShareParams);
+            // Lazy flag - we now assume the Laziness has been precalculated and can be found in passed in Row1
+            oview.Lazy = atRow1.Col_2 > 0;
             return oview;
         }
 
@@ -173,16 +173,59 @@ namespace ShareViewer
 
         }
 
-        internal static void UpdateFromLastRow(Share share, ref Overview oview, AllTable atLast)
+
+        internal static void OverviewFromLastRow(Share share, ref Overview oview, AllTable atLast)
         {
+            //col 3: Sum of volumes (LastDayVolume) (49) 
+            oview.LastDayVol = atLast.FV;
+            //col 4: Price of row 10401 (11) 
             oview.LastPrice = atLast.FP;
-            if (oview.DayBeforePrice > 0) { oview.PriceFactor = oview.LastPrice / oview.DayBeforePrice; }
+            //col 5: Price of row 1040-104-1
+            oview.DayBeforePrice = atLast.Col_10; // atSegment[10401 - 104].FP;  ============> PROBLEM !!!!
+            //col 6: Price of row 10401 / Price of row 10297
+            if (oview.DayBeforePrice > 0) {
+                oview.PriceFactor = oview.LastPrice / oview.DayBeforePrice;
+            }
+            // col 7: Price-Gradient PGc of row 1040 (23)
             oview.LastPGc = atLast.PGc;
+            // col 8: Price-Gradient PGd of row 10401
             oview.LastPGd = atLast.PGd;
+            // col 9: 13 The biggest PGa of row 10298 to 10401
+            oview.BigLastDayPGa = atLast.PGa;
+            // col 10: 18 The biggest PGF of All-table column 15 to 17, row 10298 to 10401
+            oview.BigLastDayPGF = atLast.BigPGF;
+            // col 11: 30 The DHLFPc of row 10401
             oview.LastDHLFPc = atLast.DHLFPc;
+            //col 12: 34 The DHLFPd of row 10401
             oview.LastDHLFPd = atLast.DHLFPd;
+            //col 13 unused
+            //col 14: 40 The DLLFPc of row 10401
             oview.LastDLLFPc = atLast.DLLFPc;
+            //col 15: 44 The DLLFPd of row 10401
             oview.LastDLLFPd = atLast.DLLFPd;
+            //col 16: 64 Sum of Points Gradient a of row 10298 to 10401
+            oview.LastDaySumOfPGa = atLast.PtsGradA;
+            //col 17: 66 Sum of Points Gradient b   of row 10298 to 10401
+            oview.LastDaySumOfPGb = atLast.PtsGradB;
+            //col 18: 68 Sum of Points Gradient c of row 10298 to 10401
+            oview.LastDaySumOfPGc = atLast.PtsGradC;
+            //col 19: 73 Sum of Points Volume a of row 10298 to 10401
+            oview.LastDaySumOfPtsVola = atLast.PtsVola;
+            //col 20: 75 Sum of Points Volume b of row 10298 to 10401
+            oview.LastDaySumOfPtsVolb = atLast.PtsVolb;
+            //col 21: 77 Sum of Points Volume c of row 10298 to 10401
+            oview.LastDaySumOfPtsVolc = atLast.PtsVolc;
+            //col 22: 79 Sum of Points Volume d of row 10298 to 10401
+            oview.LastDaySumOfPtsVold = atLast.PtsVold;
+            //col 23: 70 Sum of Points Points High Line HLc of row 10298 to 10401
+            oview.LastDaySumOfPtsHLc = atLast.PtsHLc;
+            //col 24: 71 Sum of Points Points High Line HLd of row 10298 to 10401
+            oview.LastDaySumOfPtsHLd = atLast.PtsHLd;
+            //col 25: duplicate of col 19???
+            //col 26: duplicate of col 20???
+            //col 27: ask Gunther
+            //col 28: ask Gunther
+
         }
 
 

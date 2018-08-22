@@ -297,7 +297,7 @@ namespace ShareViewer
         {
             var allTablesFolder = Helper.GetAppUserSettings().AllTablesFolder;
             var shareLines = LocalStore.CreateShareArrayFromShareList();
-            AllTable[] atSegment = new AllTable[10401];
+            AllTable[] atSegment = new AllTable[10402];
 
             sharesOverview.Clear();
 
@@ -306,20 +306,29 @@ namespace ShareViewer
                 var share = Helper.CreateShareFromLine(line);
                 var atFilename = allTablesFolder + $@"\alltable_{share.Number}.at";
 
-                //load up the full AllTable
-                atSegment = AllTable.GetAllTableRows(atFilename, 10402);
 
                 if (_FullRecalcNeeded)
                 {
-                    Calculations.PerformShareCalculations(share, atSegment);
-                    AllTable.SaveAllTable(atFilename, atSegment);
+                    //load up the full AllTable
+                    atSegment = AllTable.GetAllTableRows(atFilename, 10402);
+                    Calculations.PerformShareCalculations(share, ref atSegment); //also stores laziness in Col_2 row 0
+                    Calculations.Row1Calcs(share, ref atSegment);
+                    AllTable.SaveAllTable(atFilename, ref atSegment);
+                    //then the Overview
+                    //instantiate an Overview object and initialize it - includes grabbing the Lazy status from Col_2 row 0
+                    Overview oview = OverviewCalcs.CreateInitialOverviewForShare(share, atSegment[1]);
+                    OverviewCalcs.PerformOverviewCalcs(share, ref oview, atSegment);
+                    sharesOverview.Add(oview);
+                }
+                else
+                {
+                    // No calcs needed, we must build an Overview object from row 1 of the AllTable
+                    AllTable atRow1 = AllTable.GetSingleAllTableRow(atFilename, 1);
+                    Overview oview = OverviewCalcs.CreateInitialOverviewForShare(share, atRow1);
+                    OverviewCalcs.OverviewFromLastRow(share, ref oview, atRow1);
+                    sharesOverview.Add(oview);
                 }
 
-                //then the Overview
-                Overview oview = OverviewCalcs.CreateInitialOverviewForShare(share, atSegment);
-                OverviewCalcs.PerformOverviewCalcs(share, ref oview, atSegment);
-
-                sharesOverview.Add(oview);
                 progress(share);
 
             }
