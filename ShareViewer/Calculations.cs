@@ -114,7 +114,7 @@ namespace ShareViewer
             if (bands.Count() > 0 && numBands > 2)
             {
                 //we must skip startRow rows because 'Row' starts at -1
-                double totalFV = bands.Skip(startRow).Take(numBands).Sum(atRec => atRec.FV);
+                double totalFV = bands.Skip(startRow).Take(numBands).Sum(atRec => Math.Sqrt(atRec.FV));
                 double numDays = numBands / 104; // there are 104 bands per day
                 double avgDailyVolume = totalFV / numDays;
                 double effectivePrice = bands[numBands - 1].FP;
@@ -122,16 +122,16 @@ namespace ShareViewer
                 isLazy = VP < Z.Setting;
                 auditSummary =
 $@"
-CALCULATION AUDIT
+LazyShare calculation: 
 
-Period                       = {numDays} last days
-Total Five-Minutes-Volume FV = {totalFV}
-Average Daily Volume         = {avgDailyVolume}
-Last price (FP1041)          = {effectivePrice}
-VP (Avg Daily Vol x Price)   = {VP} 
-Z                            = {Z.Setting}
+Period                         = {numDays} last days
+Sum of roots of Volume FV      = {totalFV}
+Avg Daily Sum of RootsVolume   = {avgDailyVolume}
+Last price (FP1041)            = {effectivePrice}
+VP (Avg DailyRootsVol x Price) = {VP} 
+Z                              = {Z.Setting}
 Result:
-(VP < Z)?               LAZY = {isLazy}".Split('\n');
+(VP < Z)?                 LAZY = {isLazy}".Split('\n');
             }
             else
             {
@@ -192,11 +192,11 @@ Result:
                     }
 
                 }
-                auditSummary = $"{numBands} processed.Please inspect the view for results.".Split('\n');
+                auditSummary = $"MakeSlowPrices results:\n{numBands} processed\nInspect the view.".Split('\n');
             }
             else
             {
-                auditSummary = $"No bands to work with".Split('\n');
+                auditSummary = $"MakeSlowPrices: No bands to work with".Split('\n');
             }
 
         }
@@ -228,11 +228,11 @@ Result:
                         bands[f].PGd = bands[f].SPd / bands[f - 1].SPd;
                     }
                 }
-                auditSummary = $"{numBands} processed.\nPlease inspect the view for results.".Split('\n');
+                auditSummary = $"MakeFiveMinutesPriceGradients results:\n{numBands} processed.\nInspect the view.".Split('\n');
             }
             else
             {
-                auditSummary = $"No bands to work with".Split('\n');
+                auditSummary = $"MakeFiveMinutesPriceGradients: No bands to work with".Split('\n');
             }
 
         }
@@ -256,18 +256,18 @@ Result:
                         {
                             jackPot = true;
                             bands[i].PtsGradC += 3;
-                            auditSummary = $"The PGc value in row {endRow} ({bands[endRow].PGc}) DOES exceed Z ({dtp.Z})\nplus PGc value in row {i} ({bands[i].PGc}) IS < threshold ({dtp.PGcThreshold})\nPlease inspect the view for results.".Split('\n');
+                            auditSummary = $"FindDirectionAndTurning:\nThe PGc value in row {endRow} ({bands[endRow].PGc}) DOES exceed Z ({dtp.Z})\nplus PGc value in row {i} ({bands[i].PGc}) IS < threshold ({dtp.PGcThreshold})\nInspect the view.".Split('\n');
                             break;
                         }
                     }
                     if (!jackPot)
                     {
-                        auditSummary = $"The PGc value in row {endRow} ({bands[endRow].PGc}) does exceed Z ({dtp.Z})\nBUT no PGc value in rows {startRow} to {endRow}  IS < threshold ({dtp.PGcThreshold})".Split('\n');
+                        auditSummary = $"FindDirectionAndTurning:\nThe PGc value in row {endRow} ({bands[endRow].PGc}) does exceed Z ({dtp.Z})\nBUT no PGc value in rows {startRow} to {endRow}  IS < threshold ({dtp.PGcThreshold})".Split('\n');
                     }
                 }
                 else
                 {
-                    auditSummary = $"Last PGc value ({bands[endRow].PGc}) does NOT exceed Z ({dtp.Z})\nNo changes made.".Split('\n');
+                    auditSummary = $"FindDirectionAndTurning:\nLast PGc value ({bands[endRow].PGc}) does NOT exceed Z ({dtp.Z})\nNo changes made".Split('\n');
                 }
             }
         }
@@ -298,7 +298,7 @@ Result:
             {
                 atRows[i].PGFrowx17 = (atRows[i].PGa * atRows[i + 1].PGa * atRows[i + 2].PGa) / atRows[i].APpg;
             }
-            auditSegment = $"Columns APpg, PGFrowx15, PGFrowx16, PGFrowx17 filled from row {startRow}-{endRow}.\nPlease inspect the view";
+            auditSegment = $"FindFiveMinsGradientsFigurePGF:\nColumns APpg, PGFrowx15, PGFrowx16, PGFrowx17 filled from row {startRow}-{endRow}.\nPlease inspect the view.";
 
             // from Gunther
             //2) look in the fields of columns 15 to17 and the last Z rows for the biggest figure. Z = 104 … 999  	
@@ -343,7 +343,7 @@ Result:
             }
             else
             {
-                auditSegment += $"\nWarning: Unable to locate biggest figure in the last {calcFiveMinsGradientFigureParam.Z} rows amongst PGFrowx15, PGFrowx16, PGFrowx17";
+                auditSegment += $"FindFiveMinsGradientsFigurePGF:\nWarning: Unable to locate biggest figure in the last {calcFiveMinsGradientFigureParam.Z} rows amongst PGFrowx15, PGFrowx16, PGFrowx17";
                 auditSummary = auditSegment.Split('\n');
             }
 
@@ -393,7 +393,7 @@ Result:
                 }
             }
 
-            auditSummary = $"HLc, HLd, PtsHLc, PtsHLd, DHLFPc and DHLFPd computed from row {startRow}-{endRow}.\nPlease inspect the view".Split('\n');
+            auditSummary = $"MakeHighLineHL:\nHLc, HLd, PtsHLc, PtsHLd, DHLFPc and DHLFPd computed from row {startRow}-{endRow}.\nPlease inspect the view".Split('\n');
 
         }
 
@@ -436,7 +436,7 @@ Result:
                 }
             }
 
-            auditSummary = $"LLc, LLd, PtsLLc, PtsLLd, DLLFPc and DLLFPd computed from row {startRow}-{endRow}.\nPlease inspect the view".Split('\n');
+            auditSummary = $"MakeLowLineLL:\nLLc, LLd, PtsLLc, PtsLLd, DLLFPc and DLLFPd computed from row {startRow}-{endRow}.\nPlease inspect the view".Split('\n');
 
         }
 
@@ -542,7 +542,7 @@ Result:
                 }
 
             }
-            auditSummary = $"SVa,SVb,SVc,SVd computed from row {startRow}-{endRow}.\nPlease inspect the view".Split('\n');
+            auditSummary = $"MakeSlowVolume:\nSVa,SVb,SVc,SVd computed from row {startRow}-{endRow}.\nInspect the view".Split('\n');
         }
 
         internal static void SlowVolumeFigureSVFac(ref AllTable[] atRows, SlowVolFigSVFacParam svf, int startRow, int endRow, out string[] auditSummary)
@@ -601,7 +601,7 @@ Result:
                     }
                 }
             }
-            auditSummary = $"SVFac computed for {startRow}-{endRow}.Biggest {big}, row {bigRow}\nPlease inspect the view".Split('\n');
+            auditSummary = $"SlowVolumeFigureSVFac:\nSVFac computed for {startRow}-{endRow}.Biggest {big}, row {bigRow}\nInspect the view".Split('\n');
         }
 
 
@@ -662,7 +662,7 @@ Result:
                     }
                 }
             }
-            auditSummary = $"SVFbd computed for {startRow}-{endRow}.Biggest {big}, row {bigRow}\nPlease inspect the view".Split('\n');
+            auditSummary = $"SlowVolumeFigureSVFbd:\nSVFbd computed for {startRow}-{endRow}.Biggest {big}, row {bigRow}\nInspect the view".Split('\n');
 
         }
 

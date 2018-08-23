@@ -46,6 +46,23 @@ namespace ShareViewer
         public Dictionary<string, WantHaveInfo> DatesData { get => datesData; set => datesData = value; }
         public Dictionary<int,string> LastDate { get => lastDate; set => lastDate = value; }
         public Dictionary<int,int> LastRow { get => lastRow; set => lastRow = value; }
+
+        //Scan thru the lastDates and return the earliest one
+        //(they should all be the same)
+        //Used to build minimal requird TradeHash when topping up All-Tables
+        public string EarliestLastDate()
+        {
+            string elDate = LastDate.Values.First();
+            foreach (string dateItem in LastDate.Values)
+            {
+                if (String.Compare(dateItem,elDate) < 0)
+                {
+                    elDate = dateItem;
+                }
+            }
+            return elDate;
+        }
+
     }
 
     //for use in the 'Whats on hand' grid

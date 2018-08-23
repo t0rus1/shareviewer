@@ -502,9 +502,14 @@ namespace ShareViewer
         private bool BleatForSpan()
         {
             //firstly, daysBack span MUST BE 100 days
-            if (daysBack.Value > 100)
+            //if (daysBack.Value > 100)
+            //{
+            //    MessageBox.Show("The trading days span MAY NOT be set to more 100 days for this operation", "Add new Data",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+            //    return true;
+            //}
+            if (daysBack.Value != 100)
             {
-                MessageBox.Show("The trading days span MAY NOT be set to more 100 days for this operation", "Add new Data",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                MessageBox.Show("The trading days span MUST = 100 days for this operation", "Add new Data", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return true;
             }
 
@@ -547,7 +552,7 @@ namespace ShareViewer
                         //finally, we can tell user how many new days data he is trying to add
                         var lastDayOnHandDT = Helper.ConvertCompressedDateToDateTime(lastDayOnHand);
                         int addDays = (calendarTo.SelectionStart - lastDayOnHandDT).Days;
-                        var msg = $"Add new trading data for the {addDays} calendar day(s) beyond last data on hand ({lastDayOnHand})?\n(Allow approx. 6 minutes before any feedback)";
+                        var msg = $"Add new trading data for the {addDays} calendar day(s) beyond last data on hand ({lastDayOnHand})?\n(Takes some time)";
                         if (MessageBox.Show(msg, "Add New Data to All-Tables", MessageBoxButtons.OKCancel, MessageBoxIcon.Question,MessageBoxDefaultButton.Button1) == DialogResult.OK)
                         {
                             return false; // user can proceed to next check

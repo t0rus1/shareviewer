@@ -567,6 +567,8 @@ namespace ShareViewer
 
         internal void HandleParameterSaveClick(object sender, EventArgs e)
         {
+            string[] auditLines = new string[20];
+
             var aus = Helper.GetAppUserSettings();
             string calculation = (string)((Button)sender).Tag;
             switch (calculation)
@@ -575,60 +577,60 @@ namespace ShareViewer
                     aus.ParamsLazyShare = CalcLazyShareParam;
                     aus.Save();
                     stripText.Text = "Parameter saved";
-                    RecalcToSelectedCalc();
+                    RecalcToSelectedCalc(ref auditLines);
                     break;
                 case "Make Slow (Five minutes) Prices SP":
                     aus.ParamsSlowPrice = CalcSlowPriceParam;
                     aus.Save();
-                    RecalcToSelectedCalc();
+                    RecalcToSelectedCalc(ref auditLines);
                     //SaveAllTable();
                     break;
                 case "Make Five minutes Price Gradients PG":
-                    RecalcToSelectedCalc();
+                    RecalcToSelectedCalc(ref auditLines);
                     //SaveAllTable();
                     break;
                 case "Find direction and Turning":
                     aus.ParamsDirectionAndTurning = CalcDirectionAndTurningParam;
                     aus.Save();
-                    RecalcToSelectedCalc();
+                    RecalcToSelectedCalc(ref auditLines);
                     //SaveAllTable();
                     break;
                 case "Find Five minutes Gradients Figure PGF":
                     aus.ParamsFiveMinsGradientFigure = CalcFiveMinsGradientFigureParam;
                     aus.Save();
-                    RecalcToSelectedCalc();
+                    RecalcToSelectedCalc(ref auditLines);
                     //SaveAllTable();
                     break;
                 case "Related volume Figure (RPGFV) of biggest PGF":
-                    RecalcToSelectedCalc();
+                    RecalcToSelectedCalc(ref auditLines);
                     //SaveAllTable();
                     break;
                 case "Make High Line HL":
                     aus.ParamsMakeHighLine = CalcHighLineParam;
                     aus.Save();
-                    RecalcToSelectedCalc();
+                    RecalcToSelectedCalc(ref auditLines);
                     //SaveAllTable();
                     break;
                 case "Make Low Line LL":
                     aus.ParamsMakeLowLine = CalcLowLineParam;
                     aus.Save();
-                    RecalcToSelectedCalc();
+                    RecalcToSelectedCalc(ref auditLines);
                     //SaveAllTable();
                     break;
                 case "Make Slow Volumes SV":
                     aus.ParamsMakeSlowVolume = CalcSlowVolumeParam;
                     aus.Save();
-                    RecalcToSelectedCalc();
+                    RecalcToSelectedCalc(ref auditLines);
                     break;
                 case "Slow Volume Figure SVFac":
                     aus.ParamsSlowVolFigSVFac = CalcSlowVolFigSVFacParam;
                     aus.Save();
-                    RecalcToSelectedCalc();
+                    RecalcToSelectedCalc(ref auditLines);
                     break;
                 case "Slow Volume Figure SVFbd":
                     aus.ParamsSlowVolFigSVFbd = CalcSlowVolFigSVFbdParam;
                     aus.Save();
-                    RecalcToSelectedCalc();
+                    RecalcToSelectedCalc(ref auditLines);
                     break;
 
                 default:
@@ -932,10 +934,12 @@ namespace ShareViewer
 
         private void linkLabelCalcToHere_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            RecalcToSelectedCalc();
+            string[] auditLines = new string[20];
+            RecalcToSelectedCalc(ref auditLines);
+            calcAuditTextBox.Text = String.Join("\r\n", auditLines);
         }
 
-        private void RecalcToSelectedCalc()
+        private void RecalcToSelectedCalc(ref string[] auditLines)
         {
             //stripText.Text = "";
             _calculatingToHere = true;
@@ -944,7 +948,7 @@ namespace ShareViewer
             for (int i = 1; i <= currSelectedIndex; i++)
             {
                 listBoxVariables.SelectedIndex = i;
-                string[] auditLines;
+                //string[] auditLines;
 
                 string calculation = (string)listBoxVariables.SelectedItem;
                 switch (calculation)

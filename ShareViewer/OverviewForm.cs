@@ -743,7 +743,7 @@ namespace ShareViewer
             }
             else
             {
-                msg = "Compile the Overview from EXISTING All-Tables?\nTakes a while...";
+                msg = "Compile from EXISTING All-Tables?\n(Relatively quick)...";
                 var dlgResult = MessageBox.Show(msg, "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button2);
                 if (dlgResult == DialogResult.Yes)
                 {

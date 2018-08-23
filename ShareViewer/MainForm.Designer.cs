@@ -948,7 +948,6 @@
         private System.Windows.Forms.Label labelAffirmDate;
         private System.Windows.Forms.ListBox listBoxHolidays;
         private System.Windows.Forms.Button buttonSaveHolidays;
-        public System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.Label labelHolidays;
         private System.Windows.Forms.ListBox listBoxSpannedHolidays;
         private System.Windows.Forms.Button buttonAddToAllTables;
@@ -958,8 +957,9 @@
         //internal System.Windows.Forms.ToolStripStatusLabel stripText;
         private System.Windows.Forms.Button buttonOverview;
         private System.Windows.Forms.LinkLabel linkLabelRepair;
-        internal System.Windows.Forms.ToolStripStatusLabel stripText;
         private System.Windows.Forms.Label labelNumShares;
+        internal System.Windows.Forms.StatusStrip statusStrip;
+        internal System.Windows.Forms.ToolStripStatusLabel stripText;
     }
 }
 

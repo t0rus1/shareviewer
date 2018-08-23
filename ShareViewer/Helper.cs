@@ -36,11 +36,11 @@ namespace ShareViewer
         internal static void Status(string msg)
         {
             var form = GetMainForm();
-            //if (form.statusStrip.Items.Count > 0)
-            //{
-                //form.statusStrip.Items["stripText"].Text = msg;
-                form.stripText.Text = msg;
-            //}
+            if (form.statusStrip.Items.ContainsKey("stripText"))
+            {
+                form.statusStrip.Items["stripText"].Text = msg;
+            }
+            //form.stripText.Text = msg;
         }
 
         internal static void UpdateAllTableProgress(string msg)
@@ -210,7 +210,7 @@ namespace ShareViewer
             ((Button)form.Controls.Find("buttonNewShareList", true)[0]).Enabled = !hold;
             ((Button)form.Controls.Find("buttonDays", true)[0]).Enabled = !hold;
             ((GroupBox)form.Controls.Find("groupBoxSource", true)[0]).Enabled = !hold;
-            //((Button)form.Controls.Find("buttonNewAllTables", true)[0]).Enabled = !hold;
+            ((Button)form.Controls.Find("buttonNewAllTables", true)[0]).Enabled = !hold;
             //((Button)form.Controls.Find("buttonAddToAllTables", true)[0]).Enabled = !hold;
             ((TextBox)form.Controls.Find("textBoxShareNumSearch", true)[0]).Enabled = !hold;
 
