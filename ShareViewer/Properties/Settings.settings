@@ -47,7 +47,12 @@
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="ParamsLazyShare" Type="ShareViewer.LazyShareParam" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">&lt;LazyShareParam xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+    &lt;From&gt;1000&lt;/From&gt;
+    &lt;To&gt;1000000&lt;/To&gt;
+    &lt;Setting&gt;7000&lt;/Setting&gt;
+&lt;/LazyShareParam&gt;</Value>
     </Setting>
     <Setting Name="Holidays" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
@@ -75,28 +80,102 @@
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="ParamsDirectionAndTurning" Type="ShareViewer.DirectionAndTurningParam" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">&lt;DirectionAndTurningParam xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+    &lt;From&gt;0.99999&lt;/From&gt;
+    &lt;To&gt;1.01&lt;/To&gt;
+    &lt;Z&gt;1&lt;/Z&gt;
+    &lt;PGcThreshold&gt;100000&lt;/PGcThreshold&gt;
+&lt;/DirectionAndTurningParam&gt;</Value>
     </Setting>
     <Setting Name="ParamsFiveMinsGradientFigure" Type="ShareViewer.FiveMinsGradientFigureParam" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">&lt;FiveMinsGradientFigureParam xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+    &lt;X&gt;0&lt;/X&gt;
+    &lt;Y&gt;0&lt;/Y&gt;
+    &lt;Z&gt;0&lt;/Z&gt;
+    &lt;XMin&gt;1&lt;/XMin&gt;
+    &lt;XMax&gt;5&lt;/XMax&gt;
+    &lt;YMin&gt;0&lt;/YMin&gt;
+    &lt;YMax&gt;0.005&lt;/YMax&gt;
+    &lt;ZMin&gt;104&lt;/ZMin&gt;
+    &lt;ZMax&gt;999&lt;/ZMax&gt;
+&lt;/FiveMinsGradientFigureParam&gt;</Value>
     </Setting>
     <Setting Name="ParamsMakeHighLine" Type="ShareViewer.MakeHighLineParam" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">&lt;MakeHighLineParam xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+    &lt;ZMin&gt;0&lt;/ZMin&gt;
+    &lt;ZMax&gt;0.001&lt;/ZMax&gt;
+    &lt;Z&gt;0.0005&lt;/Z&gt;
+&lt;/MakeHighLineParam&gt;</Value>
     </Setting>
     <Setting Name="ParamsMakeLowLine" Type="ShareViewer.MakeLowLineParam" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ParamsMakeSlowVolume" Type="ShareViewer.MakeSlowVolumeParam" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">&lt;MakeLowLineParam xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+    &lt;ZMin&gt;0&lt;/ZMin&gt;
+    &lt;ZMax&gt;0.01&lt;/ZMax&gt;
+    &lt;Z&gt;0.005&lt;/Z&gt;
+&lt;/MakeLowLineParam&gt;</Value>
     </Setting>
     <Setting Name="ParamsSlowVolFigSVFac" Type="ShareViewer.SlowVolFigSVFacParam" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">&lt;SlowVolFigSVFacParam xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+    &lt;XMin&gt;1&lt;/XMin&gt;
+    &lt;XMax&gt;5&lt;/XMax&gt;
+    &lt;X&gt;1&lt;/X&gt;
+    &lt;YMin&gt;0&lt;/YMin&gt;
+    &lt;YMax&gt;0.005&lt;/YMax&gt;
+    &lt;Y&gt;0&lt;/Y&gt;
+    &lt;ZMin&gt;104&lt;/ZMin&gt;
+    &lt;ZMax&gt;999&lt;/ZMax&gt;
+    &lt;Z&gt;104&lt;/Z&gt;
+    &lt;WMin&gt;1&lt;/WMin&gt;
+    &lt;WMax&gt;99&lt;/WMax&gt;
+    &lt;W&gt;1&lt;/W&gt;
+&lt;/SlowVolFigSVFacParam&gt;</Value>
     </Setting>
     <Setting Name="ParamsSlowVolFigSVFbd" Type="ShareViewer.SlowVolFigSVFbdParam" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">&lt;SlowVolFigSVFbdParam xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+    &lt;ZMin&gt;104&lt;/ZMin&gt;
+    &lt;ZMax&gt;2000&lt;/ZMax&gt;
+    &lt;Z&gt;104&lt;/Z&gt;
+    &lt;YMin&gt;0&lt;/YMin&gt;
+    &lt;YMax&gt;0.005&lt;/YMax&gt;
+    &lt;Y&gt;0&lt;/Y&gt;
+    &lt;WMin&gt;1&lt;/WMin&gt;
+    &lt;WMax&gt;99&lt;/WMax&gt;
+    &lt;W&gt;1&lt;/W&gt;
+&lt;/SlowVolFigSVFbdParam&gt;</Value>
     </Setting>
     <Setting Name="ParamsSlowPrice" Type="ShareViewer.SlowPriceParam" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">&lt;SlowPriceParam xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+    &lt;Z&gt;100&lt;/Z&gt;
+    &lt;Ya&gt;0.98&lt;/Ya&gt;
+    &lt;Yb&gt;0.95&lt;/Yb&gt;
+    &lt;Yc&gt;0.8&lt;/Yc&gt;
+    &lt;Yd&gt;0.7&lt;/Yd&gt;
+    &lt;ZMin&gt;100&lt;/ZMin&gt;
+    &lt;ZMax&gt;99999&lt;/ZMax&gt;
+    &lt;YMin&gt;0&lt;/YMin&gt;
+    &lt;YMax&gt;0.9999&lt;/YMax&gt;
+&lt;/SlowPriceParam&gt;</Value>
+    </Setting>
+    <Setting Name="ParamsMakeSlowVolume" Type="ShareViewer.MakeSlowVolumeParam" Scope="User">
+      <Value Profile="(Default)">&lt;MakeSlowVolumeParam xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+    &lt;YMin&gt;0&lt;/YMin&gt;
+    &lt;YMax&gt;0.9999&lt;/YMax&gt;
+    &lt;Ya&gt;0.1&lt;/Ya&gt;
+    &lt;Yb&gt;0.1&lt;/Yb&gt;
+    &lt;Yc&gt;0.1&lt;/Yc&gt;
+    &lt;Yd&gt;0.1&lt;/Yd&gt;
+    &lt;X&gt;0.5&lt;/X&gt;
+    &lt;XMin&gt;0.4&lt;/XMin&gt;
+    &lt;XMax&gt;1&lt;/XMax&gt;
+&lt;/MakeSlowVolumeParam&gt;</Value>
     </Setting>
   </Settings>
 </SettingsFile>

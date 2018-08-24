@@ -590,6 +590,7 @@ namespace ShareViewer
                     //SaveAllTable();
                     break;
                 case "Find direction and Turning":
+                    CalcDirectionAndTurningParam.ForceValid();
                     aus.ParamsDirectionAndTurning = CalcDirectionAndTurningParam;
                     aus.Save();
                     RecalcToSelectedCalc(ref auditLines);
@@ -618,6 +619,7 @@ namespace ShareViewer
                     //SaveAllTable();
                     break;
                 case "Make Slow Volumes SV":
+                    calcSlowVolumeParam.ForceValid();
                     aus.ParamsMakeSlowVolume = CalcSlowVolumeParam;
                     aus.Save();
                     RecalcToSelectedCalc(ref auditLines);
@@ -819,7 +821,7 @@ namespace ShareViewer
                     groupBoxParams.Controls.Add(calcAuditTextBox);
                     break;
                 case "Find direction and Turning":
-                    CalcDirectionAndTurningParam = new DirectionAndTurningParam(CurrDirectionAndTurningParam.From,CurrDirectionAndTurningParam.To, CurrDirectionAndTurningParam.PGcThreshold, CurrDirectionAndTurningParam.Z);
+                    CalcDirectionAndTurningParam = new DirectionAndTurningParam(CurrDirectionAndTurningParam.Z);
                     var propGridDandT = DirectionAndTurningUI.PropertyGridParams(CalcDirectionAndTurningParam, groupBoxParams.Height - 20);
                     var btnPairDandT = DirectionAndTurningUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
                     calcAuditTextBox = AuditTextBox(new string[] { "Adjust setting then press 'Update' to (re)evaluate" });
@@ -834,14 +836,8 @@ namespace ShareViewer
                     break;
                 case "Find Five minutes Gradients Figure PGF":
                     CalcFiveMinsGradientFigureParam = new FiveMinsGradientFigureParam(
-                        CurrFiveMinsGradientFigureParam.ZMin,
-                        CurrFiveMinsGradientFigureParam.ZMax,
                         CurrFiveMinsGradientFigureParam.Z,
-                        CurrFiveMinsGradientFigureParam.XMin,
-                        CurrFiveMinsGradientFigureParam.XMax,
                         CurrFiveMinsGradientFigureParam.X,
-                        CurrFiveMinsGradientFigureParam.YMin,
-                        CurrFiveMinsGradientFigureParam.YMax,
                         CurrFiveMinsGradientFigureParam.Y);
                     var propGridFiveMinsPGF = FiveMinsGradientFigureUI.PropertyGridParams(CalcFiveMinsGradientFigureParam, groupBoxParams.Height - 20);
                     var btnPairFiveMinsPGF = FiveMinsGradientFigureUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
@@ -851,9 +847,6 @@ namespace ShareViewer
                     groupBoxParams.Controls.Add(btnPairFiveMinsPGF[0]);
                     groupBoxParams.Controls.Add(btnPairFiveMinsPGF[1]);
                     groupBoxParams.Controls.Add(calcAuditTextBox);
-                    //move to row 10298 (09:00:00 of last day)
-                    //dgViewBindingSource.Position = 10298;
-                    //dgView.FirstDisplayedScrollingRowIndex = 10298;
                     break;
                 case "Related volume Figure (RPGFV) of biggest PGF":
                     var propGridRv = RelatedVolumeFigureOfBiggestPGFUI.PropertyGridParams(groupBoxParams.Height - 20);
@@ -890,7 +883,8 @@ namespace ShareViewer
                 case "Make Slow Volumes SV":
                     CalcSlowVolumeParam = 
                         new MakeSlowVolumeParam(CurrSlowVolumeParam.YMin, CurrSlowVolumeParam.YMax,
-                                   CurrSlowVolumeParam.Ya, CurrSlowVolumeParam.Yb, CurrSlowVolumeParam.Yc, CurrSlowVolumeParam.Yd);
+                                   CurrSlowVolumeParam.Ya, CurrSlowVolumeParam.Yb, 
+                                   CurrSlowVolumeParam.Yc, CurrSlowVolumeParam.Yd, CurrSlowVolumeParam.X);
                     var propGridSV = MakeSlowVolumeUI.PropertyGridParams(CalcSlowVolumeParam, groupBoxParams.Height - 20);
                     var btnPairSV = MakeSlowVolumeUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
                     calcAuditTextBox = AuditTextBox(new string[] { "Adjust setting then press 'Update' to (re)evaluate" });
@@ -974,7 +968,7 @@ namespace ShareViewer
                         stripText.Text += $"{calculation}, ";
                         break;
                     case "Find Five minutes Gradients Figure PGF":
-                        Calculations.FindFiveMinsGradientsFigurePGF(ref atRows, Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure, 10298, 10401, out auditLines);
+                        Calculations.FindFiveMinsGradientsFigurePGF(ref atRows, Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure, 2, 10401, out auditLines);
                         stripText.Text += $"{calculation}, ";
                         calcsPerformed++;
                         break;

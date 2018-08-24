@@ -28,13 +28,13 @@ namespace ShareViewer
             if (aus.ParamsDirectionAndTurning == null)
             {
                 //not been set yet. set some defaults and save.
-                aus.ParamsDirectionAndTurning = new DirectionAndTurningParam(0.99999, 1.01000, 100000, 1.0);
+                aus.ParamsDirectionAndTurning = new DirectionAndTurningParam(0.99999);
                 shouldSave = true;
             }
             if (aus.ParamsFiveMinsGradientFigure == null)
             {
                 //not yet set
-                aus.ParamsFiveMinsGradientFigure = new FiveMinsGradientFigureParam(104, 999, 104, 1.0, 5.0, 1.0, 0, 0.0050, 0);
+                aus.ParamsFiveMinsGradientFigure = new FiveMinsGradientFigureParam(104, 1.0, 0);
                 shouldSave = true;
             }
             if (aus.ParamsMakeHighLine == null)
@@ -52,7 +52,7 @@ namespace ShareViewer
             if (aus.ParamsMakeSlowVolume == null)
             {
                 //not yet set
-                aus.ParamsMakeSlowVolume = new MakeSlowVolumeParam(0, 0.9999, 0.1, 0.1, 0.1, 0.1);
+                aus.ParamsMakeSlowVolume = new MakeSlowVolumeParam(0, 0.9999, 0.1, 0.1, 0.1, 0.1, 0.4);
                 shouldSave = true;
             }
             if (aus.ParamsSlowVolFigSVFac == null)
@@ -480,21 +480,20 @@ Result:
                     }
                     else if (i == 10401)
                     {
-                        //special case i = 10401, use row 10400's FV
-                        //case 1, SVa
-                        diffTerm = atRows[10400].FV - atRows[i - 1].SVa;
+                        //special treatment for the 17:35 band volume (FV) raise it to a settable power before using it
+                        diffTerm = Math.Pow(atRows[i].FV,svp.X) - atRows[i - 1].SVa;
                         powTerm = Math.Pow(diffTerm, svp.Ya);
                         atRows[i].SVa = atRows[i - 1].SVa + Convert.ToUInt32(powTerm);
                         //       SVb
-                        diffTerm = atRows[10400].FV - atRows[i - 1].SVb;
+                        diffTerm = Math.Pow(atRows[i].FV,svp.X) - atRows[i - 1].SVb;
                         powTerm = Math.Pow(diffTerm, svp.Yb);
                         atRows[i].SVb = atRows[i - 1].SVb + Convert.ToUInt32(powTerm);
                         //       SVc
-                        diffTerm = atRows[10400].FV - atRows[i - 1].SVc;
+                        diffTerm = Math.Pow(atRows[i].FV,svp.X) - atRows[i - 1].SVc;
                         powTerm = Math.Pow(diffTerm, svp.Yc);
                         atRows[i].SVc = atRows[i - 1].SVc + Convert.ToUInt32(powTerm);
                         //       SVd
-                        diffTerm = atRows[10400].FV - atRows[i - 1].SVd;
+                        diffTerm = Math.Pow(atRows[i].FV,svp.X) - atRows[i - 1].SVd;
                         powTerm = Math.Pow(diffTerm, svp.Yd);
                         atRows[i].SVd = atRows[i - 1].SVd + Convert.ToUInt32(powTerm);
                     }
@@ -523,19 +522,19 @@ Result:
                     else if (i == 10401)
                     {
                         //case 2, SVa
-                        diffTerm = atRows[i - 1].SVa - atRows[10400].FV;
+                        diffTerm = Math.Pow(atRows[i].SVa,svp.X) - atRows[10400].FV;
                         powTerm = Math.Pow(diffTerm, svp.Ya);
                         atRows[i].SVa = atRows[i - 1].SVa - Convert.ToUInt32(powTerm);
                         //case 2, SVb
-                        diffTerm = atRows[i - 1].SVb - atRows[10400].FV;
+                        diffTerm = Math.Pow(atRows[i].SVb,svp.X) - atRows[10400].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yb);
                         atRows[i].SVb = atRows[i - 1].SVb - Convert.ToUInt32(powTerm);
                         //case 2, SVc
-                        diffTerm = atRows[i - 1].SVc - atRows[10400].FV;
+                        diffTerm = Math.Pow(atRows[i].SVc,svp.X) - atRows[10400].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yc);
                         atRows[i].SVc = atRows[i - 1].SVc - Convert.ToUInt32(powTerm);
                         //case 2, SVd
-                        diffTerm = atRows[i - 1].SVd - atRows[10400].FV;
+                        diffTerm = Math.Pow(atRows[i].SVd,svp.X) - atRows[10400].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yd);
                         atRows[i].SVd = atRows[i - 1].SVd - Convert.ToUInt32(powTerm);
                     }
@@ -582,7 +581,11 @@ Result:
                 for (int i = bigRow; i <=endRow ; i++)
                 {
                     atRows[i].APSVac *= (1 + svf.Y);
-                    if (big > svf.W)
+                    //if (big > svf.W)
+                    //{
+                    //    atRows[i].PtsVola += big;
+                    //}
+                    if (i > 10401-104)
                     {
                         atRows[i].PtsVola += big;
                     }
@@ -595,7 +598,11 @@ Result:
                 {
                     atRows[i].APSVac *= Math.Pow(1 - svf.Y,svf.X);
                     //not sure if this is necessary
-                    if (big > svf.W)
+                    //if (big > svf.W)
+                    //{
+                    //    atRows[i].PtsVola += big;
+                    //}
+                    if (i > 10401 - 104)
                     {
                         atRows[i].PtsVola += big;
                     }
@@ -678,7 +685,7 @@ Result:
             Calculations.FindDirectionAndTurning(ref atSegment, directionAndTurningParams, 10298, 10401, out auditSummary);
 
             var fiveMinsGradientFigParam = Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure;
-            Calculations.FindFiveMinsGradientsFigurePGF(ref atSegment, fiveMinsGradientFigParam, 10298, 10401, out auditSummary);
+            Calculations.FindFiveMinsGradientsFigurePGF(ref atSegment, fiveMinsGradientFigParam, 2, 10401, out auditSummary);
 
             Calculations.RelatedVolumeFigureOfBiggestPGF(ref atSegment, 10298, 10401, out auditSummary);
 

@@ -28,21 +28,9 @@ namespace ShareViewer
         // Check that new param settings remains within allowed bounds
         private static void OnParamSettingChange(object sender, EventArgs e)
         {
-            //var pg = (PropertyGrid)sender;
-            //var param = ((FiveMinsGradientFigureParam)pg.SelectedObject);
-
-            ////check that Z is within allowable range
-            //if (param.Z > param.ZMax) param.Z = param.ZMax;
-            //if (param.Z < param.ZMin) param.Z = param.ZMin;
-
-            ////check that X is within allowable range
-            //if (param.X > param.XMax) param.X = param.XMax;
-            //if (param.X < param.XMin) param.X = param.XMin;
-
-            ////check that Y is within allowable range
-            //if (param.Y > param.YMax) param.Y = param.YMax;
-            //if (param.Y < param.YMin) param.Y = param.YMin;
-
+            var pg = (PropertyGrid)sender;
+            var param = (FiveMinsGradientFigureParam)pg.SelectedObject;
+            param.ForceValid();
         }
 
         internal static Button[] CalcAndSaveBtns(string calculation,

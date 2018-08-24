@@ -473,6 +473,7 @@ namespace ShareViewer
                 case "Find direction and Turning":
                     if (aus.ParamsDirectionAndTurning.DiffersFrom(CalcDirectionAndTurningParam))
                     {
+                        CalcDirectionAndTurningParam.ForceValid();
                         aus.ParamsDirectionAndTurning = CalcDirectionAndTurningParam;
                         aus.Save();
                         toolStripCalcs.Text = $"Changed '{calculation}' parameter saved. You should RE-CALCULATE.";
@@ -514,6 +515,7 @@ namespace ShareViewer
                 case "Make Slow Volumes SV":
                     if (aus.ParamsMakeSlowVolume.DiffersFrom(calcSlowVolumeParam))
                     {
+                        CalcSlowVolumeParam.ForceValid();
                         aus.ParamsMakeSlowVolume = CalcSlowVolumeParam;
                         aus.Save();
                         toolStripCalcs.Text = $"{calculation} Parameter saved";
@@ -626,11 +628,7 @@ namespace ShareViewer
                     groupBoxParams.Controls.Add(btnPg[1]);
                     break;
                 case "Find direction and Turning":
-                    CalcDirectionAndTurningParam = new DirectionAndTurningParam(
-                        CurrDirectionAndTurningParam.From, 
-                        CurrDirectionAndTurningParam.To, 
-                        CurrDirectionAndTurningParam.PGcThreshold, 
-                        CurrDirectionAndTurningParam.Z);
+                    CalcDirectionAndTurningParam = new DirectionAndTurningParam(CurrDirectionAndTurningParam.Z);
                     var propGridDandT = DirectionAndTurningUI.PropertyGridParams(CalcDirectionAndTurningParam, groupBoxParams.Height - 20);
                     var btnPairDandT = DirectionAndTurningUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
                     groupBoxParams.Controls.Add(propGridDandT);
@@ -639,14 +637,8 @@ namespace ShareViewer
                     break;
                 case "Find Five minutes Gradients Figure PGF":
                     CalcFiveMinsGradientFigureParam = new FiveMinsGradientFigureParam(
-                        CurrFiveMinsGradientFigureParam.ZMin,
-                        CurrFiveMinsGradientFigureParam.ZMax,
                         CurrFiveMinsGradientFigureParam.Z,
-                        CurrFiveMinsGradientFigureParam.XMin,
-                        CurrFiveMinsGradientFigureParam.XMax,
                         CurrFiveMinsGradientFigureParam.X,
-                        CurrFiveMinsGradientFigureParam.YMin,
-                        CurrFiveMinsGradientFigureParam.YMax,
                         CurrFiveMinsGradientFigureParam.Y
                         );
                     var propGridFiveMinGradFig = FiveMinsGradientFigureUI.PropertyGridParams(CalcFiveMinsGradientFigureParam, groupBoxParams.Height - 20);
@@ -684,7 +676,7 @@ namespace ShareViewer
                 case "Make Slow Volumes SV":
                     CalcSlowVolumeParam = new MakeSlowVolumeParam(
                         CurrSlowVolumeParam.YMin, CurrSlowVolumeParam.YMax, CurrSlowVolumeParam.Ya,
-                        CurrSlowVolumeParam.Yb, CurrSlowVolumeParam.Yc, CurrSlowVolumeParam.Yd);
+                        CurrSlowVolumeParam.Yb, CurrSlowVolumeParam.Yc, CurrSlowVolumeParam.Yd, CurrSlowVolumeParam.X);
                     var propGridSV = MakeSlowVolumeUI.PropertyGridParams(CalcSlowVolumeParam, groupBoxParams.Height - 20);
                     var btnPairSV = MakeSlowVolumeUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
                     //add params property grid and calc button to groupBox panel
