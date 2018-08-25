@@ -40,12 +40,12 @@ namespace ShareViewer
 
         [Category("Parameter")]
         [Description("Lower limit for Z")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double ZMin { get => zMin; set => zMin = value; }
 
         [Category("Parameter")]
         [Description("Upper limit for Z")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double ZMax { get => zMax; set => zMax = value; }
 
         [Category("Parameter")]
@@ -54,12 +54,12 @@ namespace ShareViewer
 
         [Category("Parameter")]
         [Description("Lower limit for Y exponent")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double YMin { get => yMin; set => yMin = value; }
 
         [Category("Parameter")]
         [Description("Upper limit for Y exponent")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double YMax { get => yMax; set => yMax = value; }
 
         [Category("Parameter")]

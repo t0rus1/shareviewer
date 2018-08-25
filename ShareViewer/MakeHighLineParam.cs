@@ -30,12 +30,12 @@ namespace ShareViewer
 
         [Category("Parameter")]
         [Description("Lower limit for Z")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double ZMin { get => zMin; set => zMin = value; }
 
         [Category("Parameter")]
         [Description("Upper limit for Z")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double ZMax { get => zMax; set=> zMax = value; }
 
         [Category("Parameter")]

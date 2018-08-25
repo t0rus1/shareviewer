@@ -55,12 +55,12 @@ namespace ShareViewer
 
 
         [Description("Lower limit for X")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double XMin { get => xMin; set => xMin = value;  }
 
         [Category("Parameter")]
         [Description("Upper limit for X")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double XMax { get => xMax; set => xMax = value; }
 
         [Category("Parameter")]
@@ -69,12 +69,12 @@ namespace ShareViewer
 
         [Category("Parameter")]
         [Description("Lower limit for Y")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double YMin { get => yMin; set => yMin = value; }
 
         [Category("Parameter")]
         [Description("Upper limit for Y")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double YMax { get => yMax; set => yMax = value; }
 
         [Category("Parameter")]
@@ -84,12 +84,12 @@ namespace ShareViewer
 
         [Category("Parameter")]
         [Description("Lower limit for Z")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public int ZMin { get => zMin; set => zMin = value; }
 
         [Category("Parameter")]
         [Description("Upper limit for Z")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public int ZMax { get => zMax; set => zMax = value; }
 
         [Category("Parameter")]
@@ -98,12 +98,12 @@ namespace ShareViewer
 
         [Category("Parameter")]
         [Description("Lower limit for W")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double WMin { get => wMin; set => wMin = value; }
 
         [Category("Parameter")]
         [Description("Upper limit for W")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)]
         public double WMax { get => wMax; set => wMax = value; }
 
         [Category("Parameter")]
