@@ -16,35 +16,25 @@ namespace ShareViewer
 
         public LazyShareParam()
         {
-            this.from = 0;
-            this.to = 0;
-            this.setting = 0;
         }
 
-        public LazyShareParam(double from, double to, double initial)
+        public LazyShareParam(double initial)
         {
-            this.from = from;
-            this.to = to;
+            this.from = 10.0;
+            this.to = 1000000;
             this.setting = initial;
+            ForceValid();
         }
 
         [Category("Parameter")]
         [Description("Minimum Value")]
-        //[ReadOnly(true)]
+        [ReadOnly(true)]
         public double From { get => from; set => from = value; }
 
         [Category("Parameter")]
         [Description("Maximum Value")]
-        //[ReadOnly(true)]
-        public double To
-        {
-            get => to;
-            set
-            {
-                //if (value >= this.from) to = value;
-                to = value;
-            }
-        }
+        [ReadOnly(true)]
+        public double To { get => to; set => to = value; }
 
         [Category("Parameter")]
         [Description("(Z) adjust to suit")]
@@ -53,6 +43,12 @@ namespace ShareViewer
         public bool DiffersFrom(LazyShareParam other)
         {
             return this.Setting != other.Setting;
+        }
+
+        public void ForceValid()
+        {
+            if (setting < from) setting = from;
+            if (setting > to) setting = to;
         }
 
     }

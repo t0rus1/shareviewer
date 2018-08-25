@@ -15,20 +15,25 @@ namespace ShareViewer
 
         }
 
-        public SlowVolFigSVFacParam(
-            double xmin, double xmax, double x, 
-            double ymin, double ymax, double y, 
-            int zmin, int zmax, int z, 
-            double wmin, double wmax, double w)
+        public SlowVolFigSVFacParam(double x, double y, int z, double w)
         {
-            //values will get coerced
-            XMin = xmin;  XMax = xmax;  this.X = x;
+            XMin = 1.0;
+            XMax = 5.0;
+            this.X = x;
 
-            YMin = ymin; YMax = ymax; this.Y = y;
+            YMin = 0;
+            YMax = 0.005;
+            this.Y = y;
 
-            ZMin = zmin; ZMax = zmax; this.Z = z;
+            ZMin = 104;
+            ZMax = 999;
+            this.Z = z;
 
-            WMin = wmin; WMax = wmax; this.W = w;
+            WMin = 1.0;
+            WMax = 99.000;
+            this.W = w;
+
+            ForceValid();
         }
 
 
@@ -50,133 +55,79 @@ namespace ShareViewer
 
 
         [Description("Lower limit for X")]
-        //[ReadOnly(true)]
-        public double XMin
-        {
-            get => xMin; set => xMin = value;
-        }
+        [ReadOnly(true)]
+        public double XMin { get => xMin; set => xMin = value;  }
 
         [Category("Parameter")]
         [Description("Upper limit for X")]
-        //[ReadOnly(true)]
-        public double XMax
-        {
-            get => xMax;
-            set
-            {
-                if (value >= xMin) xMax = value; else xMax = xMin;
-            }
-        }
+        [ReadOnly(true)]
+        public double XMax { get => xMax; set => xMax = value; }
 
         [Category("Parameter")]
         [Description("Setting")]
-        public double X
-        {
-            get => x;
-            set
-            {
-                if (value >= xMin && value <= xMax) x = value;
-            }
-        }
+        public double X { get => x; set => x = value; }
 
         [Category("Parameter")]
         [Description("Lower limit for Y")]
-        //[ReadOnly(true)]
-        public double YMin
-        {
-            get => yMin; set => yMin = value;
-        }
+        [ReadOnly(true)]
+        public double YMin { get => yMin; set => yMin = value; }
 
         [Category("Parameter")]
         [Description("Upper limit for Y")]
-        //[ReadOnly(true)]
-        public double YMax
-        {
-            get => yMax;
-            set
-            {
-                if (value >= yMin) yMax = value;
-            }
-        }
+        [ReadOnly(true)]
+        public double YMax { get => yMax; set => yMax = value; }
 
         [Category("Parameter")]
         [Description("Setting")]
-        public double Y
-        {
-            get => y;
-            set
-            {
-                if (value >= yMin && value <= yMax) y = value;
-            }
-        }
+        public double Y { get => y; set => y = value; }
 
 
         [Category("Parameter")]
         [Description("Lower limit for Z")]
-        //[ReadOnly(true)]
-        public int ZMin
-        {
-            get => zMin; set => zMin = value;
-        }
+        [ReadOnly(true)]
+        public int ZMin { get => zMin; set => zMin = value; }
 
         [Category("Parameter")]
         [Description("Upper limit for Z")]
-        //[ReadOnly(true)]
-        public int ZMax
-        {
-            get => zMax;
-            set
-            {
-                if (value >= zMin) zMax = value;
-            }
-        }
+        [ReadOnly(true)]
+        public int ZMax { get => zMax; set => zMax = value; }
 
         [Category("Parameter")]
         [Description("Setting")]
-        public int Z
-        {
-            get => z;
-            set
-            {
-                if (value <= zMax && value >= zMin) z = value;
-            }
-        }
+        public int Z { get => z; set => z = value; }
 
         [Category("Parameter")]
         [Description("Lower limit for W")]
-        //[ReadOnly(true)]
-        public double WMin
-        {
-            get => wMin; set => wMin = value;
-        }
+        [ReadOnly(true)]
+        public double WMin { get => wMin; set => wMin = value; }
 
         [Category("Parameter")]
         [Description("Upper limit for W")]
-        //[ReadOnly(true)]
-        public double WMax
-        {
-            get => wMax;
-            set
-            {
-                if (value >= wMin) wMax = value; else wMax = wMin;
-            }
-        }
+        [ReadOnly(true)]
+        public double WMax { get => wMax; set => wMax = value; }
 
         [Category("Parameter")]
         [Description("Setting")]
-        public double W
-        {
-            get => w;
-            set
-            {
-                if (value >= wMin && value <= wMax) w = value;
-            }
-        }
-
+        public double W { get => w; set => w = value; }
 
         public bool DiffersFrom(SlowVolFigSVFacParam other)
         {
             return (this.X != other.X || this.Y != other.Y || this.Z != other.Z || this.W != other.W);
+        }
+
+        public void ForceValid()
+        {
+            if (x < xMin) x = xMin;
+            if (x > xMax) x = xMax;
+
+            if (y < yMin) y = yMin;
+            if (y > yMax) y = yMax;
+
+            if (z < zMin) z = zMin;
+            if (z > zMax) z = zMax;
+
+            if (w < wMin) w = wMin;
+            if (w > wMax) w = wMax;
         }
 
     }

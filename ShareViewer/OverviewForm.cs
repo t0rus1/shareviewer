@@ -473,7 +473,6 @@ namespace ShareViewer
                 case "Find direction and Turning":
                     if (aus.ParamsDirectionAndTurning.DiffersFrom(CalcDirectionAndTurningParam))
                     {
-                        CalcDirectionAndTurningParam.ForceValid();
                         aus.ParamsDirectionAndTurning = CalcDirectionAndTurningParam;
                         aus.Save();
                         toolStripCalcs.Text = $"Changed '{calculation}' parameter saved. You should RE-CALCULATE.";
@@ -515,7 +514,6 @@ namespace ShareViewer
                 case "Make Slow Volumes SV":
                     if (aus.ParamsMakeSlowVolume.DiffersFrom(calcSlowVolumeParam))
                     {
-                        CalcSlowVolumeParam.ForceValid();
                         aus.ParamsMakeSlowVolume = CalcSlowVolumeParam;
                         aus.Save();
                         toolStripCalcs.Text = $"{calculation} Parameter saved";
@@ -595,7 +593,7 @@ namespace ShareViewer
             {
                 case "Identify Lazy Shares":
                     //show a bound params property grid with init values taken from current LazyShareParam settings
-                    CalcLazyShareParam = new LazyShareParam(CurrLazyShareParam.From, CurrLazyShareParam.To, CurrLazyShareParam.Setting);
+                    CalcLazyShareParam = new LazyShareParam(CurrLazyShareParam.Setting);
                     var propGridLazy = LazyShareUI.PropertyGridParams(CalcLazyShareParam, groupBoxParams.Height - 20);
                     var btnPairLazy = LazyShareUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
                     //add params property grid and calc button to groupBox panel
@@ -656,7 +654,7 @@ namespace ShareViewer
                     groupBoxParams.Controls.Add(btnRv[1]);
                     break;
                 case "Make High Line HL":
-                    CalcHighLineParam = new MakeHighLineParam(CurrHighLineParam.ZMin, CurrHighLineParam.ZMax, CurrHighLineParam.Z);
+                    CalcHighLineParam = new MakeHighLineParam(CurrHighLineParam.Z);
                     var propGridHL = MakeHighLineParamUI.PropertyGridParams(CalcHighLineParam, groupBoxParams.Height - 20);
                     var btnPairHL = MakeHighLineParamUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
                     //add params property grid and calc button to groupBox panel
@@ -665,7 +663,7 @@ namespace ShareViewer
                     groupBoxParams.Controls.Add(btnPairHL[1]);
                     break;
                 case "Make Low Line LL":
-                    CalcLowLineParam = new MakeLowLineParam(CurrLowLineParam.ZMin, CurrLowLineParam.ZMax, CurrLowLineParam.Z);
+                    CalcLowLineParam = new MakeLowLineParam(CurrLowLineParam.Z);
                     var propGridLL = MakeLowLineParamUI.PropertyGridParams(CalcLowLineParam, groupBoxParams.Height - 20);
                     var btnPairLL = MakeLowLineParamUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
                     //add params property grid and calc button to groupBox panel
@@ -686,10 +684,10 @@ namespace ShareViewer
                     break;
                 case "Slow Volume Figure SVFac":
                     CalcSlowVolFigSVFacParam = new SlowVolFigSVFacParam(
-                        CurrSlowVolFigSVFacParam.XMin, CurrSlowVolFigSVFacParam.XMax, CurrSlowVolFigSVFacParam.X,
-                        CurrSlowVolFigSVFacParam.YMin, CurrSlowVolFigSVFacParam.YMax, CurrSlowVolFigSVFacParam.Y,
-                        CurrSlowVolFigSVFacParam.ZMin, CurrSlowVolFigSVFacParam.ZMax, CurrSlowVolFigSVFacParam.Z,
-                        CurrSlowVolFigSVFacParam.WMin, CurrSlowVolFigSVFacParam.WMax, CurrSlowVolFigSVFacParam.W);
+                        CurrSlowVolFigSVFacParam.X,
+                        CurrSlowVolFigSVFacParam.Y,
+                        CurrSlowVolFigSVFacParam.Z,
+                        CurrSlowVolFigSVFacParam.W);
                     var propGridSVFac = SlowVolFigSVFacUI.PropertyGridParams(CalcSlowVolFigSVFacParam, groupBoxParams.Height - 20);
                     var btnPairSVFac = SlowVolFigSVFacUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
                     //add params property grid and calc button to groupBox panel
@@ -698,10 +696,7 @@ namespace ShareViewer
                     groupBoxParams.Controls.Add(btnPairSVFac[1]);
                     break;
                 case "Slow Volume Figure SVFbd":
-                    CalcSlowVolFigSVFbdParam = new SlowVolFigSVFbdParam(
-                        CurrSlowVolFigSVFbdParam.ZMin,CurrSlowVolFigSVFbdParam.ZMax,CurrSlowVolFigSVFbdParam.Z,
-                        CurrSlowVolFigSVFbdParam.YMin,CurrSlowVolFigSVFbdParam.YMax,CurrSlowVolFigSVFbdParam.Y,
-                        CurrSlowVolFigSVFbdParam.WMin,CurrSlowVolFigSVFbdParam.WMax,CurrSlowVolFigSVFbdParam.W);
+                    CalcSlowVolFigSVFbdParam = new SlowVolFigSVFbdParam(CurrSlowVolFigSVFbdParam.Z,CurrSlowVolFigSVFbdParam.Y,CurrSlowVolFigSVFbdParam.W);
                     var propGridSVFbd = SlowVolFigSVFbdUI.PropertyGridParams(CalcSlowVolFigSVFbdParam, groupBoxParams.Height - 20);
                     var btnPairSVFbd = SlowVolFigSVFbdUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
                     //add params property grid and calc button to groupBox panel

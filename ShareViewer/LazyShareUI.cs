@@ -28,18 +28,8 @@ namespace ShareViewer
         private static void OnParamSettingChange(object sender, EventArgs e)
         {
             var pg = (PropertyGrid)sender;
-            var param = ((LazyShareParam)pg.SelectedObject);
-            var newVal = param.Setting;
-            var lowerLimit = param.From;
-            var upperLimit = param.To;
-            if (newVal < lowerLimit)
-            {
-                param.Setting = lowerLimit;
-            }
-            else if (newVal > upperLimit)
-            {
-                param.Setting = upperLimit;
-            }
+            var param = (LazyShareParam)pg.SelectedObject;
+            param.ForceValid();
         }
 
         internal static Button[] CalcAndSaveBtns(string calculation, 

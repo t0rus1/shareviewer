@@ -15,13 +15,12 @@ namespace ShareViewer
 
         }
 
-        public MakeHighLineParam(double zmin, double zmax, double zDefault)
+        public MakeHighLineParam(double zDefault)
         {
-            zMin = zmin;
-            //if (zmax >= zMin) zMax = zmax; else zMax = zMin;
-            zMax = zmax;
-            //if (zDefault >= zMin && zDefault <= zmax) z = zDefault; else z = zMin;
+            zMin = 0;
+            zMax = 0.001;
             z = zDefault;
+            ForceValid();
         }
 
 
@@ -31,38 +30,27 @@ namespace ShareViewer
 
         [Category("Parameter")]
         [Description("Lower limit for Z")]
-        //[ReadOnly(true)]
+        [ReadOnly(true)]
         public double ZMin { get => zMin; set => zMin = value; }
 
         [Category("Parameter")]
         [Description("Upper limit for Z")]
-        //[ReadOnly(true)]
-        public double ZMax
-        {
-            get => zMax;
-            set
-            {
-                //if (value >= zMin) zMax = value;
-                zMax = value;
-            }
-        }
+        [ReadOnly(true)]
+        public double ZMax { get => zMax; set=> zMax = value; }
 
         [Category("Parameter")]
         [Description("Setting")]
-        public double Z
-        {
-            get => z;
-            set {
-                //if (z >= zMin && z <= zMax)
-                //{
-                    z = value;
-                //}
-            }
-        }
+        public double Z { get => z; set => z = value; }
 
         public bool DiffersFrom(MakeHighLineParam other)
         {
             return this.Z != other.Z;
+        }
+
+        public void ForceValid()
+        {
+            if (z < zMin) z = zMin;
+            if (z > zMax) z = zMax;
         }
 
     }

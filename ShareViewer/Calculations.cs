@@ -10,68 +10,91 @@ namespace ShareViewer
     internal static class Calculations
     {
 
-        internal static void InitializeAllShareCalculationParameters(Properties.Settings aus)
+        internal static void InitializeShareCalculationParameters(Properties.Settings aus)
         {
-            bool shouldSave = false;
             if (aus.ParamsLazyShare == null)
             {
-                //not been set yet. set it to some defaults and save.
-                aus.ParamsLazyShare = new LazyShareParam(10, 1000000, 50000);
-                shouldSave = true;
+                aus.ParamsLazyShare = new LazyShareParam(50000);
             }
-            if (aus.ParamsSlowPrice == null)
+            else
             {
-                //not been set yet. set it to some defaults and save.
-                aus.ParamsSlowPrice = new SlowPriceParam(100, 99999, 0, 0.9999, 100);
-                shouldSave = true;
-            }
-            if (aus.ParamsDirectionAndTurning == null)
-            {
-                //not been set yet. set some defaults and save.
-                aus.ParamsDirectionAndTurning = new DirectionAndTurningParam(0.99999);
-                shouldSave = true;
-            }
-            if (aus.ParamsFiveMinsGradientFigure == null)
-            {
-                //not yet set
-                aus.ParamsFiveMinsGradientFigure = new FiveMinsGradientFigureParam(104, 1.0, 0);
-                shouldSave = true;
-            }
-            if (aus.ParamsMakeHighLine == null)
-            {
-                //not yet set
-                aus.ParamsMakeHighLine = new MakeHighLineParam(0, 0.001, 0.0005);
-                shouldSave = true;
-            }
-            if (aus.ParamsMakeLowLine == null)
-            {
-                //not yet set
-                aus.ParamsMakeLowLine = new MakeLowLineParam(0, 0.01, 0.005);
-                shouldSave = true;
-            }
-            if (aus.ParamsMakeSlowVolume == null)
-            {
-                //not yet set
-                aus.ParamsMakeSlowVolume = new MakeSlowVolumeParam(0, 0.9999, 0.1, 0.1, 0.1, 0.1, 0.4);
-                shouldSave = true;
-            }
-            if (aus.ParamsSlowVolFigSVFac == null)
-            {
-                //not yet set
-                aus.ParamsSlowVolFigSVFac = new SlowVolFigSVFacParam(1.0, 5.0, 1, 0, 0.005, 0.1, 104, 999,104, 1.000, 99.000,1.000);
-                shouldSave = true;
-            }
-            if (aus.ParamsSlowVolFigSVFbd == null)
-            {
-                //not yet set
-                aus.ParamsSlowVolFigSVFbd = new SlowVolFigSVFbdParam(104, 2000, 104, 0, 0.005, 0, 1000, 99000, 1000);
-                shouldSave = true;
-            }
-            if (shouldSave)
-            {
-                aus.Save();
+                aus.ParamsLazyShare.ForceValid();
             }
 
+            if (aus.ParamsSlowPrice == null)
+            {
+                aus.ParamsSlowPrice = new SlowPriceParam(100, 0, 0, 0, 0);
+            }
+            else
+            {
+                aus.ParamsSlowPrice.ForceValid();
+            }
+
+            if (aus.ParamsDirectionAndTurning == null)
+            {
+                aus.ParamsDirectionAndTurning = new DirectionAndTurningParam(0.99999);
+            }
+            else
+            {
+                aus.ParamsDirectionAndTurning.ForceValid();
+            }
+
+            if (aus.ParamsFiveMinsGradientFigure == null)
+            {
+                aus.ParamsFiveMinsGradientFigure = new FiveMinsGradientFigureParam(104, 1.0, 0);
+            }
+            else
+            {
+                aus.ParamsFiveMinsGradientFigure.ForceValid();
+            }
+
+            if (aus.ParamsMakeHighLine == null)
+            {
+                aus.ParamsMakeHighLine = new MakeHighLineParam(0.0005);
+            }
+            else
+            {
+                aus.ParamsMakeHighLine.ForceValid();
+            }
+
+            if (aus.ParamsMakeLowLine == null)
+            {
+                aus.ParamsMakeLowLine = new MakeLowLineParam(0.005);
+            }
+            else
+            {
+                aus.ParamsMakeLowLine.ForceValid();
+            }
+
+            if (aus.ParamsMakeSlowVolume == null)
+            {
+                aus.ParamsMakeSlowVolume = new MakeSlowVolumeParam(0, 0.9999, 0.1, 0.1, 0.1, 0.1, 0.4);
+            }
+            else
+            {
+                aus.ParamsMakeSlowVolume.ForceValid();
+            }
+
+            if (aus.ParamsSlowVolFigSVFac == null)
+            {
+                aus.ParamsSlowVolFigSVFac = new SlowVolFigSVFacParam(1, 0, 104, 1.000);
+            }
+            else
+            {
+                aus.ParamsSlowVolFigSVFac.ForceValid();
+            }
+
+            if (aus.ParamsSlowVolFigSVFbd == null)
+            {
+                aus.ParamsSlowVolFigSVFbd = new SlowVolFigSVFbdParam(104, 0, 1.000);
+            }
+            else
+            {
+                aus.ParamsSlowVolFigSVFbd.ForceValid();
+            }
+
+            //save all force-validated settings for good mesaure settings regardless
+            aus.Save();
 
         }
 

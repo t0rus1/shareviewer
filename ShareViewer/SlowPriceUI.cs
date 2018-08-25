@@ -27,19 +27,9 @@ namespace ShareViewer
         // Check that new param setting remains within allowed bounds
         private static void OnParamSettingChange(object sender, EventArgs e)
         {
-            //var pg = (PropertyGrid)sender;
-            //var param = ((SlowPriceParam)pg.SelectedObject);
-            //var newVal = param.Setting;
-            //var lowerLimit = param.From;
-            //var upperLimit = param.To;
-            //if (newVal < lowerLimit)
-            //{
-            //    param.Setting = lowerLimit;
-            //}
-            //else if (newVal > upperLimit)
-            //{
-            //    param.Setting = upperLimit;
-            //}
+            var pg = (PropertyGrid)sender;
+            var param = (SlowPriceParam)pg.SelectedObject;
+            param.ForceValid();
         }
 
         internal static Button[] CalcAndSaveBtns(string calculation,
