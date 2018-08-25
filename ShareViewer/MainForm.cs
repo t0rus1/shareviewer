@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShareViewer.Properties;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,7 +16,7 @@ namespace ShareViewer
 {
     public partial class MainForm : Form
     {
-        public const String Version = "1.1.6";
+        public const String Version = "1.1.8";
         internal Properties.Settings appUserSettings;
         bool initializing = true;
         bool SuppressDaysBackChangeHandling = false; // when true, suppresses OnChangehandling
@@ -31,6 +32,13 @@ namespace ShareViewer
         private void OnLoad(object sender, EventArgs e)
         {
             Text = "ShareViewer v" + Version;
+
+            if (Settings.Default.UpgradeRequired)
+            {
+                Settings.Default.Upgrade();
+                Settings.Default.UpgradeRequired = false;
+                Settings.Default.Save();
+            }
 
             appUserSettings = Properties.Settings.Default;
 
