@@ -202,13 +202,23 @@ namespace ShareViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"
-                    <LazyShareParam xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-                        <From>1000</From>
-                        <To>1000000</To>
-                        <Setting>7000</Setting>
-                    </LazyShareParam>
-                ")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.SettingsManageabilityAttribute(global::System.Configuration.SettingsManageability.Roaming)]
+        public bool UpgradeRequired {
+            get {
+                return ((bool)(this["UpgradeRequired"]));
+            }
+            set {
+                this["UpgradeRequired"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<LazyShareParam xmlns:xsi=\"http://www.w3" +
+            ".org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <" +
+            "From>1000</From>\r\n  <To>1000000</To>\r\n  <Setting>7000</Setting>\r\n</LazySharePara" +
+            "m>")]
         public global::ShareViewer.LazyShareParam ParamsLazyShare {
             get {
                 return ((global::ShareViewer.LazyShareParam)(this["ParamsLazyShare"]));
@@ -220,14 +230,13 @@ namespace ShareViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"
-                    <DirectionAndTurningParam xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-                        <From>0.99999</From>
-                        <To>1.01</To>
-                        <Z>1</Z>
-                        <PGcThreshold>100000</PGcThreshold>
-                    </DirectionAndTurningParam>
-                ")]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<DirectionAndTurningParam xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+  <From>0.99999</From>
+  <To>1.01</To>
+  <Z>1</Z>
+  <PGcThreshold>100000</PGcThreshold>
+</DirectionAndTurningParam>")]
         public global::ShareViewer.DirectionAndTurningParam ParamsDirectionAndTurning {
             get {
                 return ((global::ShareViewer.DirectionAndTurningParam)(this["ParamsDirectionAndTurning"]));
@@ -239,19 +248,18 @@ namespace ShareViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"
-                    <FiveMinsGradientFigureParam xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-                        <X>0</X>
-                        <Y>0</Y>
-                        <Z>0</Z>
-                        <XMin>1</XMin>
-                        <XMax>5</XMax>
-                        <YMin>0</YMin>
-                        <YMax>0.005</YMax>
-                        <ZMin>104</ZMin>
-                        <ZMax>999</ZMax>
-                    </FiveMinsGradientFigureParam>
-                ")]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<FiveMinsGradientFigureParam xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+  <XMin>1</XMin>
+  <XMax>5</XMax>
+  <X>0</X>
+  <YMin>0</YMin>
+  <YMax>0.005</YMax>
+  <Y>0</Y>
+  <ZMin>104</ZMin>
+  <ZMax>999</ZMax>
+  <Z>0</Z>
+</FiveMinsGradientFigureParam>")]
         public global::ShareViewer.FiveMinsGradientFigureParam ParamsFiveMinsGradientFigure {
             get {
                 return ((global::ShareViewer.FiveMinsGradientFigureParam)(this["ParamsFiveMinsGradientFigure"]));
@@ -263,13 +271,9 @@ namespace ShareViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"
-                    <MakeHighLineParam xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-                        <ZMin>0</ZMin>
-                        <ZMax>0.001</ZMax>
-                        <Z>0.0005</Z>
-                    </MakeHighLineParam>
-                ")]
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<MakeHighLineParam xmlns:xsi=\"http://www" +
+            ".w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n" +
+            "  <ZMin>0</ZMin>\r\n  <ZMax>0.001</ZMax>\r\n  <Z>0.0005</Z>\r\n</MakeHighLineParam>")]
         public global::ShareViewer.MakeHighLineParam ParamsMakeHighLine {
             get {
                 return ((global::ShareViewer.MakeHighLineParam)(this["ParamsMakeHighLine"]));
@@ -281,13 +285,9 @@ namespace ShareViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"
-                    <MakeLowLineParam xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-                        <ZMin>0</ZMin>
-                        <ZMax>0.01</ZMax>
-                        <Z>0.005</Z>
-                    </MakeLowLineParam>
-                ")]
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<MakeLowLineParam xmlns:xsi=\"http://www." +
+            "w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n " +
+            " <ZMin>0</ZMin>\r\n  <ZMax>0.01</ZMax>\r\n  <Z>0.005</Z>\r\n</MakeLowLineParam>")]
         public global::ShareViewer.MakeLowLineParam ParamsMakeLowLine {
             get {
                 return ((global::ShareViewer.MakeLowLineParam)(this["ParamsMakeLowLine"]));
@@ -299,22 +299,21 @@ namespace ShareViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"
-                    <SlowVolFigSVFacParam xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-                        <XMin>1</XMin>
-                        <XMax>5</XMax>
-                        <X>1</X>
-                        <YMin>0</YMin>
-                        <YMax>0.005</YMax>
-                        <Y>0</Y>
-                        <ZMin>104</ZMin>
-                        <ZMax>999</ZMax>
-                        <Z>104</Z>
-                        <WMin>1</WMin>
-                        <WMax>99</WMax>
-                        <W>1</W>
-                    </SlowVolFigSVFacParam>
-                ")]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<SlowVolFigSVFacParam xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+  <XMin>1</XMin>
+  <XMax>5</XMax>
+  <X>1</X>
+  <YMin>0</YMin>
+  <YMax>0.005</YMax>
+  <Y>0</Y>
+  <ZMin>104</ZMin>
+  <ZMax>999</ZMax>
+  <Z>104</Z>
+  <WMin>1</WMin>
+  <WMax>99</WMax>
+  <W>1</W>
+</SlowVolFigSVFacParam>")]
         public global::ShareViewer.SlowVolFigSVFacParam ParamsSlowVolFigSVFac {
             get {
                 return ((global::ShareViewer.SlowVolFigSVFacParam)(this["ParamsSlowVolFigSVFac"]));
@@ -326,19 +325,18 @@ namespace ShareViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"
-                    <SlowVolFigSVFbdParam xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-                        <ZMin>104</ZMin>
-                        <ZMax>2000</ZMax>
-                        <Z>104</Z>
-                        <YMin>0</YMin>
-                        <YMax>0.005</YMax>
-                        <Y>0</Y>
-                        <WMin>1</WMin>
-                        <WMax>99</WMax>
-                        <W>1</W>
-                    </SlowVolFigSVFbdParam>
-                ")]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<SlowVolFigSVFbdParam xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+  <ZMin>104</ZMin>
+  <ZMax>2000</ZMax>
+  <Z>104</Z>
+  <YMin>0</YMin>
+  <YMax>0.005</YMax>
+  <Y>0</Y>
+  <WMin>1</WMin>
+  <WMax>99</WMax>
+  <W>1</W>
+</SlowVolFigSVFbdParam>")]
         public global::ShareViewer.SlowVolFigSVFbdParam ParamsSlowVolFigSVFbd {
             get {
                 return ((global::ShareViewer.SlowVolFigSVFbdParam)(this["ParamsSlowVolFigSVFbd"]));
@@ -350,19 +348,18 @@ namespace ShareViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"
-                    <SlowPriceParam xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-                        <Z>100</Z>
-                        <Ya>0.98</Ya>
-                        <Yb>0.95</Yb>
-                        <Yc>0.8</Yc>
-                        <Yd>0.7</Yd>
-                        <ZMin>100</ZMin>
-                        <ZMax>99999</ZMax>
-                        <YMin>0</YMin>
-                        <YMax>0.9999</YMax>
-                    </SlowPriceParam>
-                ")]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<SlowPriceParam xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+  <ZMin>100</ZMin>
+  <ZMax>99999</ZMax>
+  <Z>100</Z>
+  <YMin>0</YMin>
+  <YMax>0.9999</YMax>
+  <Ya>0.98</Ya>
+  <Yb>0.95</Yb>
+  <Yc>0.8</Yc>
+  <Yd>0.7</Yd>
+</SlowPriceParam>")]
         public global::ShareViewer.SlowPriceParam ParamsSlowPrice {
             get {
                 return ((global::ShareViewer.SlowPriceParam)(this["ParamsSlowPrice"]));
@@ -374,37 +371,24 @@ namespace ShareViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"
-                    <MakeSlowVolumeParam xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-                        <YMin>0</YMin>
-                        <YMax>0.9999</YMax>
-                        <Ya>0.1</Ya>
-                        <Yb>0.1</Yb>
-                        <Yc>0.1</Yc>
-                        <Yd>0.1</Yd>
-                        <X>0.5</X>
-                        <XMin>0.4</XMin>
-                        <XMax>1</XMax>
-                    </MakeSlowVolumeParam>
-                ")]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<MakeSlowVolumeParam xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+  <XMin>0.4</XMin>
+  <XMax>1</XMax>
+  <X>0.5</X>
+  <YMin>0</YMin>
+  <YMax>0.9999</YMax>
+  <Ya>0.1</Ya>
+  <Yb>0.1</Yb>
+  <Yc>0.1</Yc>
+  <Yd>0.1</Yd>
+</MakeSlowVolumeParam>")]
         public global::ShareViewer.MakeSlowVolumeParam ParamsMakeSlowVolume {
             get {
                 return ((global::ShareViewer.MakeSlowVolumeParam)(this["ParamsMakeSlowVolume"]));
             }
             set {
                 this["ParamsMakeSlowVolume"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool UpgradeRequired {
-            get {
-                return ((bool)(this["UpgradeRequired"]));
-            }
-            set {
-                this["UpgradeRequired"] = value;
             }
         }
     }

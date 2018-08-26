@@ -93,7 +93,7 @@ namespace ShareViewer
                 aus.ParamsSlowVolFigSVFbd.ForceValid();
             }
 
-            //save all force-validated settings for good mesaure settings regardless
+            //save all force-validated settings for good measure settings regardless
             aus.Save();
 
         }

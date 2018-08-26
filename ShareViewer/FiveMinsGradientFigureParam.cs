@@ -26,8 +26,8 @@ namespace ShareViewer
             this.x = x;
 
             yMin = 0;
-            yMax = 0.005;
-            this.z = z;
+            yMax = 2.0;
+            this.y = y;
 
             ForceValid();
         }

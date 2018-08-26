@@ -29,6 +29,7 @@ namespace ShareViewer
             var pg = (PropertyGrid)sender;
             var param = ((SlowVolFigSVFacParam)pg.SelectedObject);
             param.ForceValid();
+            pg.BackColor = Color.LightPink;
         }
 
         internal static Button[] CalcAndSaveBtns(string calculation,

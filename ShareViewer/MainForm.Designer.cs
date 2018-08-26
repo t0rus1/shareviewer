@@ -92,6 +92,8 @@
             this.toolTipShareList = new System.Windows.Forms.ToolTip(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tabPageParameters = new System.Windows.Forms.TabPage();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -102,6 +104,7 @@
             this.tabPageCalendar.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.statusStrip.SuspendLayout();
+            this.tabPageParameters.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControlMain
@@ -111,12 +114,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControlMain.Controls.Add(this.tabPageImportation);
             this.tabControlMain.Controls.Add(this.tabPageCalendar);
+            this.tabControlMain.Controls.Add(this.tabPageParameters);
             this.tabControlMain.Location = new System.Drawing.Point(0, 0);
             this.tabControlMain.Name = "tabControlMain";
             this.tabControlMain.SelectedIndex = 0;
             this.tabControlMain.Size = new System.Drawing.Size(1008, 737);
             this.tabControlMain.TabIndex = 0;
             this.tabControlMain.SelectedIndexChanged += new System.EventHandler(this.tabControlMain_SelectedIndexChanged);
+            this.tabControlMain.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControlMain_Selected);
             // 
             // tabPageImportation
             // 
@@ -862,6 +867,25 @@
             this.stripText.Size = new System.Drawing.Size(22, 17);
             this.stripText.Text = "Ok";
             // 
+            // tabPageParameters
+            // 
+            this.tabPageParameters.Controls.Add(this.flowLayoutPanel1);
+            this.tabPageParameters.Location = new System.Drawing.Point(4, 22);
+            this.tabPageParameters.Name = "tabPageParameters";
+            this.tabPageParameters.Size = new System.Drawing.Size(1000, 711);
+            this.tabPageParameters.TabIndex = 2;
+            this.tabPageParameters.Text = "Calculation Parameters";
+            this.tabPageParameters.UseVisualStyleBackColor = true;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(10);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1000, 711);
+            this.flowLayoutPanel1.TabIndex = 0;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -890,6 +914,7 @@
             this.groupBox1.PerformLayout();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
+            this.tabPageParameters.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -960,6 +985,8 @@
         private System.Windows.Forms.Label labelNumShares;
         internal System.Windows.Forms.StatusStrip statusStrip;
         internal System.Windows.Forms.ToolStripStatusLabel stripText;
+        private System.Windows.Forms.TabPage tabPageParameters;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
     }
 }
 

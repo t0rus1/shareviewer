@@ -17,13 +17,19 @@ namespace ShareViewer
 
         public SlowPriceParam(double zDefault, double ya, double yb, double yc, double yd)
         {
-            zMin = 100;
+            zMin = 1000;
             zMax = 99999;
+            z = zDefault;
+
             //the yMin and Ymax apply to Ya,Yb,Yc and Yd
             yMin = 0;
             yMax = 0.9999;
-            z = zDefault;
+
             this.ya = ya;
+            this.yb = yb;
+            this.yc = yc;
+            this.yd = yd;
+
             ForceValid();
         }
 

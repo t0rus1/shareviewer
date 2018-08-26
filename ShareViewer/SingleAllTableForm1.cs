@@ -795,12 +795,7 @@ namespace ShareViewer
 
                 case "Make Slow (Five minutes) Prices SP":
                     //show a bound params property grid with init values taken from current SlowPriceParam settings
-                    CalcSlowPriceParam = new SlowPriceParam(CurrSlowPriceParam.ZMin, CurrSlowPriceParam.ZMax,
-                        CurrSlowPriceParam.YMin, CurrSlowPriceParam.YMax, CurrSlowPriceParam.Z);
-                    CalcSlowPriceParam.Ya = CurrSlowPriceParam.Ya;
-                    CalcSlowPriceParam.Yb = CurrSlowPriceParam.Yb;
-                    CalcSlowPriceParam.Yc = CurrSlowPriceParam.Yc;
-                    CalcSlowPriceParam.Yd = CurrSlowPriceParam.Yd;
+                    CalcSlowPriceParam = new SlowPriceParam(CurrSlowPriceParam.Z, CurrSlowPriceParam.Ya, CurrSlowPriceParam.Yb, CurrSlowPriceParam.Yc, CurrSlowPriceParam.Yd);
                     var propGridSlow = SlowPriceUI.PropertyGridParams(CalcSlowPriceParam, groupBoxParams.Height - 20);
                     var btnPairSlow = SlowPriceUI.CalcAndSaveBtns(calculation, null, HandleParameterSaveClick);
                     calcAuditTextBox = AuditTextBox(new string[] { "Adjust settings then press 'Update' to (re)evaluate" });

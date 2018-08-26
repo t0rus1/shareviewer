@@ -16,7 +16,7 @@ namespace ShareViewer
 {
     public partial class MainForm : Form
     {
-        public const String Version = "1.1.8";
+        public const String Version = "1.1.11";
         internal Properties.Settings appUserSettings;
         bool initializing = true;
         bool SuppressDaysBackChangeHandling = false; // when true, suppresses OnChangehandling
@@ -40,7 +40,7 @@ namespace ShareViewer
                 Settings.Default.Save();
             }
 
-            appUserSettings = Properties.Settings.Default;
+            appUserSettings = Settings.Default;
 
             CheckExtraFolderSettings();
             CheckAllTableFolderSettings();
@@ -953,6 +953,136 @@ namespace ShareViewer
 
         }
 
+        private void buttonAllParamsSave_Click(object sender, EventArgs e)
+        {
+            var aus = Helper.GetAppUserSettings();
 
+            var panel = (FlowLayoutPanel)((Button)sender).Tag;
+            foreach (Control control in panel.Controls)
+            {
+                if (control is GroupBox)
+                {
+                    var pg = (PropertyGrid)((GroupBox)control).Controls[0];
+                    if (pg.SelectedObject is LazyShareParam)
+                    {
+                        var param = (LazyShareParam)pg.SelectedObject;
+                        param.ForceValid();
+                        aus.ParamsLazyShare = param;
+                        pg.BackColor = SystemColors.Control;
+                    }
+                    if (pg.SelectedObject is SlowPriceParam)
+                    {
+                        var param = (SlowPriceParam)pg.SelectedObject;
+                        param.ForceValid();
+                        aus.ParamsSlowPrice = param;
+                        pg.BackColor = SystemColors.Control;
+                    }
+                    if (pg.SelectedObject is DirectionAndTurningParam)
+                    {
+                        var param = (DirectionAndTurningParam)pg.SelectedObject;
+                        param.ForceValid();
+                        aus.ParamsDirectionAndTurning = param;
+                        pg.BackColor = SystemColors.Control;
+                    }
+                    if (pg.SelectedObject is FiveMinsGradientFigureParam)
+                    {
+                        var param = (FiveMinsGradientFigureParam)pg.SelectedObject;
+                        param.ForceValid();
+                        aus.ParamsFiveMinsGradientFigure = param;
+                        pg.BackColor = SystemColors.Control;
+                    }
+                    if (pg.SelectedObject is MakeHighLineParam)
+                    {
+                        var param = (MakeHighLineParam)pg.SelectedObject;
+                        param.ForceValid();
+                        aus.ParamsMakeHighLine = param;
+                        pg.BackColor = SystemColors.Control;
+                    }
+                    if (pg.SelectedObject is MakeLowLineParam)
+                    {
+                        var param = (MakeLowLineParam)pg.SelectedObject;
+                        param.ForceValid();
+                        aus.ParamsMakeLowLine = param;
+                        pg.BackColor = SystemColors.Control;
+                    }
+                    if (pg.SelectedObject is MakeSlowVolumeParam)
+                    {
+                        var param = (MakeSlowVolumeParam)pg.SelectedObject;
+                        param.ForceValid();
+                        aus.ParamsMakeSlowVolume = param;
+                        pg.BackColor = SystemColors.Control;
+                    }
+                    if (pg.SelectedObject is SlowVolFigSVFacParam)
+                    {
+                        var param = (SlowVolFigSVFacParam)pg.SelectedObject;
+                        param.ForceValid();
+                        aus.ParamsSlowVolFigSVFac = param;
+                        pg.BackColor = SystemColors.Control;
+                    }
+                    if (pg.SelectedObject is SlowVolFigSVFbdParam)
+                    {
+                        var param = (SlowVolFigSVFbdParam)pg.SelectedObject;
+                        param.ForceValid();
+                        aus.ParamsSlowVolFigSVFbd = param;
+                        pg.BackColor = SystemColors.Control;
+                    }
+
+                }
+            }
+
+            aus.Save();
+        }
+
+        private void tabControlMain_Selected(object sender, TabControlEventArgs e)
+        {
+            if (e.TabPageIndex == 2)
+            {
+                const int grpBoxHt = 260;
+                flowLayoutPanel1.Controls.Clear();
+
+                //instantiate and populate propertygrids to house the Params
+                var lazyShareGrpBox = new GroupBox() { Text = "Lazy Shares", AutoSize = true };
+                lazyShareGrpBox.Controls.Add(LazyShareUI.PropertyGridParams(Helper.GetAppUserSettings().ParamsLazyShare, grpBoxHt));
+                flowLayoutPanel1.Controls.Add(lazyShareGrpBox);
+
+                var slowPriceGrpBox = new GroupBox() { Text = "Slow (Five Minute) Prices", AutoSize = true };
+                slowPriceGrpBox.Controls.Add(SlowPriceUI.PropertyGridParams(Helper.GetAppUserSettings().ParamsSlowPrice, grpBoxHt));
+                flowLayoutPanel1.Controls.Add(slowPriceGrpBox);
+
+                var directionAndTurningGrpBox = new GroupBox() { Text = "Direction and Turning", AutoSize = true };
+                directionAndTurningGrpBox.Controls.Add(DirectionAndTurningUI.PropertyGridParams(Helper.GetAppUserSettings().ParamsDirectionAndTurning, grpBoxHt));
+                flowLayoutPanel1.Controls.Add(directionAndTurningGrpBox);
+
+                var fiveMinsGradientsFigurePGFGrpBox = new GroupBox() { Text = "Five mins Gradients Figure PGF", AutoSize = true };
+                fiveMinsGradientsFigurePGFGrpBox.Controls.Add(FiveMinsGradientFigureUI.PropertyGridParams(Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure, grpBoxHt));
+                flowLayoutPanel1.Controls.Add(fiveMinsGradientsFigurePGFGrpBox);
+
+                var makeHighLineGrpBox = new GroupBox() { Text = "Make High Line HL", AutoSize = true };
+                makeHighLineGrpBox.Controls.Add(MakeHighLineParamUI.PropertyGridParams(Helper.GetAppUserSettings().ParamsMakeHighLine, grpBoxHt));
+                flowLayoutPanel1.Controls.Add(makeHighLineGrpBox);
+
+                var makeLowLineGrpBox = new GroupBox() { Text = "Make Low Line LL", AutoSize = true };
+                makeLowLineGrpBox.Controls.Add(MakeLowLineParamUI.PropertyGridParams(Helper.GetAppUserSettings().ParamsMakeLowLine, grpBoxHt));
+                flowLayoutPanel1.Controls.Add(makeLowLineGrpBox);
+
+                var makeSlowVolumesGrpBox = new GroupBox() { Text = "Make Slow Volumes SV", AutoSize = true };
+                makeSlowVolumesGrpBox.Controls.Add(MakeSlowVolumeUI.PropertyGridParams(Helper.GetAppUserSettings().ParamsMakeSlowVolume, grpBoxHt));
+                flowLayoutPanel1.Controls.Add(makeSlowVolumesGrpBox);
+
+                var slowVolFigSVFacGrpBox = new GroupBox() { Text = "Slow Volume Figure SVFac", AutoSize = true };
+                slowVolFigSVFacGrpBox.Controls.Add(SlowVolFigSVFacUI.PropertyGridParams(Helper.GetAppUserSettings().ParamsSlowVolFigSVFac, grpBoxHt));
+                flowLayoutPanel1.Controls.Add(slowVolFigSVFacGrpBox);
+
+                var slowVolFigSVFbdGrpBox = new GroupBox() { Text = "Slow Volume Figure SVFbd", AutoSize = true };
+                slowVolFigSVFbdGrpBox.Controls.Add(SlowVolFigSVFbdUI.PropertyGridParams(Helper.GetAppUserSettings().ParamsSlowVolFigSVFbd, grpBoxHt));
+                flowLayoutPanel1.Controls.Add(slowVolFigSVFbdGrpBox);
+
+                var saveBtn = new Button() { Text = "Save All", Height = slowVolFigSVFbdGrpBox.Height, Width = slowVolFigSVFbdGrpBox.Width };
+                saveBtn.Click += buttonAllParamsSave_Click;
+                saveBtn.Tag = flowLayoutPanel1;
+                flowLayoutPanel1.Controls.Add(saveBtn);
+            }
+
+        }
     }
 }

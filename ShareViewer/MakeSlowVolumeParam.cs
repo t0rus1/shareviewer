@@ -34,7 +34,7 @@ namespace ShareViewer
             Ya = ya;
             Yb = yb;
             Yc = yc;
-            Yd = yc;
+            Yd = yd;
             XMin = 0.4;
             XMax = 1.0;
             X = x; //new property, for dealing with large volumes in FV at 17:35

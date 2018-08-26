@@ -30,6 +30,7 @@ namespace ShareViewer
             var pg = (PropertyGrid)sender;
             var param = (SlowPriceParam)pg.SelectedObject;
             param.ForceValid();
+            pg.BackColor = Color.LightPink;
         }
 
         internal static Button[] CalcAndSaveBtns(string calculation,
