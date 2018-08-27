@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using log4net.Core;
+using ShareViewer.Properties;
 
 namespace ShareViewer
 {
@@ -25,11 +23,9 @@ namespace ShareViewer
             return GetMainForm().Controls.Find(controlName, true)[0];
         }
 
-        internal static Properties.Settings GetAppUserSettings()
+        internal static Properties.Settings UserSettings()
         {
-            var form = GetMainForm();
-            return ((MainForm)form).appUserSettings;
-
+            return Settings.Default;
         }
 
         //place message on status strip
@@ -78,7 +74,7 @@ namespace ShareViewer
         internal static void UpdateHolidayHash(ref Dictionary<string, string> holidayHash)
         {
             holidayHash.Clear();
-            var aus = GetAppUserSettings();
+            var aus = UserSettings();
             foreach (string day in aus.Holidays)
             {
                 var keyDay = day.Split('=')[0].Trim();

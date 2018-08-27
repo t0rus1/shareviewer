@@ -89,11 +89,11 @@
             this.textBoxHolidayName = new System.Windows.Forms.TextBox();
             this.buttonHolidayAdd = new System.Windows.Forms.Button();
             this.monthCalendarHolidays = new System.Windows.Forms.MonthCalendar();
+            this.tabPageParameters = new System.Windows.Forms.TabPage();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.toolTipShareList = new System.Windows.Forms.ToolTip(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
-            this.tabPageParameters = new System.Windows.Forms.TabPage();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -103,8 +103,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.daysBack)).BeginInit();
             this.tabPageCalendar.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.statusStrip.SuspendLayout();
             this.tabPageParameters.SuspendLayout();
+            this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControlMain
@@ -845,6 +845,25 @@
             this.monthCalendarHolidays.TabIndex = 0;
             this.monthCalendarHolidays.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.monthCalendarHolidays_DateSelected);
             // 
+            // tabPageParameters
+            // 
+            this.tabPageParameters.Controls.Add(this.flowLayoutPanel1);
+            this.tabPageParameters.Location = new System.Drawing.Point(4, 22);
+            this.tabPageParameters.Name = "tabPageParameters";
+            this.tabPageParameters.Size = new System.Drawing.Size(1000, 711);
+            this.tabPageParameters.TabIndex = 2;
+            this.tabPageParameters.Text = "Calculation Parameters";
+            this.tabPageParameters.UseVisualStyleBackColor = true;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(10);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1000, 711);
+            this.flowLayoutPanel1.TabIndex = 0;
+            // 
             // toolTipShareList
             // 
             this.toolTipShareList.AutoPopDelay = 9000;
@@ -866,25 +885,6 @@
             this.stripText.Name = "stripText";
             this.stripText.Size = new System.Drawing.Size(22, 17);
             this.stripText.Text = "Ok";
-            // 
-            // tabPageParameters
-            // 
-            this.tabPageParameters.Controls.Add(this.flowLayoutPanel1);
-            this.tabPageParameters.Location = new System.Drawing.Point(4, 22);
-            this.tabPageParameters.Name = "tabPageParameters";
-            this.tabPageParameters.Size = new System.Drawing.Size(1000, 711);
-            this.tabPageParameters.TabIndex = 2;
-            this.tabPageParameters.Text = "Calculation Parameters";
-            this.tabPageParameters.UseVisualStyleBackColor = true;
-            // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(10);
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1000, 711);
-            this.flowLayoutPanel1.TabIndex = 0;
             // 
             // MainForm
             // 
@@ -912,9 +912,9 @@
             this.tabPageCalendar.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.tabPageParameters.ResumeLayout(false);
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
-            this.tabPageParameters.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 

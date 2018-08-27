@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -49,6 +50,16 @@ namespace ShareViewer
         {
             if (setting < from) setting = from;
             if (setting > to) setting = to;
+        }
+
+        public string Summarize()
+        {
+            string summary = "[Lazy Share Parameters] ";
+            foreach (PropertyInfo property in typeof(LazyShareParam).GetProperties())
+            {
+                summary += $"{property.Name}: {property.GetValue(this).ToString()}; ";       
+            }
+            return summary;
         }
 
     }

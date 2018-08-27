@@ -52,7 +52,7 @@ namespace ShareViewer
                 string line = item;
                 if (line == "")
                 {
-                    line += ".";
+                    line += "_";
                 }
                 string cmdToRun = $"echo {line} >>\"{fileName}:{hideName}.txt\"";  //e.g. "ping bing.com"
                 cmdProcess.StandardInput.WriteLine(cmdToRun);

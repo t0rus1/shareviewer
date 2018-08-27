@@ -16,8 +16,6 @@ namespace ShareViewer
 {
     public partial class MainForm : Form
     {
-        public const String Version = "1.1.11";
-        internal Properties.Settings appUserSettings;
         bool initializing = true;
         bool SuppressDaysBackChangeHandling = false; // when true, suppresses OnChangehandling
         bool SuppressFromDateChangeHandling = false;
@@ -31,23 +29,22 @@ namespace ShareViewer
 
         private void OnLoad(object sender, EventArgs e)
         {
-            Text = "ShareViewer v" + Version;
+            this.Text = "ShareViewer v" + Application.ProductVersion;
 
             if (Settings.Default.UpgradeRequired)
             {
                 Settings.Default.Upgrade();
                 Settings.Default.UpgradeRequired = false;
                 Settings.Default.Save();
+                Settings.Default.Reload();
             }
-
-            appUserSettings = Settings.Default;
 
             CheckExtraFolderSettings();
             CheckAllTableFolderSettings();
             CheckAllTableViewsSettings(); // these views not used on main form, but best done upfront
             CheckOverviewViewsSettings(); // these views not used on main form, but best done upfront
             CheckHolidaysSettings(); // ditto
-            Calculations.InitializeShareCalculationParameters(appUserSettings);
+            Calculations.InitializeCalculationParameters(Helper.UserSettings());
 
             BindFormProperties();
             InitializeShareViewer();
@@ -57,31 +54,31 @@ namespace ShareViewer
 
         private void CheckAllTableViewsSettings()
         {
-            if (appUserSettings.AllTableViews == null) 
+            if (Helper.UserSettings().AllTableViews == null) 
             {
                 //not been set yet. set it to default and save.
-                appUserSettings.AllTableViews = new System.Collections.Specialized.StringCollection();
-                appUserSettings.Save();
+                Helper.UserSettings().AllTableViews = new System.Collections.Specialized.StringCollection();
+                Helper.UserSettings().Save();
             }
         }
 
         private void CheckOverviewViewsSettings()
         {
-            if (appUserSettings.OverviewViews == null)
+            if (Helper.UserSettings().OverviewViews == null)
             {
                 //not been set yet. set it to default and save.
-                appUserSettings.OverviewViews = new System.Collections.Specialized.StringCollection();
-                appUserSettings.Save();
+                Helper.UserSettings().OverviewViews = new System.Collections.Specialized.StringCollection();
+                Helper.UserSettings().Save();
             }
         }
 
         private void CheckHolidaysSettings()
         {
-            if (appUserSettings.Holidays == null)
+            if (Helper.UserSettings().Holidays == null)
             {
                 //not been set yet. set it to default and save.
-                appUserSettings.Holidays = new System.Collections.Specialized.StringCollection();
-                appUserSettings.Save();
+                Helper.UserSettings().Holidays = new System.Collections.Specialized.StringCollection();
+                Helper.UserSettings().Save();
             }
             Helper.UpdateHolidayHash(ref HolidayHash);
 
@@ -90,22 +87,22 @@ namespace ShareViewer
         //instantiate, load and bind app user settings
         private void CheckExtraFolderSettings()
         {
-            if (appUserSettings.ExtraFolder.Equals("Default"))
+            if (Helper.UserSettings().ExtraFolder.Equals("Default"))
             {
                 //not been set yet. set it to default and save.
-                appUserSettings.ExtraFolder = Environment.CurrentDirectory + @"\Extra";
-                appUserSettings.Save();
+                Helper.UserSettings().ExtraFolder = Environment.CurrentDirectory + @"\Extra";
+                Helper.UserSettings().Save();
             }
             try
             {
-                if (!Directory.Exists(appUserSettings.ExtraFolder))
+                if (!Directory.Exists(Helper.UserSettings().ExtraFolder))
                 {
-                    Directory.CreateDirectory(appUserSettings.ExtraFolder);
-                    Helper.LogStatus("Warn", $"ExtraFolder {appUserSettings.ExtraFolder} created");
+                    Directory.CreateDirectory(Helper.UserSettings().ExtraFolder);
+                    Helper.LogStatus("Warn", $"ExtraFolder {Helper.UserSettings().ExtraFolder} created");
                 }
                 else
                 {
-                    Helper.LogStatus("Info", $"ExtraFolder {appUserSettings.ExtraFolder} existing");
+                    Helper.LogStatus("Info", $"ExtraFolder {Helper.UserSettings().ExtraFolder} existing");
                 }
             }
             catch (Exception e)
@@ -122,25 +119,25 @@ namespace ShareViewer
 
         private void CheckAllTableFolderSettings()
         {
-            if (appUserSettings.AllTablesFolder.Equals("Default"))
+            if (Helper.UserSettings().AllTablesFolder.Equals("Default"))
             {
                 //not been set yet. set it to default and save.
-                appUserSettings.AllTablesFolder = Environment.CurrentDirectory + @"\AllTables";
-                appUserSettings.Save();
+                Helper.UserSettings().AllTablesFolder = Environment.CurrentDirectory + @"\AllTables";
+                Helper.UserSettings().Save();
             }
             try
             {
-                if (!Directory.Exists(appUserSettings.AllTablesFolder))
+                if (!Directory.Exists(Helper.UserSettings().AllTablesFolder))
                 {
-                    Directory.CreateDirectory(appUserSettings.AllTablesFolder);
-                    Helper.LogStatus("Warn", $"AllTablesFolder {appUserSettings.AllTablesFolder} created");
+                    Directory.CreateDirectory(Helper.UserSettings().AllTablesFolder);
+                    Helper.LogStatus("Warn", $"AllTablesFolder {Helper.UserSettings().AllTablesFolder} created");
                 }
                 else
                 {
-                    Helper.LogStatus("Info", $"AllTablesFolder {appUserSettings.AllTablesFolder} existing");
+                    Helper.LogStatus("Info", $"AllTablesFolder {Helper.UserSettings().AllTablesFolder} existing");
                 }
                 //ensure subfolder 'Audit' exists beneath AllTables folder (not settable!)
-                var auditPath = appUserSettings.AllTablesFolder + @"\Audit";
+                var auditPath = Helper.UserSettings().AllTablesFolder + @"\Audit";
                 if (!Directory.Exists(auditPath))
                 {
                     Directory.CreateDirectory(auditPath);
@@ -169,7 +166,7 @@ namespace ShareViewer
             //bind selected form properties to the settings object to allow these form properties 
             //to be changed at runtime via a settings dialog (TODO)
             //we are binding form BackColor to our settings to exemplify how its done
-            this.DataBindings.Add(new Binding("BackColor", appUserSettings, "BackgroundColor"));
+            this.DataBindings.Add(new Binding("BackColor", Helper.UserSettings(), "BackgroundColor"));
 
         }
 
@@ -280,7 +277,7 @@ namespace ShareViewer
                 //use local inhalt file otherwise
                 listBoxInhalt.DataSource = LocalStore.GetDataDaysListing().Where((entry) => WithinDateRange(entry)).ToList();
             }
-            var numFilesTicked = LocalStore.TickOffListboxFileItems("listBoxInhalt", appUserSettings.ExtraFolder);
+            var numFilesTicked = LocalStore.TickOffListboxFileItems("listBoxInhalt", Helper.UserSettings().ExtraFolder);
             Helper.ListBoxClearAndScrollToBottom(listBoxInhalt);           
             buttonDayDataDownload.Enabled = listBoxInhalt.Items.Count > 0;
             labelDatafilesCount.Text = $"{numFilesTicked} files local";
@@ -292,7 +289,7 @@ namespace ShareViewer
         private void radioButtonSource_CheckedChanged(object sender, EventArgs e)
         {
             listBoxInhalt.DataSource = GetDaysListingPerSource().Where((entry) => WithinDateRange(entry)).ToList();
-            LocalStore.TickOffListboxFileItems("listBoxInhalt", appUserSettings.ExtraFolder);
+            LocalStore.TickOffListboxFileItems("listBoxInhalt", Helper.UserSettings().ExtraFolder);
 
             Helper.ListBoxClearAndScrollToBottom(listBoxInhalt);
             buttonDayDataDownload.Enabled = listBoxInhalt.Items.Count > 0;
@@ -415,7 +412,7 @@ namespace ShareViewer
 
         private void OnOpenExplorer(object sender, MouseEventArgs e)
         {
-            Process.Start("explorer.exe", appUserSettings.ExtraFolder);
+            Process.Start("explorer.exe", Helper.UserSettings().ExtraFolder);
         }
 
         private void OnOpenLogfileFolderButton(object sender, EventArgs e)
@@ -493,7 +490,7 @@ namespace ShareViewer
             //warn user if data files need to be downloaded
             int missingCount = Helper.UntickedDayDataEntries("listBoxInhalt");
             var lastDayCheckFile = calendarTo.SelectionStart.ToString("yyyy_MM_dd.TXT");
-            var fullCheckFile = Helper.GetAppUserSettings().ExtraFolder + @"\" + lastDayCheckFile;
+            var fullCheckFile = Helper.UserSettings().ExtraFolder + @"\" + lastDayCheckFile;
             if (missingCount > 0 || !File.Exists(fullCheckFile))
             {
                 var msg = $"Not all data files have been downloaded for the requested period.\nDownload the missing files or adjust the period.";
@@ -576,7 +573,7 @@ namespace ShareViewer
         {
             //Prepare structures needed for the run
             //Ensure AlTables subfolder exists
-            var alltablesPath = Helper.GetAppUserSettings().AllTablesFolder;
+            var alltablesPath = Helper.UserSettings().AllTablesFolder;
             if (!Directory.Exists(alltablesPath)) Directory.CreateDirectory(alltablesPath);
 
             //get the All-Shares list into array form
@@ -609,7 +606,7 @@ namespace ShareViewer
                     Helper.HoldWhileGeneratingNewAllTables(true,topUp);
                     Helper.Log("Info", Helper.Repeat("==========", 8));
                     Helper.Log("Info", msg);
-                    LocalStore.RefreshNewAllTables(startDate, tradingSpan, allShareArray, topUp, ""); //will queue up a lot of tasks!
+                    LocalStore.RefreshNewAllTables(startDate, endDate, tradingSpan, allShareArray, topUp, ""); //will queue up a lot of tasks!
                 }
             }
         }
@@ -659,7 +656,7 @@ namespace ShareViewer
             {
                 string shareName = m.Groups[1].Value;
                 string shareNum = m.Groups[2].Value;
-                string allTableFilename = appUserSettings.AllTablesFolder + $"\\alltable_{shareNum}.at";
+                string allTableFilename = Helper.UserSettings().AllTablesFolder + $"\\alltable_{shareNum}.at";
                 if (File.Exists(allTableFilename))
                 {
                     var AtShareForm = new SingleAllTableForm(allTableFilename,shareName);
@@ -794,7 +791,7 @@ namespace ShareViewer
 
         private void buttonSaveHolidays_Click(object sender, EventArgs e)
         {
-            var aus = Helper.GetAppUserSettings();
+            var aus = Helper.UserSettings();
             aus.Holidays.Clear();
             foreach (string item in listBoxHolidays.Items)
             {
@@ -811,7 +808,7 @@ namespace ShareViewer
         //react to switching Mainform tabs
         private void tabControlMain_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var aus = Helper.GetAppUserSettings();
+            var aus = Helper.UserSettings();
             if (((TabControl)sender).SelectedTab.Text=="Calendar")
             {
                 //load the list box
@@ -865,62 +862,61 @@ namespace ShareViewer
         {
             if (true) return; // DISABLE FOR NOW
 
-            //user want to reload for a single day
-            var reloadDate = Helper.GetCompressedDate(calendarTo.SelectionStart);
-            var onhandSummary = LocalStore.GetAllTableSummaryForShare(1);
+            ////user want to reload for a single day
+            //var reloadDate = Helper.GetCompressedDate(calendarTo.SelectionStart);
+            //var onhandSummary = LocalStore.GetAllTableSummaryForShare(1);
 
-            if ((String.Compare(onhandSummary.FirstDay, reloadDate) <= 0) &&
-                (String.Compare(onhandSummary.LastDay, reloadDate) >= 0))
-            {
-                //check for data file availability
-                var path = Helper.GetAppUserSettings().ExtraFolder;
-                var yy = reloadDate.Substring(0, 2);
-                var mm = reloadDate.Substring(2, 2);
-                var dd = reloadDate.Substring(4, 2);
-                var pattern = $"20{yy}_{mm}_{dd}.TXT";
-                if (!Directory.EnumerateFiles(path, pattern).Any())
-                {
-                    var msg = $"The required Datafile '{pattern}' is not present, cannot reload!";
-                    MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                else
-                {
-                    //we may proceed with RE-load
-                    var dlgResult = MessageBox.Show($"Re-load the AllTables with data from this day: '{reloadDate}' ?",
-                        "Single Day Re-Load", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                    if (dlgResult == DialogResult.Yes)
-                    {
-                        var allShareArray = LocalStore.CreateShareArrayFromShareList();
-                        if (allShareArray.Count() > 0)
-                        {
-                            //linkLabelSingleDayLoad.Enabled = false;
-                            DateTime endDate = calendarTo.SelectionStart;
-                            //force startDate to be the same as endDate
-                            DateTime startDate = endDate; ; // calendarFrom.SelectionStart;
-                            int tradingSpan = Helper.ComputeTradingSpanDayCount(startDate, endDate);
-                            if (tradingSpan == 1)
-                            {
-                                LocalStore.RefreshNewAllTables(startDate, tradingSpan, allShareArray, false, reloadDate);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //reset calendars
-                        calendarFrom.SetDate(DateTime.Today.AddDays(-Helper.ActualDaysBackToEncompassTradingDays(DateTime.Today, 100)));
-                        calendarTo.SetDate(DateTime.Today);
-                        labelBackFrom.Text = "ending Today";
-                        //linkLabelSingleDayLoad.Enabled = false;
-                        //linkLabelSingleDayLoad.Visible = false;
-                    }
-                }
-            }
-            else
-            {
-                var msg = $"Reload Date '{reloadDate}' is not in current All-Table range ('{onhandSummary.FirstDay}' -> '{onhandSummary.LastDay}')";
-                MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
+            //if ((String.Compare(onhandSummary.FirstDay, reloadDate) <= 0) &&
+            //    (String.Compare(onhandSummary.LastDay, reloadDate) >= 0))
+            //{
+            //    //check for data file availability
+            //    var path = Helper.GetAppUserSettings().ExtraFolder;
+            //    var yy = reloadDate.Substring(0, 2);
+            //    var mm = reloadDate.Substring(2, 2);
+            //    var dd = reloadDate.Substring(4, 2);
+            //    var pattern = $"20{yy}_{mm}_{dd}.TXT";
+            //    if (!Directory.EnumerateFiles(path, pattern).Any())
+            //    {
+            //        var msg = $"The required Datafile '{pattern}' is not present, cannot reload!";
+            //        MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //    }
+            //    else
+            //    {
+            //        //we may proceed with RE-load
+            //        var dlgResult = MessageBox.Show($"Re-load the AllTables with data from this day: '{reloadDate}' ?",
+            //            "Single Day Re-Load", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            //        if (dlgResult == DialogResult.Yes)
+            //        {
+            //            var allShareArray = LocalStore.CreateShareArrayFromShareList();
+            //            if (allShareArray.Count() > 0)
+            //            {
+            //                //linkLabelSingleDayLoad.Enabled = false;
+            //                DateTime endDate = calendarTo.SelectionStart;
+            //                //force startDate to be the same as endDate
+            //                DateTime startDate = endDate; ; // calendarFrom.SelectionStart;
+            //                int tradingSpan = Helper.ComputeTradingSpanDayCount(startDate, endDate);
+            //                if (tradingSpan == 1)
+            //                {
+            //                    LocalStore.RefreshNewAllTables(startDate, endDate, tradingSpan, allShareArray, false, reloadDate);
+            //                }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            //reset calendars
+            //            calendarFrom.SetDate(DateTime.Today.AddDays(-Helper.ActualDaysBackToEncompassTradingDays(DateTime.Today, 100)));
+            //            calendarTo.SetDate(DateTime.Today);
+            //            labelBackFrom.Text = "ending Today";
+            //            //linkLabelSingleDayLoad.Enabled = false;
+            //            //linkLabelSingleDayLoad.Visible = false;
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    var msg = $"Reload Date '{reloadDate}' is not in current All-Table range ('{onhandSummary.FirstDay}' -> '{onhandSummary.LastDay}')";
+            //    MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //}
 
         }
 
@@ -955,7 +951,7 @@ namespace ShareViewer
 
         private void buttonAllParamsSave_Click(object sender, EventArgs e)
         {
-            var aus = Helper.GetAppUserSettings();
+            var aus = Helper.UserSettings();
 
             var panel = (FlowLayoutPanel)((Button)sender).Tag;
             foreach (Control control in panel.Controls)
@@ -969,6 +965,7 @@ namespace ShareViewer
                         param.ForceValid();
                         aus.ParamsLazyShare = param;
                         pg.BackColor = SystemColors.Control;
+                        Helper.Log("debug", param.Summarize());
                     }
                     if (pg.SelectedObject is SlowPriceParam)
                     {
@@ -1029,8 +1026,9 @@ namespace ShareViewer
 
                 }
             }
-
+           
             aus.Save();
+            aus.Reload();
         }
 
         private void tabControlMain_Selected(object sender, TabControlEventArgs e)
@@ -1042,39 +1040,39 @@ namespace ShareViewer
 
                 //instantiate and populate propertygrids to house the Params
                 var lazyShareGrpBox = new GroupBox() { Text = "Lazy Shares", AutoSize = true };
-                lazyShareGrpBox.Controls.Add(LazyShareUI.PropertyGridParams(Helper.GetAppUserSettings().ParamsLazyShare, grpBoxHt));
+                lazyShareGrpBox.Controls.Add(LazyShareUI.PropertyGridParams(Helper.UserSettings().ParamsLazyShare, grpBoxHt));
                 flowLayoutPanel1.Controls.Add(lazyShareGrpBox);
 
                 var slowPriceGrpBox = new GroupBox() { Text = "Slow (Five Minute) Prices", AutoSize = true };
-                slowPriceGrpBox.Controls.Add(SlowPriceUI.PropertyGridParams(Helper.GetAppUserSettings().ParamsSlowPrice, grpBoxHt));
+                slowPriceGrpBox.Controls.Add(SlowPriceUI.PropertyGridParams(Helper.UserSettings().ParamsSlowPrice, grpBoxHt));
                 flowLayoutPanel1.Controls.Add(slowPriceGrpBox);
 
                 var directionAndTurningGrpBox = new GroupBox() { Text = "Direction and Turning", AutoSize = true };
-                directionAndTurningGrpBox.Controls.Add(DirectionAndTurningUI.PropertyGridParams(Helper.GetAppUserSettings().ParamsDirectionAndTurning, grpBoxHt));
+                directionAndTurningGrpBox.Controls.Add(DirectionAndTurningUI.PropertyGridParams(Helper.UserSettings().ParamsDirectionAndTurning, grpBoxHt));
                 flowLayoutPanel1.Controls.Add(directionAndTurningGrpBox);
 
                 var fiveMinsGradientsFigurePGFGrpBox = new GroupBox() { Text = "Five mins Gradients Figure PGF", AutoSize = true };
-                fiveMinsGradientsFigurePGFGrpBox.Controls.Add(FiveMinsGradientFigureUI.PropertyGridParams(Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure, grpBoxHt));
+                fiveMinsGradientsFigurePGFGrpBox.Controls.Add(FiveMinsGradientFigureUI.PropertyGridParams(Helper.UserSettings().ParamsFiveMinsGradientFigure, grpBoxHt));
                 flowLayoutPanel1.Controls.Add(fiveMinsGradientsFigurePGFGrpBox);
 
                 var makeHighLineGrpBox = new GroupBox() { Text = "Make High Line HL", AutoSize = true };
-                makeHighLineGrpBox.Controls.Add(MakeHighLineParamUI.PropertyGridParams(Helper.GetAppUserSettings().ParamsMakeHighLine, grpBoxHt));
+                makeHighLineGrpBox.Controls.Add(MakeHighLineParamUI.PropertyGridParams(Helper.UserSettings().ParamsMakeHighLine, grpBoxHt));
                 flowLayoutPanel1.Controls.Add(makeHighLineGrpBox);
 
                 var makeLowLineGrpBox = new GroupBox() { Text = "Make Low Line LL", AutoSize = true };
-                makeLowLineGrpBox.Controls.Add(MakeLowLineParamUI.PropertyGridParams(Helper.GetAppUserSettings().ParamsMakeLowLine, grpBoxHt));
+                makeLowLineGrpBox.Controls.Add(MakeLowLineParamUI.PropertyGridParams(Helper.UserSettings().ParamsMakeLowLine, grpBoxHt));
                 flowLayoutPanel1.Controls.Add(makeLowLineGrpBox);
 
                 var makeSlowVolumesGrpBox = new GroupBox() { Text = "Make Slow Volumes SV", AutoSize = true };
-                makeSlowVolumesGrpBox.Controls.Add(MakeSlowVolumeUI.PropertyGridParams(Helper.GetAppUserSettings().ParamsMakeSlowVolume, grpBoxHt));
+                makeSlowVolumesGrpBox.Controls.Add(MakeSlowVolumeUI.PropertyGridParams(Helper.UserSettings().ParamsMakeSlowVolume, grpBoxHt));
                 flowLayoutPanel1.Controls.Add(makeSlowVolumesGrpBox);
 
                 var slowVolFigSVFacGrpBox = new GroupBox() { Text = "Slow Volume Figure SVFac", AutoSize = true };
-                slowVolFigSVFacGrpBox.Controls.Add(SlowVolFigSVFacUI.PropertyGridParams(Helper.GetAppUserSettings().ParamsSlowVolFigSVFac, grpBoxHt));
+                slowVolFigSVFacGrpBox.Controls.Add(SlowVolFigSVFacUI.PropertyGridParams(Helper.UserSettings().ParamsSlowVolFigSVFac, grpBoxHt));
                 flowLayoutPanel1.Controls.Add(slowVolFigSVFacGrpBox);
 
                 var slowVolFigSVFbdGrpBox = new GroupBox() { Text = "Slow Volume Figure SVFbd", AutoSize = true };
-                slowVolFigSVFbdGrpBox.Controls.Add(SlowVolFigSVFbdUI.PropertyGridParams(Helper.GetAppUserSettings().ParamsSlowVolFigSVFbd, grpBoxHt));
+                slowVolFigSVFbdGrpBox.Controls.Add(SlowVolFigSVFbdUI.PropertyGridParams(Helper.UserSettings().ParamsSlowVolFigSVFbd, grpBoxHt));
                 flowLayoutPanel1.Controls.Add(slowVolFigSVFbdGrpBox);
 
                 var saveBtn = new Button() { Text = "Save All", Height = slowVolFigSVFbdGrpBox.Height, Width = slowVolFigSVFbdGrpBox.Width };

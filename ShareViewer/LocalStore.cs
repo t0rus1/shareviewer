@@ -21,7 +21,7 @@ namespace ShareViewer
         //and converts to list of strings
         internal static List<String> GetDataDaysListing()
         {
-            Properties.Settings appUserSettings = Helper.GetAppUserSettings();
+            Properties.Settings appUserSettings = Helper.UserSettings();
 
             var localFilename = appUserSettings.ExtraFolder + @"\" + appUserSettings.DataDaysListingFilename;
 
@@ -83,7 +83,7 @@ namespace ShareViewer
         //generate a new ShareList file
         internal static List<ShareListItem> GenerateShareList(string sourceName)
         {
-            var appUserSettings = Helper.GetAppUserSettings();
+            var appUserSettings = Helper.UserSettings();
             var shareList = new List<ShareListItem>();
 
             var sourceFilename = appUserSettings.ExtraFolder + @"\" + sourceName;
@@ -134,7 +134,7 @@ namespace ShareViewer
 
         internal static List<String> WriteShareList(List<ShareListItem> shareList, string basedOnDate)
         {
-            var appUserSettings = Helper.GetAppUserSettings();
+            var appUserSettings = Helper.UserSettings();
 
             var shares = from s in shareList
                          select s.ToString();
@@ -149,7 +149,7 @@ namespace ShareViewer
 
         internal static String[] ReadShareList()
         {
-            var appUserSettings = Helper.GetAppUserSettings();
+            var appUserSettings = Helper.UserSettings();
             var shareListFilename = appUserSettings.ExtraFolder + @"\ShareList.txt";
             if (File.Exists(shareListFilename)) {
                 return File.ReadAllLines(shareListFilename);
@@ -160,7 +160,7 @@ namespace ShareViewer
 
         internal static String[] ShareListByName()
         {
-            var appUserSettings = Helper.GetAppUserSettings();
+            var appUserSettings = Helper.UserSettings();
             var shareListFilename = appUserSettings.ExtraFolder + @"\ShareList.txt";
             try
             {
@@ -175,7 +175,7 @@ namespace ShareViewer
 
         internal static void GetDayDataRange(out DateTime newest, out DateTime oldest)
         {
-            var appUserSettings = Helper.GetAppUserSettings();
+            var appUserSettings = Helper.UserSettings();
             var directory = new DirectoryInfo(appUserSettings.ExtraFolder);
 
             var fileInfos = directory.GetFiles("????_??_??.TXT");
@@ -228,7 +228,7 @@ namespace ShareViewer
         private static void PrepareAllTables(ref TopupInformation topupInfo, DateTime startDate, 
             int tradingSpan, string[] allShares, bool topUpOnly, Action<string> progress)
         {
-            var atPath = Helper.GetAppUserSettings().AllTablesFolder;
+            var atPath = Helper.UserSettings().AllTablesFolder;
 
             var msg = $"Preparing all *.at files";
             progress(msg);
@@ -526,7 +526,7 @@ namespace ShareViewer
                     var tradeDate = dateTest.Substring(2); //YYMMDD
                     //does a data file exist for this day?
                     var dayFilename = Helper.BuildDayDataFilename(runDate);
-                    var dayFile = Helper.GetAppUserSettings().ExtraFolder + $"\\{dayFilename}";
+                    var dayFile = Helper.UserSettings().ExtraFolder + $"\\{dayFilename}";
                     if (File.Exists(dayFile))
                     {
                         progressCallback($"Processing {dayFilename} (XETRA trades only) ...");
@@ -651,10 +651,10 @@ namespace ShareViewer
         //NOTE: if topUpOnly then existing allTable files must be preserved and simply appended to
         //      if reloadOnly then just one day's worth of timebands within the existing all-table must be overwritten
         private static void UpdateAllTables(
-            Dictionary<string,Trade> tradeHash, TopupInformation topUpInfo, DateTime startDate, int tradingSpan, 
+            Dictionary<string,Trade> tradeHash, TopupInformation topUpInfo, DateTime startDate, DateTime endDate, int tradingSpan, 
             string[] allShares, bool topUpOnly, string reloadDate, Action<string> progresscallBack)
         {
-            var appUserSettings = Helper.GetAppUserSettings();
+            var appUserSettings = Helper.UserSettings();
             var atPath = appUserSettings.AllTablesFolder;
 
             //skip 1st informational line of sharelist and sweep thru the rest of the shares
@@ -711,6 +711,7 @@ namespace ShareViewer
                                 //normal end of run, store date range now held in the AllTables
                                 //appUserSettings.AllTableDataStart = startDate.ToShortDateString();  // YYYY/MM/DD in en-ZA culture
                                 appUserSettings.AllTableDataStart = startDate.ToString("yyyy/MM/dd"); // culture independent
+                                appUserSettings.AllTableDataEnd = endDate.ToString("yyyy/MM/dd");
                                 appUserSettings.AllTableTradingSpan = tradingSpan.ToString();
                                 appUserSettings.Save();
                                 Helper.LogStatus("Info", $"{sharesDone} All-Tables COMPLETE. ===> Please click 'unlock' followed by 'lock' to restore normal buttons <===");
@@ -781,7 +782,7 @@ namespace ShareViewer
         //see method BuildComprehensiveTradeHash
         private static void SaveTradehashForAudit(Dictionary<String, Trade> tradeHash)
         {
-            var appUserSettings = Helper.GetAppUserSettings();
+            var appUserSettings = Helper.UserSettings();
             var auditPath = appUserSettings.AllTablesFolder + @"\Audit";
             Directory.CreateDirectory(auditPath);
 
@@ -801,7 +802,7 @@ namespace ShareViewer
         internal static string[] CreateShareArrayFromShareList()
         {
             string[] allSharesArray = new string[] { };
-            var appUserSettings = Helper.GetAppUserSettings();
+            var appUserSettings = Helper.UserSettings();
             var sharelistPath = appUserSettings.ExtraFolder;
             var shareListFilePath = sharelistPath + @"\ShareList.txt";
 
@@ -839,12 +840,12 @@ namespace ShareViewer
         //Entrypoint for the generation/update of a complete batch of fresh new AllTables
         //based on the ShareList, creating one AllTable for each share, populated with initial values.
         internal static void RefreshNewAllTables(
-            DateTime startDate, int tradingSpan, string[] allSharesArray,  bool topUpOnly, string reloadDate)
+            DateTime startDate, DateTime endDate, int tradingSpan, string[] allSharesArray,  bool topUpOnly, string reloadDate)
         {
             if (reloadDate=="")
             {
                 //prepare trimmed AllTable files (if topping up) and delete Audit files
-                var task = Task.Run(() => PrepareThenUpdateAllTables(startDate, tradingSpan, allSharesArray, topUpOnly, reloadDate, AllTablesProgressCallback));
+                var task = Task.Run(() => PrepareThenUpdateAllTables(startDate, endDate, tradingSpan, allSharesArray, topUpOnly, reloadDate, AllTablesProgressCallback));
             }
             //else
             //{
@@ -855,7 +856,7 @@ namespace ShareViewer
         }
 
         internal static void PrepareThenUpdateAllTables(
-            DateTime startDate, int tradingSpan, string[] allShares, 
+            DateTime startDate, DateTime endDate, int tradingSpan, string[] allShares, 
             bool topUpOnly, string reloadDate, Action<string> progresscallBack)
         {
             //initialize the topupInfo structure which will hold the info we need to enable us to do a topup run
@@ -869,7 +870,7 @@ namespace ShareViewer
             //Construct hash which holds all trading info for every date in the trading range
             var tradeHash = BuildComprehensiveTradeHash(shareName2Number, topUpInfo, startDate, tradingSpan, topUpOnly, progresscallBack);
             //Generate/Update an AllTable for each share
-            UpdateAllTables(tradeHash, topUpInfo, startDate, tradingSpan, allShares, topUpOnly, reloadDate, progresscallBack);
+            UpdateAllTables(tradeHash, topUpInfo, startDate, endDate, tradingSpan, allShares, topUpOnly, reloadDate, progresscallBack);
         }
 
         //Progress Callback
@@ -882,7 +883,7 @@ namespace ShareViewer
         // Firstday,Lastday and NumberOfTradingDays which it returns in an AllTableSummary object
         internal static AllTableSummary GetAllTableSummaryForShare(int shareNum)
         {
-            var allTablesFolder = Helper.GetAppUserSettings().AllTablesFolder;
+            var allTablesFolder = Helper.UserSettings().AllTablesFolder;
             string allTableFilename = allTablesFolder + $"\\alltable_{shareNum}.at";
 
             var shareSummary = new AllTableSummary(new Share("dontcare", 1));

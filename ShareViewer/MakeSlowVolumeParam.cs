@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -105,6 +106,17 @@ namespace ShareViewer
             if (yd > yMax) yd = yMax;
 
         }
+
+        public string Summarize()
+        {
+            string summary = "[Slow Volume Parameters] ";
+            foreach (PropertyInfo property in typeof(MakeSlowVolumeParam).GetProperties())
+            {
+                summary += $"{property.Name}: {property.GetValue(this).ToString()}; ";
+            }
+            return summary;
+        }
+
 
     }
 

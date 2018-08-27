@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -129,6 +130,17 @@ namespace ShareViewer
             if (w < wMin) w = wMin;
             if (w > wMax) w = wMax;
         }
+
+        public string Summarize()
+        {
+            string summary = "[Slow Volume Figure SVFac Parameters] ";
+            foreach (PropertyInfo property in typeof(SlowVolFigSVFacParam).GetProperties())
+            {
+                summary += $"{property.Name}: {property.GetValue(this).ToString()}; ";
+            }
+            return summary;
+        }
+
 
     }
 

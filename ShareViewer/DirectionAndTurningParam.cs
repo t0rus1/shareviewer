@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -58,6 +59,17 @@ namespace ShareViewer
             if (z < from) z = from;
             if (z > to) z = to;
         }
+
+        public string Summarize()
+        {
+            string summary = "[Direction and Turning Parameters] ";
+            foreach (PropertyInfo property in typeof(DirectionAndTurningParam).GetProperties())
+            {
+                summary += $"{property.Name}: {property.GetValue(this).ToString()}; ";
+            }
+            return summary;
+        }
+
     }
 
 

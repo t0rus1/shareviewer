@@ -107,7 +107,7 @@ namespace ShareViewer
         //Here we instantiate an initial Overview object for a share and determine its Laziness
         internal static Overview CreateInitialOverviewForShare(Share share, AllTable atRow1)
         {
-            var lazyShareParams = Helper.GetAppUserSettings().ParamsLazyShare;
+            var lazyShareParams = Helper.UserSettings().ParamsLazyShare;
             // col 2. Instantiate an Overview object and assign Name of share
             Overview oview = new Overview(share.Name, share.Number);
             // Lazy flag - we now assume the Laziness has been precalculated and can be found in passed in Row1

@@ -36,15 +36,15 @@ namespace ShareViewer
         internal TextBox calcAuditTextBox;
 
         //CURRENT properties, gotten from user settings
-        internal LazyShareParam CurrLazyShareParam { get => Helper.GetAppUserSettings().ParamsLazyShare; }
-        internal SlowPriceParam CurrSlowPriceParam { get => Helper.GetAppUserSettings().ParamsSlowPrice;  }
-        internal DirectionAndTurningParam CurrDirectionAndTurningParam { get => Helper.GetAppUserSettings().ParamsDirectionAndTurning; }
-        internal FiveMinsGradientFigureParam CurrFiveMinsGradientFigureParam { get => Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure; }
-        internal MakeHighLineParam CurrHighLineParam { get => Helper.GetAppUserSettings().ParamsMakeHighLine; }
-        internal MakeLowLineParam CurrLowLineParam { get => Helper.GetAppUserSettings().ParamsMakeLowLine; }
-        internal MakeSlowVolumeParam CurrSlowVolumeParam { get => Helper.GetAppUserSettings().ParamsMakeSlowVolume; }
-        internal SlowVolFigSVFacParam CurrSlowVolFigSVFacParam { get => Helper.GetAppUserSettings().ParamsSlowVolFigSVFac; }
-        internal SlowVolFigSVFbdParam CurrSlowVolFigSVFbdParam { get => Helper.GetAppUserSettings().ParamsSlowVolFigSVFbd; }
+        internal LazyShareParam CurrLazyShareParam { get => Helper.UserSettings().ParamsLazyShare; }
+        internal SlowPriceParam CurrSlowPriceParam { get => Helper.UserSettings().ParamsSlowPrice;  }
+        internal DirectionAndTurningParam CurrDirectionAndTurningParam { get => Helper.UserSettings().ParamsDirectionAndTurning; }
+        internal FiveMinsGradientFigureParam CurrFiveMinsGradientFigureParam { get => Helper.UserSettings().ParamsFiveMinsGradientFigure; }
+        internal MakeHighLineParam CurrHighLineParam { get => Helper.UserSettings().ParamsMakeHighLine; }
+        internal MakeLowLineParam CurrLowLineParam { get => Helper.UserSettings().ParamsMakeLowLine; }
+        internal MakeSlowVolumeParam CurrSlowVolumeParam { get => Helper.UserSettings().ParamsMakeSlowVolume; }
+        internal SlowVolFigSVFacParam CurrSlowVolFigSVFacParam { get => Helper.UserSettings().ParamsSlowVolFigSVFac; }
+        internal SlowVolFigSVFbdParam CurrSlowVolFigSVFbdParam { get => Helper.UserSettings().ParamsSlowVolFigSVFbd; }
 
         //CALCULATION properties (we bind these to a property grid)
         private LazyShareParam calcLazyShareParam;
@@ -141,8 +141,8 @@ namespace ShareViewer
 
         private void SingleAllTableForm_Load(object sender, EventArgs e)
         {
-            var periodStart = Helper.GetAppUserSettings().AllTableDataStart;
-            var tradingSpan = Helper.GetAppUserSettings().AllTableTradingSpan;
+            var periodStart = Helper.UserSettings().AllTableDataStart;
+            var tradingSpan = Helper.UserSettings().AllTableTradingSpan;
             if (periodStart == "")
             {
                 //this.Text += "Date Range unknown! (this can occur after an App update)";
@@ -202,7 +202,7 @@ namespace ShareViewer
         private void LoadViewsComboBox(string selectItem)
         {
             comboBoxViews.Items.Clear();
-            foreach (string item in Helper.GetAppUserSettings().AllTableViews)
+            foreach (string item in Helper.UserSettings().AllTableViews)
             {
                 string viewName = item.Split(',')[0];
                 int viewIndex = comboBoxViews.Items.Add(viewName);
@@ -501,7 +501,7 @@ namespace ShareViewer
                 //get definition from User settings - its name is the first value in the csv list
                 //var viewDefinition = Helper.GetAppUserSettings().AllTableViews.Find(v => v.StartsWith(viewName));
                 string viewDefinition = null;
-                foreach (var item in Helper.GetAppUserSettings().AllTableViews)
+                foreach (var item in Helper.UserSettings().AllTableViews)
                 {
                     if (item.StartsWith(viewName))
                     {
@@ -542,7 +542,7 @@ namespace ShareViewer
                 viewStr = viewStr.TrimEnd(',');
 
                 //save currently selected colums to Usersettings under a name
-                var aus = Helper.GetAppUserSettings();
+                var aus = Helper.UserSettings();
                 //overwrite (silently) if view already present - treat as an edit
                 foreach (var item in aus.AllTableViews)
                 {
@@ -569,7 +569,7 @@ namespace ShareViewer
         {
             string[] auditLines = new string[20];
 
-            var aus = Helper.GetAppUserSettings();
+            var aus = Helper.UserSettings();
             string calculation = (string)((Button)sender).Tag;
             switch (calculation)
             {
@@ -943,12 +943,12 @@ namespace ShareViewer
                 {
                     case "Identify Lazy Shares":
                         stripText.Text = $"";
-                        Calculations.LazyShare(atRows, Helper.GetAppUserSettings().ParamsLazyShare, 9362, 10401, out auditLines);
+                        Calculations.LazyShare(atRows, Helper.UserSettings().ParamsLazyShare, 9362, 10401, out auditLines);
                         stripText.Text += $"{calculation}, ";
                         calcsPerformed++;
                         break;
                     case "Make Slow (Five minutes) Prices SP":
-                        Calculations.MakeSlowPrices(ref atRows, Helper.GetAppUserSettings().ParamsSlowPrice, 2, 10401, out auditLines);
+                        Calculations.MakeSlowPrices(ref atRows, Helper.UserSettings().ParamsSlowPrice, 2, 10401, out auditLines);
                         stripText.Text += $"{calculation}, ";
                         calcsPerformed++;
                         break;
@@ -958,11 +958,11 @@ namespace ShareViewer
                         calcsPerformed++;
                         break;
                     case "Find direction and Turning":
-                        Calculations.FindDirectionAndTurning(ref atRows, Helper.GetAppUserSettings().ParamsDirectionAndTurning, 10298, 10401, out auditLines);
+                        Calculations.FindDirectionAndTurning(ref atRows, Helper.UserSettings().ParamsDirectionAndTurning, 10298, 10401, out auditLines);
                         stripText.Text += $"{calculation}, ";
                         break;
                     case "Find Five minutes Gradients Figure PGF":
-                        Calculations.FindFiveMinsGradientsFigurePGF(ref atRows, Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure, 2, 10401, out auditLines);
+                        Calculations.FindFiveMinsGradientsFigurePGF(ref atRows, Helper.UserSettings().ParamsFiveMinsGradientFigure, 2, 10401, out auditLines);
                         stripText.Text += $"{calculation}, ";
                         calcsPerformed++;
                         break;
@@ -972,27 +972,27 @@ namespace ShareViewer
                         calcsPerformed++;
                         break;
                     case "Make High Line HL":
-                        Calculations.MakeHighLineHL(ref atRows, Helper.GetAppUserSettings().ParamsMakeHighLine, 2, 10401, out auditLines);
+                        Calculations.MakeHighLineHL(ref atRows, Helper.UserSettings().ParamsMakeHighLine, 2, 10401, out auditLines);
                         stripText.Text += $"{calculation}, ";
                         calcsPerformed++;
                         break;
                     case "Make Low Line LL":
-                        Calculations.MakeLowLineLL(ref atRows, Helper.GetAppUserSettings().ParamsMakeLowLine, 2, 10401, out auditLines);
+                        Calculations.MakeLowLineLL(ref atRows, Helper.UserSettings().ParamsMakeLowLine, 2, 10401, out auditLines);
                         stripText.Text += $"{calculation}, ";
                         calcsPerformed++;
                         break;
                     case "Make Slow Volumes SV":
-                        Calculations.MakeSlowVolume(ref atRows, Helper.GetAppUserSettings().ParamsMakeSlowVolume, 2, 10401, out auditLines);
+                        Calculations.MakeSlowVolume(ref atRows, Helper.UserSettings().ParamsMakeSlowVolume, 2, 10401, out auditLines);
                         stripText.Text += $"{calculation}, ";
                         calcsPerformed++;
                         break;
                     case "Slow Volume Figure SVFac":
-                        Calculations.SlowVolumeFigureSVFac(ref atRows, Helper.GetAppUserSettings().ParamsSlowVolFigSVFac, 2, 10401, out auditLines);
+                        Calculations.SlowVolumeFigureSVFac(ref atRows, Helper.UserSettings().ParamsSlowVolFigSVFac, 2, 10401, out auditLines);
                         stripText.Text += $"{calculation}, ";
                         calcsPerformed++;
                         break;
                     case "Slow Volume Figure SVFbd":
-                        Calculations.SlowVolumeFigureSVFbd(ref atRows, Helper.GetAppUserSettings().ParamsSlowVolFigSVFbd, 2, 10401, out auditLines);
+                        Calculations.SlowVolumeFigureSVFbd(ref atRows, Helper.UserSettings().ParamsSlowVolFigSVFbd, 2, 10401, out auditLines);
                         stripText.Text += $"{calculation}, ";
                         calcsPerformed++;
                         break;

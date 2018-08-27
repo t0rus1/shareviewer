@@ -23,7 +23,7 @@ namespace ShareViewer
         //and converts to list of strings
         public static List<String> GetDataDaysListing(String userName, String passWord)
         {
-            var appUserSettings = Helper.GetAppUserSettings();
+            var appUserSettings = Helper.UserSettings();
 
             var url = appUserSettings.SharesUrl; //eg = "http://www.bsb-software.de/rese/";
             var remoteFilename = appUserSettings.DataDaysListingFilename;
@@ -72,7 +72,7 @@ namespace ShareViewer
 
         internal static void DownloadFromStack(ConcurrentStack<String> cs, String userName, String passWord)
         {
-            var appUserSettings = Helper.GetAppUserSettings();
+            var appUserSettings = Helper.UserSettings();
             var url = appUserSettings.SharesUrl; //eg = "http://www.bsb-software.de/rese/";
 
             string item;
@@ -160,7 +160,7 @@ namespace ShareViewer
         //downloads files currently referenced in the left hand list box
         public static void DownloadDayDataFiles(String userName, String passWord, ICollection items)
         {
-            var appUserSettings = Helper.GetAppUserSettings();
+            var appUserSettings = Helper.UserSettings();
             //var url = appUserSettings.SharesUrl; //eg = "http://www.bsb-software.de/rese/";
 
             // put items into a concurrent stack // eg ✔2017_01_06.TXT 24332169 06.01.2017 22:30:34 (leading tick mark not always there)

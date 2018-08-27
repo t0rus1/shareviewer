@@ -10,7 +10,7 @@ namespace ShareViewer
     internal static class Calculations
     {
 
-        internal static void InitializeShareCalculationParameters(Properties.Settings aus)
+        internal static void InitializeCalculationParameters(Properties.Settings aus)
         {
             if (aus.ParamsLazyShare == null)
             {
@@ -487,38 +487,62 @@ Result:
                         //case 1, SVa
                         diffTerm = atRows[i].FV - atRows[i - 1].SVa;
                         powTerm = Math.Pow(diffTerm, svp.Ya);
-                        atRows[i].SVa = atRows[i - 1].SVa + Convert.ToUInt32(powTerm);
+                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
+                        {
+                            atRows[i].SVa = atRows[i - 1].SVa + Convert.ToUInt32(powTerm);
+                        }
                         //       SVb
                         diffTerm = atRows[i].FV - atRows[i - 1].SVb;
                         powTerm = Math.Pow(diffTerm, svp.Yb);
-                        atRows[i].SVb = atRows[i - 1].SVb + Convert.ToUInt32(powTerm);
+                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
+                        {
+                            atRows[i].SVb = atRows[i - 1].SVb + Convert.ToUInt32(powTerm);
+                        }
                         //       SVc
                         diffTerm = atRows[i].FV - atRows[i - 1].SVc;
                         powTerm = Math.Pow(diffTerm, svp.Yc);
-                        atRows[i].SVc = atRows[i - 1].SVc + Convert.ToUInt32(powTerm);
+                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
+                        {
+                            atRows[i].SVc = atRows[i - 1].SVc + Convert.ToUInt32(powTerm);
+                        }
                         //       SVd
                         diffTerm = atRows[i].FV - atRows[i - 1].SVd;
                         powTerm = Math.Pow(diffTerm, svp.Yd);
-                        atRows[i].SVd = atRows[i - 1].SVd + Convert.ToUInt32(powTerm);
+                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
+                        {
+                            atRows[i].SVd = atRows[i - 1].SVd + Convert.ToUInt32(powTerm);
+                        }
                     }
                     else if (i == 10401)
                     {
                         //special treatment for the 17:35 band volume (FV) raise it to a settable power before using it
                         diffTerm = Math.Pow(atRows[i].FV,svp.X) - atRows[i - 1].SVa;
                         powTerm = Math.Pow(diffTerm, svp.Ya);
-                        atRows[i].SVa = atRows[i - 1].SVa + Convert.ToUInt32(powTerm);
+                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
+                        {
+                            atRows[i].SVa = atRows[i - 1].SVa + Convert.ToUInt32(powTerm);
+                        }
                         //       SVb
                         diffTerm = Math.Pow(atRows[i].FV,svp.X) - atRows[i - 1].SVb;
                         powTerm = Math.Pow(diffTerm, svp.Yb);
-                        atRows[i].SVb = atRows[i - 1].SVb + Convert.ToUInt32(powTerm);
+                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
+                        {
+                            atRows[i].SVb = atRows[i - 1].SVb + Convert.ToUInt32(powTerm);
+                        }
                         //       SVc
                         diffTerm = Math.Pow(atRows[i].FV,svp.X) - atRows[i - 1].SVc;
                         powTerm = Math.Pow(diffTerm, svp.Yc);
-                        atRows[i].SVc = atRows[i - 1].SVc + Convert.ToUInt32(powTerm);
+                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
+                        {
+                            atRows[i].SVc = atRows[i - 1].SVc + Convert.ToUInt32(powTerm);
+                        }
                         //       SVd
                         diffTerm = Math.Pow(atRows[i].FV,svp.X) - atRows[i - 1].SVd;
                         powTerm = Math.Pow(diffTerm, svp.Yd);
-                        atRows[i].SVd = atRows[i - 1].SVd + Convert.ToUInt32(powTerm);
+                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
+                        {
+                            atRows[i].SVd = atRows[i - 1].SVd + Convert.ToUInt32(powTerm);
+                        }
                     }
                 }
                 else if (atRows[i - 1].SVa > atRows[i].FV)
@@ -528,38 +552,62 @@ Result:
                         //case 2, SVa
                         diffTerm = atRows[i - 1].SVa - atRows[i].FV;
                         powTerm = Math.Pow(diffTerm, svp.Ya);
-                        atRows[i].SVa = atRows[i - 1].SVa - Convert.ToUInt32(powTerm);
+                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
+                        {
+                            atRows[i].SVa = atRows[i - 1].SVa - Convert.ToUInt32(powTerm);
+                        }
                         //case 2, SVb
                         diffTerm = atRows[i - 1].SVb - atRows[i].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yb);
-                        atRows[i].SVb = atRows[i - 1].SVb - Convert.ToUInt32(powTerm);
+                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
+                        {
+                            atRows[i].SVb = atRows[i - 1].SVb - Convert.ToUInt32(powTerm);
+                        }
                         //case 2, SVc
                         diffTerm = atRows[i - 1].SVc - atRows[i].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yc);
-                        atRows[i].SVc = atRows[i - 1].SVc - Convert.ToUInt32(powTerm);
+                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
+                        {
+                            atRows[i].SVc = atRows[i - 1].SVc - Convert.ToUInt32(powTerm);
+                        }
                         //case 2, SVd
                         diffTerm = atRows[i - 1].SVd - atRows[i].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yd);
-                        atRows[i].SVd = atRows[i - 1].SVd - Convert.ToUInt32(powTerm);
+                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
+                        {
+                            atRows[i].SVd = atRows[i - 1].SVd - Convert.ToUInt32(powTerm);
+                        }
                     }
                     else if (i == 10401)
                     {
                         //case 2, SVa
                         diffTerm = Math.Pow(atRows[i].SVa,svp.X) - atRows[10400].FV;
                         powTerm = Math.Pow(diffTerm, svp.Ya);
-                        atRows[i].SVa = atRows[i - 1].SVa - Convert.ToUInt32(powTerm);
+                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
+                        {
+                            atRows[i].SVa = atRows[i - 1].SVa - Convert.ToUInt32(powTerm);
+                        }
                         //case 2, SVb
                         diffTerm = Math.Pow(atRows[i].SVb,svp.X) - atRows[10400].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yb);
-                        atRows[i].SVb = atRows[i - 1].SVb - Convert.ToUInt32(powTerm);
+                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
+                        {
+                            atRows[i].SVb = atRows[i - 1].SVb - Convert.ToUInt32(powTerm);
+                        }
                         //case 2, SVc
                         diffTerm = Math.Pow(atRows[i].SVc,svp.X) - atRows[10400].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yc);
-                        atRows[i].SVc = atRows[i - 1].SVc - Convert.ToUInt32(powTerm);
+                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
+                        {
+                            atRows[i].SVc = atRows[i - 1].SVc - Convert.ToUInt32(powTerm);
+                        }
                         //case 2, SVd
                         diffTerm = Math.Pow(atRows[i].SVd,svp.X) - atRows[10400].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yd);
-                        atRows[i].SVd = atRows[i - 1].SVd - Convert.ToUInt32(powTerm);
+                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
+                        {
+                            atRows[i].SVd = atRows[i - 1].SVd - Convert.ToUInt32(powTerm);
+                        }
                     }
                 }
 
@@ -699,43 +747,45 @@ Result:
         // Performs the full series of Calculations
         internal static void PerformShareCalculations(Share share, ref AllTable[] atSegment)
         {
-            var slowPriceParams = Helper.GetAppUserSettings().ParamsSlowPrice;
+            var slowPriceParams = Helper.UserSettings().ParamsSlowPrice;
             Calculations.MakeSlowPrices(ref atSegment, slowPriceParams, 2, 10401, out string[] auditSummary);
 
             Calculations.MakeFiveMinutesPriceGradients(ref atSegment, 2, 10401, out auditSummary);
 
-            var directionAndTurningParams = Helper.GetAppUserSettings().ParamsDirectionAndTurning;
+            var directionAndTurningParams = Helper.UserSettings().ParamsDirectionAndTurning;
             Calculations.FindDirectionAndTurning(ref atSegment, directionAndTurningParams, 10298, 10401, out auditSummary);
 
-            var fiveMinsGradientFigParam = Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure;
+            var fiveMinsGradientFigParam = Helper.UserSettings().ParamsFiveMinsGradientFigure;
             Calculations.FindFiveMinsGradientsFigurePGF(ref atSegment, fiveMinsGradientFigParam, 2, 10401, out auditSummary);
 
             Calculations.RelatedVolumeFigureOfBiggestPGF(ref atSegment, 10298, 10401, out auditSummary);
 
-            var highLineParam = Helper.GetAppUserSettings().ParamsMakeHighLine;
+            var highLineParam = Helper.UserSettings().ParamsMakeHighLine;
             Calculations.MakeHighLineHL(ref atSegment, highLineParam, 2, 10401, out auditSummary);
 
-            var lowLineParam = Helper.GetAppUserSettings().ParamsMakeLowLine;
+            var lowLineParam = Helper.UserSettings().ParamsMakeLowLine;
             Calculations.MakeLowLineLL(ref atSegment, lowLineParam, 2, 10401, out auditSummary);
 
-            var slowVolumeParam = Helper.GetAppUserSettings().ParamsMakeSlowVolume;
+            var slowVolumeParam = Helper.UserSettings().ParamsMakeSlowVolume;
             Calculations.MakeSlowVolume(ref atSegment, slowVolumeParam, 2, 10401, out auditSummary);
 
-            var slowVolFigSVFacParam = Helper.GetAppUserSettings().ParamsSlowVolFigSVFac;
+            var slowVolFigSVFacParam = Helper.UserSettings().ParamsSlowVolFigSVFac;
             Calculations.SlowVolumeFigureSVFac(ref atSegment, slowVolFigSVFacParam, 2, 10401, out auditSummary);
 
-            var slowVolFigSVFbdParam = Helper.GetAppUserSettings().ParamsSlowVolFigSVFbd;
+            var slowVolFigSVFbdParam = Helper.UserSettings().ParamsSlowVolFigSVFbd;
             Calculations.SlowVolumeFigureSVFbd(ref atSegment, slowVolFigSVFbdParam, 2, 10401, out auditSummary);
 
             // we store the results of our Laziness determination in Col_2 row 1 so that the Overview
             // can initially be compiled without having to recalculate it
-            var lazyShareParam = Helper.GetAppUserSettings().ParamsLazyShare;
-            atSegment[1].Col_2 = OverviewCalcs.isLazyLast10Days(atSegment, lazyShareParam) ? 1.0 : 0;
+            var lazyShareParam = Helper.UserSettings().ParamsLazyShare;
+            bool isLazy = OverviewCalcs.isLazyLast10Days(atSegment, lazyShareParam);
 
             //finally, copy row 10401 to row 1
             AllTable.CopySourceToTargetAllTableRow(ref atSegment, 10401, 1);
             //fix Row number
             atSegment[1].Row = 1;
+            //and slot in the islazy flag 
+            atSegment[1].Col_2 = isLazy ? 1.0 : 0;
 
         }
 

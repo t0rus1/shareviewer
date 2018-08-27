@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -100,6 +101,17 @@ namespace ShareViewer
             if (w > wMax) w = wMax;
 
         }
+
+        public string Summarize()
+        {
+            string summary = "[Slow Volume Figure SVFbd Parameters] ";
+            foreach (PropertyInfo property in typeof(SlowVolFigSVFbdParam).GetProperties())
+            {
+                summary += $"{property.Name}: {property.GetValue(this).ToString()}; ";
+            }
+            return summary;
+        }
+
 
     }
 

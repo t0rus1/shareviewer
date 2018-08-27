@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -52,6 +53,17 @@ namespace ShareViewer
             if (z < zMin) z = zMin;
             if (z > zMax) z = zMax;
         }
+
+        public string Summarize()
+        {
+            string summary = "[High Line Parameters] ";
+            foreach (PropertyInfo property in typeof(MakeHighLineParam).GetProperties())
+            {
+                summary += $"{property.Name}: {property.GetValue(this).ToString()}; ";
+            }
+            return summary;
+        }
+
 
     }
 

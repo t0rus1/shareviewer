@@ -30,15 +30,15 @@ namespace ShareViewer
 
         internal TextBox calcAuditTextBox;
         //CURRENT properties
-        internal LazyShareParam CurrLazyShareParam { get => Helper.GetAppUserSettings().ParamsLazyShare; }
-        internal SlowPriceParam CurrSlowPriceParam { get => Helper.GetAppUserSettings().ParamsSlowPrice; }
-        internal DirectionAndTurningParam CurrDirectionAndTurningParam { get => Helper.GetAppUserSettings().ParamsDirectionAndTurning; }
-        internal FiveMinsGradientFigureParam CurrFiveMinsGradientFigureParam { get => Helper.GetAppUserSettings().ParamsFiveMinsGradientFigure; }
-        internal MakeHighLineParam CurrHighLineParam { get => Helper.GetAppUserSettings().ParamsMakeHighLine; }
-        internal MakeLowLineParam CurrLowLineParam { get => Helper.GetAppUserSettings().ParamsMakeLowLine;  }
-        internal MakeSlowVolumeParam CurrSlowVolumeParam { get => Helper.GetAppUserSettings().ParamsMakeSlowVolume; }
-        internal SlowVolFigSVFacParam CurrSlowVolFigSVFacParam { get => Helper.GetAppUserSettings().ParamsSlowVolFigSVFac; }
-        internal SlowVolFigSVFbdParam CurrSlowVolFigSVFbdParam { get => Helper.GetAppUserSettings().ParamsSlowVolFigSVFbd; }
+        internal LazyShareParam CurrLazyShareParam { get => Helper.UserSettings().ParamsLazyShare; }
+        internal SlowPriceParam CurrSlowPriceParam { get => Helper.UserSettings().ParamsSlowPrice; }
+        internal DirectionAndTurningParam CurrDirectionAndTurningParam { get => Helper.UserSettings().ParamsDirectionAndTurning; }
+        internal FiveMinsGradientFigureParam CurrFiveMinsGradientFigureParam { get => Helper.UserSettings().ParamsFiveMinsGradientFigure; }
+        internal MakeHighLineParam CurrHighLineParam { get => Helper.UserSettings().ParamsMakeHighLine; }
+        internal MakeLowLineParam CurrLowLineParam { get => Helper.UserSettings().ParamsMakeLowLine;  }
+        internal MakeSlowVolumeParam CurrSlowVolumeParam { get => Helper.UserSettings().ParamsMakeSlowVolume; }
+        internal SlowVolFigSVFacParam CurrSlowVolFigSVFacParam { get => Helper.UserSettings().ParamsSlowVolFigSVFac; }
+        internal SlowVolFigSVFbdParam CurrSlowVolFigSVFbdParam { get => Helper.UserSettings().ParamsSlowVolFigSVFbd; }
 
         //CALCULATION properties (we bind these to a property grid)
         LazyShareParam calcLazyShareParam;
@@ -96,9 +96,10 @@ namespace ShareViewer
 
         private void OverviewForm_Load(object sender, EventArgs e)
         {
-            var rangeFrom = Helper.GetAppUserSettings().AllTableDataStart;
-            var tradingSpan = Helper.GetAppUserSettings().AllTableTradingSpan;
-            this.Text = $"Overview. All-Tables from '{rangeFrom}' for {tradingSpan} trading days";
+            var rangeFrom = Helper.UserSettings().AllTableDataStart;
+            var rangeTo = Helper.UserSettings().AllTableDataEnd;
+            var tradingSpan = Helper.UserSettings().AllTableTradingSpan;
+            this.Text = $"Overview. All-Tables from '{rangeFrom}' till '{rangeTo}' ({tradingSpan} trading days)";
 
             //load up combobox for views from user settings
             LoadViewsComboBox("");
@@ -139,7 +140,7 @@ namespace ShareViewer
         private void LoadViewsComboBox(string selectItem)
         {
             comboBoxViews.Items.Clear();
-            foreach (string item in Helper.GetAppUserSettings().OverviewViews)
+            foreach (string item in Helper.UserSettings().OverviewViews)
             {
                 string viewName = item.Split(',')[0];
                 int viewIndex = comboBoxViews.Items.Add(viewName);
@@ -295,7 +296,7 @@ namespace ShareViewer
         //Fills the sharesOverview list of Overview objects(a form field)
         internal void GenerateOverview(Action<Share> progress)
         {
-            var allTablesFolder = Helper.GetAppUserSettings().AllTablesFolder;
+            var allTablesFolder = Helper.UserSettings().AllTablesFolder;
             var shareLines = LocalStore.CreateShareArrayFromShareList();
             AllTable[] atSegment = new AllTable[10402];
 
@@ -360,7 +361,7 @@ namespace ShareViewer
             {
                 //get definition from User settings - its name is the first value in the csv list
                 string viewDefinition = null;
-                foreach (var item in Helper.GetAppUserSettings().OverviewViews)
+                foreach (var item in Helper.UserSettings().OverviewViews)
                 {
                     if (item.StartsWith(viewName))
                     {
@@ -402,7 +403,7 @@ namespace ShareViewer
                 viewStr = viewStr.TrimEnd(',');
 
                 //save currently selected colums to Usersettings under a name
-                var aus = Helper.GetAppUserSettings();
+                var aus = Helper.UserSettings();
                 //overwrite (silently) if view already present - treat as an edit
                 foreach (var item in aus.OverviewViews)
                 {
@@ -445,7 +446,7 @@ namespace ShareViewer
 
         internal void HandleParameterSaveClick(object sender, EventArgs e)
         {
-            var aus = Helper.GetAppUserSettings();
+            var aus = Helper.UserSettings();
             string calculation = (string)((Button)sender).Tag;
             switch (calculation)
             {
@@ -740,7 +741,7 @@ namespace ShareViewer
             var shareName = ((Overview)dgOverview.Rows[e.RowIndex].DataBoundItem).ShareName;
             var shareNum = ((Overview)dgOverview.Rows[e.RowIndex].DataBoundItem).ShareNumber;
 
-            string allTableFilename = Helper.GetAppUserSettings().AllTablesFolder + $"\\alltable_{shareNum}.at";
+            string allTableFilename = Helper.UserSettings().AllTablesFolder + $"\\alltable_{shareNum}.at";
             if (File.Exists(allTableFilename))
             {
                 var AtShareForm = new SingleAllTableForm(allTableFilename, shareName);
@@ -772,7 +773,7 @@ namespace ShareViewer
         {
             if (dgOverview.Rows.Count > 1)
             {
-                string overviewFilename = Helper.GetAppUserSettings().AllTablesFolder + $"\\overview.at";
+                string overviewFilename = Helper.UserSettings().AllTablesFolder + $"\\overview.at";
                 SaveOverview(overviewFilename);
             }
             else
@@ -784,7 +785,7 @@ namespace ShareViewer
         private void linkLabelLoad_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
 
-            string overviewFilename = Helper.GetAppUserSettings().AllTablesFolder + $"\\overview.at";
+            string overviewFilename = Helper.UserSettings().AllTablesFolder + $"\\overview.at";
             if (File.Exists(overviewFilename))
             {
                 FileInfo fileInfo = new FileInfo(overviewFilename);
@@ -1294,9 +1295,13 @@ namespace ShareViewer
                         //save notes in Alternate Data Stream for .ovw file
                         // see https://stackoverflow.com/questions/13172129/store-metadata-outside-of-file-any-standard-approach-on-modern-windows?noredirect=1&lq=1
 
-                        var rangeFrom = Helper.GetAppUserSettings().AllTableDataStart;
-                        var tradingSpan = Helper.GetAppUserSettings().AllTableTradingSpan;
-                        var initNotes = $"{selected}Shares Overview from '{rangeFrom}' for {tradingSpan} trading days";
+                        var rangeFrom = Helper.UserSettings().AllTableDataStart;
+                        var tradingSpan = Helper.UserSettings().AllTableTradingSpan;
+                        var initNotes = "";
+                        if (!String.IsNullOrEmpty(rangeFrom) && !String.IsNullOrEmpty(tradingSpan))
+                        {
+                            initNotes = $"{selected}Shares Overview from '{rangeFrom}' for {tradingSpan} trading days";
+                        }
                         var addNotesForm = new SaveWithNotesForm(initNotes);
                         var dlgResult = addNotesForm.ShowDialog();
                         if (dlgResult == DialogResult.Yes)
