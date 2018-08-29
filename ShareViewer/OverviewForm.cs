@@ -15,6 +15,8 @@ namespace ShareViewer
 {
     public partial class OverviewForm : Form
     {
+        string[] selectedShares;
+
         BindingSource dgViewBindingSource = new BindingSource();
         List<Overview> sharesOverview = new List<Overview>();
         List<Overview> sharesOverviewPreFiltering = new List<Overview>();
@@ -151,13 +153,13 @@ namespace ShareViewer
             }
         }
 
-        private void GenerateOverviewAndBindDataGrid()
+        private void GenerateOverviewAndBindDataGrid(string[] shareLines)
         {
             Cursor.Current = Cursors.WaitCursor;
 
             dgViewBindingSource.Clear();
 
-            var task = Task.Run(() => GenerateOverview(displayProgress));
+            var task = Task.Run(() => GenerateOverview(shareLines,displayProgress));
             var awaiter = task.GetAwaiter();
             awaiter.OnCompleted(() =>
             {
@@ -294,10 +296,9 @@ namespace ShareViewer
 
 
         //Fills the sharesOverview list of Overview objects(a form field)
-        internal void GenerateOverview(Action<Share> progress)
+        internal void GenerateOverview(string[] shareLines, Action<Share> progress)
         {
             var allTablesFolder = Helper.UserSettings().AllTablesFolder;
-            var shareLines = LocalStore.CreateShareArrayFromShareList();
             AllTable[] atSegment = new AllTable[10402];
 
             sharesOverview.Clear();
@@ -713,24 +714,56 @@ namespace ShareViewer
             _curOverviewLoadname = "";
             linkLabelNotes.Enabled = false;
 
+            //build sharelist to use. start with full list
+            var shareLines = LocalStore.CreateShareArrayFromShareList();
+
+            string workingWithSelecteds = " ";
+            if (selectedShares != null && selectedShares.Count() > 0)
+            {
+                //build a thinned out sharelist
+                var wantedSharesList = new List<string>();
+                foreach (string mainShare in shareLines)
+                {
+                    //try to find it
+                    foreach (string wantedShare in selectedShares)
+                    {
+                        if (mainShare.StartsWith(wantedShare))
+                        {
+                            wantedSharesList.Add(mainShare);
+                            break;
+                        }
+                    }
+                }
+                if (wantedSharesList.Count > 0)
+                {
+                    workingWithSelecteds = " (selected) ";
+                    shareLines = wantedSharesList.ToArray();
+                }
+                else
+                {
+                    //should not occur
+                    shareLines = LocalStore.CreateShareArrayFromShareList();
+                }
+            }
+
             //this re-introduces discarded shares
             string msg;
             if (_FullRecalcNeeded)
             {
-                msg = "A FULL RECALCULATION within All-Tables will be performed since one or more Calculation parameters were changed.\nTakes a while...";
+                msg = $"A FULL RECALCULATION within{workingWithSelecteds}All-Tables will be performed since one or more Calculation parameters were changed.\nTakes a while...";
                 var dlgResult = MessageBox.Show(msg, "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
                 if (dlgResult == DialogResult.Yes)
                 {
-                    GenerateOverviewAndBindDataGrid();
+                    GenerateOverviewAndBindDataGrid(shareLines);
                 }
             }
             else
             {
-                msg = "Compile from EXISTING All-Tables?\n(Relatively quick)...";
+                msg = $"Compile from EXISTING{workingWithSelecteds}All-Tables?\n(Relatively quick)...";
                 var dlgResult = MessageBox.Show(msg, "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button2);
                 if (dlgResult == DialogResult.Yes)
                 {
-                    GenerateOverviewAndBindDataGrid();
+                    GenerateOverviewAndBindDataGrid(shareLines);
                 }
             }
         }
@@ -1418,10 +1451,33 @@ namespace ShareViewer
             }
         }
 
-        private void saveShareListtoolStripMenuItem_Click(object sender, EventArgs e)
+        //Choose a sharelist
+        private void linkLabelChooseSelecteds_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            //31 chars for ShareName then ShareNum
-            MessageBox.Show("Not yet implemented...");
+            var openFileDlg = new OpenFileDialog();
+            openFileDlg.Filter = "Saved Share Selections|*.shl";
+            openFileDlg.Title = "Choose a Saved Share Selection";
+            openFileDlg.ShowDialog();
+
+            if (openFileDlg.FileName != "")
+            {
+                FileInfo fileInfo = new FileInfo(openFileDlg.FileName);
+                labelShareListName.Text = fileInfo.Name;
+                selectedShares = File.ReadAllLines(openFileDlg.FileName);
+                listBoxSelecteds.DataSource = selectedShares;
+            }
+
+        }
+
+        private void linkLabelAllShares_Click(object sender, EventArgs e)
+        {
+            //revert to All shares
+            listBoxSelecteds.DataBindings.Clear();
+            selectedShares = new string[] { };
+            listBoxSelecteds.DataSource = selectedShares;
+
+            labelShareListName.Text = "All shares will be included";
+            selectedShares = null;
         }
     }
 }

@@ -33,6 +33,8 @@
             this.buttonRepair = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
+            this.linkLabelSaveShareList = new System.Windows.Forms.LinkLabel();
+            this.linkLabelLoadSelections = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // listBoxRepairShares
@@ -80,18 +82,42 @@
             // 
             this.textBox2.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox2.Location = new System.Drawing.Point(283, 26);
+            this.textBox2.Location = new System.Drawing.Point(283, 150);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(144, 63);
             this.textBox2.TabIndex = 3;
             this.textBox2.Text = "Select the shares for which you wish new All-Tables to be generated";
             // 
+            // linkLabelSaveShareList
+            // 
+            this.linkLabelSaveShareList.AutoSize = true;
+            this.linkLabelSaveShareList.Location = new System.Drawing.Point(280, 424);
+            this.linkLabelSaveShareList.Name = "linkLabelSaveShareList";
+            this.linkLabelSaveShareList.Size = new System.Drawing.Size(98, 13);
+            this.linkLabelSaveShareList.TabIndex = 4;
+            this.linkLabelSaveShareList.TabStop = true;
+            this.linkLabelSaveShareList.Text = "Save Selection List";
+            this.linkLabelSaveShareList.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelSaveShareList_LinkClicked);
+            // 
+            // linkLabelLoadSelections
+            // 
+            this.linkLabelLoadSelections.AutoSize = true;
+            this.linkLabelLoadSelections.Location = new System.Drawing.Point(396, 424);
+            this.linkLabelLoadSelections.Name = "linkLabelLoadSelections";
+            this.linkLabelLoadSelections.Size = new System.Drawing.Size(31, 13);
+            this.linkLabelLoadSelections.TabIndex = 5;
+            this.linkLabelLoadSelections.TabStop = true;
+            this.linkLabelLoadSelections.Text = "Load";
+            this.linkLabelLoadSelections.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelLoadSelections_LinkClicked);
+            // 
             // AllTableRepairForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(439, 554);
+            this.Controls.Add(this.linkLabelLoadSelections);
+            this.Controls.Add(this.linkLabelSaveShareList);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.buttonRepair);
@@ -112,5 +138,7 @@
         internal System.Windows.Forms.ListBox listBoxRepairShares;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.LinkLabel linkLabelSaveShareList;
+        private System.Windows.Forms.LinkLabel linkLabelLoadSelections;
     }
 }

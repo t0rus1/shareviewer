@@ -128,6 +128,7 @@ namespace ShareViewer
         // startRow is meant to normally be 9362 and endRow 10401 - covering a 10 trading day span
         // An average daily price is computed and is then compared to a threshold. If this falls below the threshold
         // the share is considered 'Lazy'
+        // NOTE.. this must compute the same result as OverviewCalcs.isLazyLast10Days !!!!
         internal static bool LazyShare(AllTable[] bands, LazyShareParam Z, int startRow, int endRow, out string[] auditSummary)
         {
             bool isLazy = false;
@@ -140,7 +141,7 @@ namespace ShareViewer
                 double totalFV = bands.Skip(startRow).Take(numBands).Sum(atRec => Math.Sqrt(atRec.FV));
                 double numDays = numBands / 104; // there are 104 bands per day
                 double avgDailyVolume = totalFV / numDays;
-                double effectivePrice = bands[numBands - 1].FP;
+                double effectivePrice = bands[endRow].FP;
                 double VP = avgDailyVolume * effectivePrice;
                 isLazy = VP < Z.Setting;
                 auditSummary =
@@ -271,7 +272,7 @@ Result:
                 if (bands[endRow].PGc > dtp.Z)
                 {
                     bool jackPot = false;
-                    bands[endRow].PtsGradC += 0.1; // Direction
+                    bands[endRow].PtsGradC += 0.01; // 0.1; // Direction
                     //if any PGc from row 10298 till row 10400 is smaller than PGcThreshold
                     for (int i = startRow; i < endRow; i++)
                     {
@@ -302,22 +303,22 @@ Result:
             auditSummary = new string[] { };
 
             //prefill APpg column 13 with 1's
-            for (int i = startRow; i <= endRow; i++)  // 10298 -> 10401
+            for (int i = startRow; i <= endRow; i++)  // 2 -> 10401
             {
                 atRows[i].APpg = 1;
             }
             //col 15
-            for (int i = startRow; i <= endRow; i++)  // 10298 -> 10401
+            for (int i = startRow; i <= endRow; i++)  // 2 -> 10401
             {
                 atRows[i].PGFrowx15 = atRows[i].PGa / atRows[i].APpg;
             }
             //col16
-            for (int i = startRow; i <= endRow - 1; i++)  // 10298 -> 10400
+            for (int i = startRow; i <= endRow - 1; i++)  // 2 -> 10400
             {
                 atRows[i].PGFrowx16 = (atRows[i].PGa * atRows[i + 1].PGa) / atRows[i].APpg;
             }
             //col17
-            for (int i = startRow; i <= endRow - 2; i++)  // 1029 -> 10399
+            for (int i = startRow; i <= endRow - 2; i++)  // 2 -> 10399
             {
                 atRows[i].PGFrowx17 = (atRows[i].PGa * atRows[i + 1].PGa * atRows[i + 2].PGa) / atRows[i].APpg;
             }
@@ -330,37 +331,44 @@ Result:
             //find biggest figure in last Z rows amongst PGFrowx15, PGFrowx16, PGFrowx17
             double biggest = 0;
             int rowBig = -1;
+            int colBig = -1;
             for (int i = endRow-(calcFiveMinsGradientFigureParam.Z-1); i <= endRow; i++)
             {
                 if (atRows[i].PGFrowx15 > biggest)
                 {
                     biggest = atRows[i].PGFrowx15;
                     rowBig = i;
+                    colBig = 15;
                 }
                 if (atRows[i].PGFrowx16 > biggest)
                 {
                     biggest = atRows[i].PGFrowx16;
                     rowBig = i;
+                    colBig = 16;
                 }
                 if (atRows[i].PGFrowx17 > biggest)
                 {
                     biggest = atRows[i].PGFrowx17;
                     rowBig = i;
+                    colBig = 17;
                 }
             }
+
             if (rowBig != -1) {
                 if (biggest > 1.0)
                 {
                     for (int i = rowBig; i <= endRow; i++)
                     {
-                        atRows[i].APpg *= (1 + calcFiveMinsGradientFigureParam.Y);
+                        //atRows[i].APpg *= (1 + calcFiveMinsGradientFigureParam.Y);
+                        atRows[i].APpg = atRows[i-1].APpg * (1 + calcFiveMinsGradientFigureParam.Y);
                     }
                 }
                 else
                 {
                     for (int i = rowBig; i <= endRow; i++)
                     {
-                        atRows[i].APpg *= Math.Pow(1 - calcFiveMinsGradientFigureParam.Y, calcFiveMinsGradientFigureParam.X);
+                        //atRows[i].APpg *= Math.Pow(1 - calcFiveMinsGradientFigureParam.Y, calcFiveMinsGradientFigureParam.X);
+                        atRows[i].APpg = atRows[i-1].APpg * Math.Pow(1 - calcFiveMinsGradientFigureParam.Y, calcFiveMinsGradientFigureParam.X);
                     }
                 }
             }
