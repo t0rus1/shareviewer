@@ -93,5 +93,11 @@ namespace ShareViewer
             }
 
         }
+
+        private void AllTableRepairForm_HelpButtonClicked(object sender, CancelEventArgs e)
+        {
+            var helpForm = new HelpForm("Help_GenSelectedAllTables.html");
+            helpForm.Show();
+        }
     }
 }

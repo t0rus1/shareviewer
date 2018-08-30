@@ -30,10 +30,14 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OverviewForm));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
             this.panelLeft = new System.Windows.Forms.Panel();
+            this.labelShareListName = new System.Windows.Forms.Label();
+            this.linkLabelAllShares = new System.Windows.Forms.LinkLabel();
+            this.linkLabelChooseSelecteds = new System.Windows.Forms.LinkLabel();
+            this.listBoxSelecteds = new System.Windows.Forms.ListBox();
             this.listBoxCols = new System.Windows.Forms.ListBox();
             this.panelTop = new System.Windows.Forms.Panel();
             this.linkLabelNotes = new System.Windows.Forms.LinkLabel();
@@ -61,10 +65,7 @@
             this.dgOverview = new System.Windows.Forms.DataGridView();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.listBoxSelecteds = new System.Windows.Forms.ListBox();
-            this.linkLabelChooseSelecteds = new System.Windows.Forms.LinkLabel();
-            this.linkLabelAllShares = new System.Windows.Forms.LinkLabel();
-            this.labelShareListName = new System.Windows.Forms.Label();
+            this.toolStripMenuItemSaveNewShareList = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             this.panelLeft.SuspendLayout();
             this.panelTop.SuspendLayout();
@@ -102,6 +103,52 @@
             this.panelLeft.Name = "panelLeft";
             this.panelLeft.Size = new System.Drawing.Size(165, 746);
             this.panelLeft.TabIndex = 4;
+            // 
+            // labelShareListName
+            // 
+            this.labelShareListName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelShareListName.AutoSize = true;
+            this.labelShareListName.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelShareListName.Location = new System.Drawing.Point(1, 422);
+            this.labelShareListName.Name = "labelShareListName";
+            this.labelShareListName.Size = new System.Drawing.Size(169, 17);
+            this.labelShareListName.TabIndex = 8;
+            this.labelShareListName.Text = "All shares will be included";
+            // 
+            // linkLabelAllShares
+            // 
+            this.linkLabelAllShares.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.linkLabelAllShares.AutoSize = true;
+            this.linkLabelAllShares.Location = new System.Drawing.Point(110, 401);
+            this.linkLabelAllShares.Name = "linkLabelAllShares";
+            this.linkLabelAllShares.Size = new System.Drawing.Size(54, 13);
+            this.linkLabelAllShares.TabIndex = 7;
+            this.linkLabelAllShares.TabStop = true;
+            this.linkLabelAllShares.Text = "All Shares";
+            this.linkLabelAllShares.Click += new System.EventHandler(this.linkLabelAllShares_Click);
+            // 
+            // linkLabelChooseSelecteds
+            // 
+            this.linkLabelChooseSelecteds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.linkLabelChooseSelecteds.AutoSize = true;
+            this.linkLabelChooseSelecteds.Location = new System.Drawing.Point(1, 401);
+            this.linkLabelChooseSelecteds.Name = "linkLabelChooseSelecteds";
+            this.linkLabelChooseSelecteds.Size = new System.Drawing.Size(99, 13);
+            this.linkLabelChooseSelecteds.TabIndex = 6;
+            this.linkLabelChooseSelecteds.TabStop = true;
+            this.linkLabelChooseSelecteds.Text = "Choose a ShareList";
+            this.linkLabelChooseSelecteds.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelChooseSelecteds_LinkClicked);
+            // 
+            // listBoxSelecteds
+            // 
+            this.listBoxSelecteds.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.listBoxSelecteds.FormattingEnabled = true;
+            this.listBoxSelecteds.Location = new System.Drawing.Point(0, 443);
+            this.listBoxSelecteds.Name = "listBoxSelecteds";
+            this.listBoxSelecteds.ScrollAlwaysVisible = true;
+            this.listBoxSelecteds.SelectionMode = System.Windows.Forms.SelectionMode.None;
+            this.listBoxSelecteds.Size = new System.Drawing.Size(165, 303);
+            this.listBoxSelecteds.TabIndex = 5;
             // 
             // listBoxCols
             // 
@@ -247,7 +294,8 @@
             this.toolStripDDBtnSaveAs.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loadNamedOverviewToolStripMenuItem,
             this.saveAsToolStripMenuItem,
-            this.toolStripSeparator1});
+            this.toolStripSeparator1,
+            this.toolStripMenuItemSaveNewShareList});
             this.toolStripDDBtnSaveAs.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDDBtnSaveAs.Image")));
             this.toolStripDDBtnSaveAs.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDDBtnSaveAs.Name = "toolStripDDBtnSaveAs";
@@ -379,14 +427,14 @@
             // dgOverview
             // 
             this.dgOverview.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgOverview.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgOverview.DefaultCellStyle = dataGridViewCellStyle3;
             this.dgOverview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgOverview.Location = new System.Drawing.Point(165, 211);
             this.dgOverview.Name = "dgOverview";
@@ -405,51 +453,12 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-            // listBoxSelecteds
+            // toolStripMenuItemSaveNewShareList
             // 
-            this.listBoxSelecteds.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.listBoxSelecteds.FormattingEnabled = true;
-            this.listBoxSelecteds.Location = new System.Drawing.Point(0, 443);
-            this.listBoxSelecteds.Name = "listBoxSelecteds";
-            this.listBoxSelecteds.ScrollAlwaysVisible = true;
-            this.listBoxSelecteds.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.listBoxSelecteds.Size = new System.Drawing.Size(165, 303);
-            this.listBoxSelecteds.TabIndex = 5;
-            // 
-            // linkLabelChooseSelecteds
-            // 
-            this.linkLabelChooseSelecteds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.linkLabelChooseSelecteds.AutoSize = true;
-            this.linkLabelChooseSelecteds.Location = new System.Drawing.Point(1, 401);
-            this.linkLabelChooseSelecteds.Name = "linkLabelChooseSelecteds";
-            this.linkLabelChooseSelecteds.Size = new System.Drawing.Size(99, 13);
-            this.linkLabelChooseSelecteds.TabIndex = 6;
-            this.linkLabelChooseSelecteds.TabStop = true;
-            this.linkLabelChooseSelecteds.Text = "Choose a ShareList";
-            this.linkLabelChooseSelecteds.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelChooseSelecteds_LinkClicked);
-            // 
-            // linkLabelAllShares
-            // 
-            this.linkLabelAllShares.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.linkLabelAllShares.AutoSize = true;
-            this.linkLabelAllShares.Location = new System.Drawing.Point(110, 401);
-            this.linkLabelAllShares.Name = "linkLabelAllShares";
-            this.linkLabelAllShares.Size = new System.Drawing.Size(54, 13);
-            this.linkLabelAllShares.TabIndex = 7;
-            this.linkLabelAllShares.TabStop = true;
-            this.linkLabelAllShares.Text = "All Shares";
-            this.linkLabelAllShares.Click += new System.EventHandler(this.linkLabelAllShares_Click);
-            // 
-            // labelShareListName
-            // 
-            this.labelShareListName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelShareListName.AutoSize = true;
-            this.labelShareListName.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelShareListName.Location = new System.Drawing.Point(1, 422);
-            this.labelShareListName.Name = "labelShareListName";
-            this.labelShareListName.Size = new System.Drawing.Size(169, 17);
-            this.labelShareListName.TabIndex = 8;
-            this.labelShareListName.Text = "All shares will be included";
+            this.toolStripMenuItemSaveNewShareList.Name = "toolStripMenuItemSaveNewShareList";
+            this.toolStripMenuItemSaveNewShareList.Size = new System.Drawing.Size(213, 22);
+            this.toolStripMenuItemSaveNewShareList.Text = "Save as a Named ShareList";
+            this.toolStripMenuItemSaveNewShareList.Click += new System.EventHandler(this.toolStripMenuItemSaveNewShareList_Click);
             // 
             // OverviewForm
             // 
@@ -460,10 +469,12 @@
             this.Controls.Add(this.panelTop);
             this.Controls.Add(this.panelLeft);
             this.Controls.Add(this.statusStrip);
+            this.HelpButton = true;
+            this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "OverviewForm";
             this.Text = "Overview";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.OverviewForm_HelpButtonClicked);
             this.Load += new System.EventHandler(this.OverviewForm_Load);
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
@@ -518,5 +529,6 @@
         private System.Windows.Forms.LinkLabel linkLabelChooseSelecteds;
         private System.Windows.Forms.ListBox listBoxSelecteds;
         private System.Windows.Forms.Label labelShareListName;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemSaveNewShareList;
     }
 }

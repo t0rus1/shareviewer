@@ -66,6 +66,7 @@ namespace ShareViewer
         public OverviewForm()
         {
             InitializeComponent();
+            this.Text = "Overview, ShareViewer v" + Application.ProductVersion;
         }
 
         //used before DatagridView has columns
@@ -101,7 +102,7 @@ namespace ShareViewer
             var rangeFrom = Helper.UserSettings().AllTableDataStart;
             var rangeTo = Helper.UserSettings().AllTableDataEnd;
             var tradingSpan = Helper.UserSettings().AllTableTradingSpan;
-            this.Text = $"Overview. All-Tables from '{rangeFrom}' till '{rangeTo}' ({tradingSpan} trading days)";
+            this.Text = $"ShareViewer v{Application.ProductVersion} Overview from '{rangeFrom}' till '{rangeTo}' ({tradingSpan} trading days)";
 
             //load up combobox for views from user settings
             LoadViewsComboBox("");
@@ -1478,6 +1479,43 @@ namespace ShareViewer
 
             labelShareListName.Text = "All shares will be included";
             selectedShares = null;
+        }
+
+        private void OverviewForm_HelpButtonClicked(object sender, CancelEventArgs e)
+        {
+            var helpForm = new HelpForm("Help_Overview.html");
+            helpForm.Show();
+        }
+
+        //user wants to save shares in the Overview as a named ShareList
+        private void toolStripMenuItemSaveNewShareList_Click(object sender, EventArgs e)
+        {
+            var saveFileDlg = new SaveFileDialog();
+            saveFileDlg.Filter = "Saved Share Selections|*.shl";
+            saveFileDlg.Title = "Save Named Share Selection";
+            saveFileDlg.ShowDialog();
+
+            if (saveFileDlg.FileName != "")
+            {
+                List<string> sharesSelectionList = new List<string>();
+                if (dgOverview.SelectedRows.Count == 0)
+                {
+                    foreach (Overview item in sharesOverview)
+                    {
+                        sharesSelectionList.Add(item.ShareName);
+                    }
+                }
+                else
+                {
+                    foreach (DataGridViewRow row in dgOverview.SelectedRows)
+                    {
+                        var ov = (Overview)row.DataBoundItem;
+                        sharesSelectionList.Add(ov.ShareName);
+                    }
+                }
+                File.WriteAllLines(saveFileDlg.FileName, sharesSelectionList.ToArray());
+            }
+
         }
     }
 }

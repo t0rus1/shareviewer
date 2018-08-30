@@ -357,15 +357,14 @@ Result:
             if (rowBig != -1) {
                 if (biggest > 1.0)
                 {
-                    for (int i = rowBig; i <= endRow; i++)
+                    for (int i = 3; i <= endRow; i++)
                     {
-                        //atRows[i].APpg *= (1 + calcFiveMinsGradientFigureParam.Y);
                         atRows[i].APpg = atRows[i-1].APpg * (1 + calcFiveMinsGradientFigureParam.Y);
                     }
                 }
                 else
                 {
-                    for (int i = rowBig; i <= endRow; i++)
+                    for (int i = 3; i <= endRow; i++)
                     {
                         //atRows[i].APpg *= Math.Pow(1 - calcFiveMinsGradientFigureParam.Y, calcFiveMinsGradientFigureParam.X);
                         atRows[i].APpg = atRows[i-1].APpg * Math.Pow(1 - calcFiveMinsGradientFigureParam.Y, calcFiveMinsGradientFigureParam.X);
@@ -471,6 +470,46 @@ Result:
 
         }
 
+        //ensure two UINT operands can produce a negative result
+        internal static int SubtractUints(uint a, uint b)
+        {
+            return (int)a - (int)b;
+        }
+
+        //add a uint to a double and prevent a too large double from causing overflow by clamping the result
+        internal static uint SafeAdd(uint a, double b)
+        {
+            uint result;
+            if (Double.IsNaN(b)) return a;
+
+            try
+            {
+                result = a + Convert.ToUInt32(b);
+            }
+            catch (OverflowException ex)
+            {
+                result = UInt32.MaxValue;
+            }
+            return result;
+        }
+
+        //subtracts b from a, wanting an unsigned (positive) result
+        //if result aint positive, clamp result to zero
+        internal static uint SafeSubtract(uint a, double b)
+        {
+            if (Double.IsNaN(b)) return a;
+            double posRes = Convert.ToDouble(a) - b;
+            if (posRes >=0)
+            {
+                return SafeAdd(0, posRes);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+
         internal static void MakeSlowVolume(ref AllTable[] atRows, MakeSlowVolumeParam svp, int startRow, int endRow, out string[] auditSummary)
         {
             double diffTerm;
@@ -493,64 +532,40 @@ Result:
                     if (i < 10401)
                     {
                         //case 1, SVa
-                        diffTerm = atRows[i].FV - atRows[i - 1].SVa;
+                        diffTerm = SubtractUints(atRows[i].FV,atRows[i - 1].SVa);
                         powTerm = Math.Pow(diffTerm, svp.Ya);
-                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
-                        {
-                            atRows[i].SVa = atRows[i - 1].SVa + Convert.ToUInt32(powTerm);
-                        }
+                        atRows[i].SVa = SafeAdd(atRows[i - 1].SVa,powTerm);
                         //       SVb
-                        diffTerm = atRows[i].FV - atRows[i - 1].SVb;
+                        diffTerm = SubtractUints(atRows[i].FV, atRows[i - 1].SVb);
                         powTerm = Math.Pow(diffTerm, svp.Yb);
-                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
-                        {
-                            atRows[i].SVb = atRows[i - 1].SVb + Convert.ToUInt32(powTerm);
-                        }
+                        atRows[i].SVb = SafeAdd(atRows[i - 1].SVb,powTerm);
                         //       SVc
-                        diffTerm = atRows[i].FV - atRows[i - 1].SVc;
+                        diffTerm = SubtractUints(atRows[i].FV,atRows[i - 1].SVc);
                         powTerm = Math.Pow(diffTerm, svp.Yc);
-                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
-                        {
-                            atRows[i].SVc = atRows[i - 1].SVc + Convert.ToUInt32(powTerm);
-                        }
+                        atRows[i].SVc = SafeAdd(atRows[i - 1].SVc,powTerm);
                         //       SVd
-                        diffTerm = atRows[i].FV - atRows[i - 1].SVd;
+                        diffTerm = SubtractUints(atRows[i].FV, atRows[i - 1].SVd);
                         powTerm = Math.Pow(diffTerm, svp.Yd);
-                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
-                        {
-                            atRows[i].SVd = atRows[i - 1].SVd + Convert.ToUInt32(powTerm);
-                        }
+                        atRows[i].SVd = SafeAdd(atRows[i - 1].SVd, powTerm);
                     }
                     else if (i == 10401)
                     {
                         //special treatment for the 17:35 band volume (FV) raise it to a settable power before using it
-                        diffTerm = Math.Pow(atRows[i].FV,svp.X) - atRows[i - 1].SVa;
+                        diffTerm = Math.Pow(atRows[10400].FV,svp.X) - atRows[i - 1].SVa;
                         powTerm = Math.Pow(diffTerm, svp.Ya);
-                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
-                        {
-                            atRows[i].SVa = atRows[i - 1].SVa + Convert.ToUInt32(powTerm);
-                        }
+                        atRows[i].SVa = SafeAdd(atRows[i - 1].SVa, powTerm);
                         //       SVb
-                        diffTerm = Math.Pow(atRows[i].FV,svp.X) - atRows[i - 1].SVb;
+                        diffTerm = Math.Pow(atRows[10400].FV,svp.X) - atRows[i - 1].SVb;
                         powTerm = Math.Pow(diffTerm, svp.Yb);
-                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
-                        {
-                            atRows[i].SVb = atRows[i - 1].SVb + Convert.ToUInt32(powTerm);
-                        }
+                        atRows[i].SVb = SafeAdd(atRows[i - 1].SVb, powTerm);
                         //       SVc
-                        diffTerm = Math.Pow(atRows[i].FV,svp.X) - atRows[i - 1].SVc;
+                        diffTerm = Math.Pow(atRows[10400].FV,svp.X) - atRows[i - 1].SVc;
                         powTerm = Math.Pow(diffTerm, svp.Yc);
-                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
-                        {
-                            atRows[i].SVc = atRows[i - 1].SVc + Convert.ToUInt32(powTerm);
-                        }
+                        atRows[i].SVc = SafeAdd(atRows[i - 1].SVc,powTerm);
                         //       SVd
-                        diffTerm = Math.Pow(atRows[i].FV,svp.X) - atRows[i - 1].SVd;
+                        diffTerm = Math.Pow(atRows[10400].FV,svp.X) - atRows[i - 1].SVd;
                         powTerm = Math.Pow(diffTerm, svp.Yd);
-                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
-                        {
-                            atRows[i].SVd = atRows[i - 1].SVd + Convert.ToUInt32(powTerm);
-                        }
+                        atRows[i].SVd = SafeAdd(atRows[i - 1].SVd, powTerm);
                     }
                 }
                 else if (atRows[i - 1].SVa > atRows[i].FV)
@@ -558,64 +573,40 @@ Result:
                     if (i < 10401)
                     {
                         //case 2, SVa
-                        diffTerm = atRows[i - 1].SVa - atRows[i].FV;
+                        diffTerm = SubtractUints(atRows[i - 1].SVa, atRows[i].FV);
                         powTerm = Math.Pow(diffTerm, svp.Ya);
-                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
-                        {
-                            atRows[i].SVa = atRows[i - 1].SVa - Convert.ToUInt32(powTerm);
-                        }
+                        atRows[i].SVa = atRows[i - 1].SVa - Convert.ToUInt32(powTerm);
                         //case 2, SVb
-                        diffTerm = atRows[i - 1].SVb - atRows[i].FV;
+                        diffTerm = (int)((int)atRows[i - 1].SVb - (int)atRows[i].FV);
                         powTerm = Math.Pow(diffTerm, svp.Yb);
-                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
-                        {
-                            atRows[i].SVb = atRows[i - 1].SVb - Convert.ToUInt32(powTerm);
-                        }
+                        atRows[i].SVb = SafeSubtract(atRows[i - 1].SVb,powTerm);
                         //case 2, SVc
                         diffTerm = atRows[i - 1].SVc - atRows[i].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yc);
-                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
-                        {
-                            atRows[i].SVc = atRows[i - 1].SVc - Convert.ToUInt32(powTerm);
-                        }
+                        atRows[i].SVc = SafeSubtract(atRows[i - 1].SVc,powTerm);
                         //case 2, SVd
                         diffTerm = atRows[i - 1].SVd - atRows[i].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yd);
-                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
-                        {
-                            atRows[i].SVd = atRows[i - 1].SVd - Convert.ToUInt32(powTerm);
-                        }
+                        atRows[i].SVd = SafeSubtract(atRows[i - 1].SVd,powTerm);
                     }
                     else if (i == 10401)
                     {
                         //case 2, SVa
                         diffTerm = Math.Pow(atRows[i].SVa,svp.X) - atRows[10400].FV;
                         powTerm = Math.Pow(diffTerm, svp.Ya);
-                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
-                        {
-                            atRows[i].SVa = atRows[i - 1].SVa - Convert.ToUInt32(powTerm);
-                        }
+                        atRows[i].SVa = SafeSubtract(atRows[i - 1].SVa,powTerm);
                         //case 2, SVb
                         diffTerm = Math.Pow(atRows[i].SVb,svp.X) - atRows[10400].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yb);
-                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
-                        {
-                            atRows[i].SVb = atRows[i - 1].SVb - Convert.ToUInt32(powTerm);
-                        }
+                        atRows[i].SVb = SafeSubtract(atRows[i - 1].SVb,powTerm);
                         //case 2, SVc
                         diffTerm = Math.Pow(atRows[i].SVc,svp.X) - atRows[10400].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yc);
-                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
-                        {
-                            atRows[i].SVc = atRows[i - 1].SVc - Convert.ToUInt32(powTerm);
-                        }
+                        atRows[i].SVc = SafeSubtract(atRows[i - 1].SVc,powTerm);
                         //case 2, SVd
                         diffTerm = Math.Pow(atRows[i].SVd,svp.X) - atRows[10400].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yd);
-                        if (powTerm > 0 && powTerm < UInt32.MaxValue)
-                        {
-                            atRows[i].SVd = atRows[i - 1].SVd - Convert.ToUInt32(powTerm);
-                        }
+                        atRows[i].SVd = SafeSubtract(atRows[i - 1].SVd,powTerm);
                     }
                 }
 
@@ -657,13 +648,9 @@ Result:
             if ((bigRow != -1) && (big > 1))
             {
                 //yes, increase APSVac onwards
-                for (int i = bigRow; i <=endRow ; i++)
+                for (int i = 3; i <=endRow ; i++)
                 {
-                    atRows[i].APSVac *= (1 + svf.Y);
-                    //if (big > svf.W)
-                    //{
-                    //    atRows[i].PtsVola += big;
-                    //}
+                    atRows[i].APSVac = atRows[i-1].APSVac*(1 + svf.Y);
                     if (i > 10401-104)
                     {
                         atRows[i].PtsVola += big;
@@ -673,14 +660,10 @@ Result:
             else if ((bigRow != -1) && (big <= 1))
             {
                 //no, decrease APSVac onwards
-                for (int i = bigRow; i <= endRow; i++)
+                for (int i = 3; i <= endRow; i++)
                 {
-                    atRows[i].APSVac *= Math.Pow(1 - svf.Y,svf.X);
-                    //not sure if this is necessary
-                    //if (big > svf.W)
-                    //{
-                    //    atRows[i].PtsVola += big;
-                    //}
+                    //atRows[i].APSVac *= Math.Pow(1 - svf.Y,svf.X);
+                    atRows[i].APSVac = atRows[i-1].APSVac * Math.Pow(1 - svf.Y, svf.X);
                     if (i > 10401 - 104)
                     {
                         atRows[i].PtsVola += big;
@@ -726,9 +709,9 @@ Result:
             if ((bigRow != -1) && (big > 1))
             {
                 //yes, increase APSVbd onwards
-                for (int i = bigRow; i <= endRow; i++)
+                for (int i = 3; i <= endRow; i++)
                 {
-                    atRows[i].APSVbd *= (1 + svf.Y);
+                    atRows[i].APSVbd = atRows[i-1].APSVbd*(1 + svf.Y);
                     if (big > svf.W)
                     {
                         atRows[i].PtsVolb += big;
@@ -738,9 +721,9 @@ Result:
             else if ((bigRow != -1) && (big <= 1))
             {
                 //no, decrease APSVbd onwards
-                for (int i = bigRow; i <= endRow; i++)
+                for (int i = 3; i <= endRow; i++)
                 {
-                    atRows[i].APSVbd *= 1 - svf.Y;
+                    atRows[i].APSVbd = atRows[i-1].APSVbd*(1 - svf.Y);
                     //not sure if this is necessary
                     if (big > svf.W)
                     {

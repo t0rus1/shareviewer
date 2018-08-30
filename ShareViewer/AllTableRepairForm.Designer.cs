@@ -122,11 +122,13 @@
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.buttonRepair);
             this.Controls.Add(this.listBoxRepairShares);
+            this.HelpButton = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AllTableRepairForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Generate selected AllTable(s)";
+            this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.AllTableRepairForm_HelpButtonClicked);
             this.Load += new System.EventHandler(this.AllTableRepairForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
