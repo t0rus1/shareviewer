@@ -44,12 +44,27 @@ namespace ShareViewer
             CheckAllTableViewsSettings(); // these views not used on main form, but best done upfront
             CheckOverviewViewsSettings(); // these views not used on main form, but best done upfront
             CheckHolidaysSettings(); // ditto
+            CheckPrefillings();
             Calculations.InitializeCalculationParameters(Helper.UserSettings());
 
             BindFormProperties();
             InitializeShareViewer();
             initializing = false;
             Helper.LogStatus("Info", "Ready");
+        }
+
+        private void CheckPrefillings()
+        {
+            if (Helper.UserSettings().PrefillingPrices == 0)
+            {
+                Helper.UserSettings().PrefillingPrices = 30.0;
+                Helper.UserSettings().Save();
+            }
+            if (Helper.UserSettings().PrefillingVolumes == 0)
+            {
+                Helper.UserSettings().PrefillingVolumes = 100;
+                Helper.UserSettings().Save();
+            }
         }
 
         private void CheckAllTableViewsSettings()

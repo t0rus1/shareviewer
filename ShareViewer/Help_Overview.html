@@ -4,38 +4,77 @@
 <head>
     <meta charset="utf-8" />
     <title>ShareViewer Help</title>
+    <style>
+        body {
+            padding: 5px;
+            font-family: Verdana, Geneva, sans-serif;
+            background-color: whitesmoke;
+        }
+        h1 {
+            text-align: left;
+            text-transform: capitalize;
+        }
+        p,ul {
+            font-size: 20px;
+            background-color: #FFF;
+        }
+        h2 {
+            margin-left: 10px;
+        }
+        img {
+            border: 5px double #903;
+            width: 400px;
+            height: 300px;
+            margin-left: 10px;
+        }
+        a {
+            margin-left: 10px;
+        }
+    </style>
 </head>
 <body>
     <h2>Overview</h2>
-    The Overview presents a table with one entry per share. Each entry's contents is taken from the last time band of each share's All-Table, 
-    and therefore is also dependant on the values pertaining for the calculation parameters at the time they we generated.
-
+    <p>
+        The Overview presents a table with one entry per share. Each entry's contents is taken from the last time band of each share's All-Table,
+        and therefore is also dependant on the values pertaining for the calculation parameters at the time they we generated.
+    </p>
     <h3>Options available</h3>
-    <ul>
-        <li>Compile the Overview straight. Top right button</li>
-        <li>Recalculate the overview. Also top right button, but this will only happen if you've changed any parameter settings at the top.</li>
-        <li>You can at <i>any stage</i> do a <b>Quick Save</b>, which will save the state of the  Overview table at that moment. 
-        The overview is saved in the All-Tables folder under the name <b>overview.at</b> and can at any stage be recalled using the <i>Quick-reload</i></li>
-        <li>You can at any stage also save an Overview as a <b>named Overview</b>, with notes, and later reload to continue working with it</li>
-        <li>Since there are many columns in the table, you are allowed to select which columns you want to see. A particular set of columns is known as a <b><i>View</i></b></li>.
-        <li>You may name and save such view arrangements for later recall. It makes sense to name the views based on the calculation or topic you are focussing on.</li>
-        <li>You may open up any share's All-Table by <b>double clicking in the left hand column</b></li>
-        <li>You may select one or individual rows (Ctrl-Click) for either deletion or saving. Saves may be named, and have notes.</li>
-        <li>There is a Save|Load drop-down button for this aforementioned purpose.</li>
-        <li>If you Right-Click in the left hand column, ShareViewer will show you the date of the last day of that All-Table. 
-        This is useful for confirming you are seeing what you expect to see.</li>
-        <li></li>
-        <li>more to follow...</li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-    </ul>
-
-
+    <p>
+        <ul>
+            <li><b>Compile</b> the Overview straight. Top right button</li>
+            <li><b>Recalculate</b> the overview. Also top right button, but this will only happen if you've changed any parameter settings at the top.</li>
+            <li>
+                You can at <i>any stage</i> do a <b>Quick Save</b>, which will save the state of the  Overview table at that moment.
+                The overview is saved in the All-Tables folder under the name <b>overview.at</b> and can at any stage be recalled using the <i>Quick-reload</i>
+            </li>
+            <li>You can at any stage also save an Overview as a <b>named Overview</b>, with notes, and later reload to continue working with it</li>
+            <li>Since there are many columns in the table, you are allowed to select which columns you want to see. A particular <b>set of columns</b> is known as a <b><i>View</i></b></li>.
+            <li>You may name and save such view arrangements for later recall. It makes sense to name the views <b>based on the calculation or topic</b> you are focussing on.</li>
+            <li>You may open up any share's <b>All-Table</b> by <b>double clicking in the left hand column</b></li>
+            <li>You may <b>select</b> one or individual rows (<b>Ctrl-Click</b>) for either deletion or saving. Saves may be named, and have <b>notes</b>.</li>
+            <li>There is a Save|Load drop-down button for this aforementioned purpose.</li>
+            <li>
+                If you Right-Click in the left hand column, ShareViewer will show you the date of the last day of that All-Table.
+                This is useful for confirming you are seeing what you expect to see.
+            </li>
+        </ul>
+    </p>
+    <h3>How to Sort</h3>
+    <p>
+        The Overview allows for single column sorting. Simply click on a columns header to switch between ascending and descending order.
+    </p>
+    <h3>How to filter</h3>
+    <p>
+        Right Click on a column header if you wish to apply a filter criterion to a column. <br />
+        A Filters box will pop up, with a filter condition row appended.
+        Click in the <b><u>Compare</u></b> column to set a <b>Greater Than</b> or <b>Less Than</b> condition. 
+        <br/>
+        <b>Note</b>: in order to switch between these two conditions, just click again.
+        <br/>Click in the <b><u>Value</u></b> column to set a threshold value.
+        Enable or disable the condition using the <b><u>Apply</u></b> check-box.
+        <br/><b>Add additional filter conditions</b> for other columns by continuing to right click the relevant column headers, as described above...
+        <br/>Lastly, click the Apply button at the bottom. The Overview table should refresh, showing only those shares which meet your conditions.
+    </p>
 
 </body>
 </html>

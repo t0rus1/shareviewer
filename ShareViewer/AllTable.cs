@@ -717,10 +717,10 @@ namespace ShareViewer
                 case "DLLFPd": return "N3";
                 case "FV": return "N0";
                 case "SVa": return "N0";
-                case "APSVac": return "N1";
+                case "APSVac": return "N4";
                 case "SVFac": return "N6";
                 case "SVb": return "N0";
-                case "APSVbd": return "N1";
+                case "APSVbd": return "N4";
                 case "SVFbd": return "N6";
                 case "SVc": return "N0";
                 case "RPGFV": return "N1";

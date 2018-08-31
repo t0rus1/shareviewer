@@ -32,6 +32,7 @@
             this.buttonApply = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
+            this.checkBoxLazies = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgViewFilters)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -52,12 +53,11 @@
             // 
             this.buttonApply.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.buttonApply.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonApply.Location = new System.Drawing.Point(0, 490);
+            this.buttonApply.Location = new System.Drawing.Point(0, 507);
             this.buttonApply.Name = "buttonApply";
-            this.buttonApply.Size = new System.Drawing.Size(264, 57);
+            this.buttonApply.Size = new System.Drawing.Size(264, 40);
             this.buttonApply.TabIndex = 0;
             this.buttonApply.Text = "Apply";
-            this.buttonApply.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.buttonApply.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.buttonApply.UseVisualStyleBackColor = true;
             this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
@@ -78,12 +78,24 @@
             this.stripText.Size = new System.Drawing.Size(16, 17);
             this.stripText.Text = "...";
             // 
+            // checkBoxLazies
+            // 
+            this.checkBoxLazies.AutoSize = true;
+            this.checkBoxLazies.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.checkBoxLazies.Location = new System.Drawing.Point(0, 490);
+            this.checkBoxLazies.Name = "checkBoxLazies";
+            this.checkBoxLazies.Size = new System.Drawing.Size(264, 17);
+            this.checkBoxLazies.TabIndex = 3;
+            this.checkBoxLazies.Text = "exclude Lazy shares";
+            this.checkBoxLazies.UseVisualStyleBackColor = true;
+            // 
             // OverviewRowFilterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(264, 569);
+            this.Controls.Add(this.checkBoxLazies);
             this.Controls.Add(this.buttonApply);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.dgViewFilters);
@@ -107,5 +119,6 @@
         private System.Windows.Forms.Button buttonApply;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel stripText;
+        private System.Windows.Forms.CheckBox checkBoxLazies;
     }
 }

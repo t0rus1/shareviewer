@@ -52,6 +52,7 @@ namespace ShareViewer
                 Name = "Compare",
                 DataPropertyName = "CompareKind",
                 ValueType = typeof(Comparison),
+                ReadOnly = true
             });
             dgViewFilters.Columns.Add(new DataGridViewTextBoxColumn()
             {
@@ -85,6 +86,7 @@ namespace ShareViewer
 
         private void buttonApply_Click(object sender, EventArgs e)
         {
+            ((Button)sender).Tag = checkBoxLazies.Checked ? "ExcludeLazies" : "";
             _onApply(sender, e);
         }
 

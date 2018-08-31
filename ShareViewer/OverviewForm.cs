@@ -872,7 +872,9 @@ namespace ShareViewer
             }
 
             //Apply filters to the overviews as per current state in the floating filters form
-            //Successive application
+            //Successively apply each filter.
+            //Note that the filter keys are mostly property names, but sometimes have '_x' appended 
+            //to cater for multiple filters on the same property. eg LastPrice and LastPrice_1
             foreach (string filterProp in rowFilters.Keys)
             {
                 OverviewFilter filter = rowFilters[filterProp];
@@ -895,6 +897,13 @@ namespace ShareViewer
                     }
                 }
             }
+            //lastly lazy shares. Check tag on the sending button
+            string lazyInstruction = (string)((Button)sender).Tag;
+            if (lazyInstruction == "ExcludeLazies")
+            {
+                sharesOverview = sharesOverview.Where(ov => !ov.Lazy).ToList();
+            }
+
             //rebind grid
             dgViewBindingSource.Clear();
             foreach (Overview overview in sharesOverview)
@@ -903,7 +912,7 @@ namespace ShareViewer
             }
             dgOverview.DataSource = null;
             dgOverview.DataSource = dgViewBindingSource;
-            stripText.Text = $"Filters applied";
+            stripText.Text = $"Filters applied, {sharesOverview.Count} shares qualifying.";
         }
 
         private void OfferFiltering(object sender, DataGridViewCellMouseEventArgs e)
@@ -911,7 +920,8 @@ namespace ShareViewer
             //grab name of column from overview
             string propName = dgOverview.Columns[e.ColumnIndex].DataPropertyName;
             string colHeader = dgOverview.Columns[e.ColumnIndex].Name;
-            if (propName == "ShareName" || propName == "Lazy") return; // only offer filtering on numeric columns
+            //if (propName == "ShareName" || propName == "Lazy") return; // only offer filtering on numeric columns
+            if (propName == "ShareName") return; // don't offer filtering on string columns
 
             //pop up filter form and show state of current filters
             if (rowFilterForm == null)
@@ -927,9 +937,30 @@ namespace ShareViewer
             //is this column already in rowfilters?
             if (!rowFilters.Keys.Any(k=>k == propName))
             {
-                //nope, so add it
-                rowFilters.Add(propName, new OverviewFilter(propName, Comparison.GreaterThan, colHeader));
-                rowFilterForm.LoadGrid();
+                if (propName != "Lazy") // Lazy filtering handled by checkbox at bottom of RowFilter form
+                {
+                    rowFilters.Add(propName, new OverviewFilter(propName, Comparison.GreaterThan, colHeader));
+                    rowFilterForm.LoadGrid();
+                }
+            }
+            else
+            {
+                //there is already such a filter on the property. User may want another
+                //so we add a digit to the propName acting as a key for the row filters
+                bool unAdded = true;
+                int i = 1;
+                do
+                {
+                    string keyProp = $"{propName}_{i}";
+                    if (!rowFilters.Keys.Any(k => k == keyProp))
+                    {
+                        rowFilters.Add(keyProp, new OverviewFilter(propName, Comparison.LessThan, colHeader));
+                        rowFilterForm.LoadGrid();
+                        unAdded = false;
+                    }
+                    i++;
+                }
+                while (unAdded);
             }
         }
 
@@ -1466,6 +1497,7 @@ namespace ShareViewer
                 labelShareListName.Text = fileInfo.Name;
                 selectedShares = File.ReadAllLines(openFileDlg.FileName);
                 listBoxSelecteds.DataSource = selectedShares;
+                MessageBox.Show($"Sharelist '{fileInfo.Name}' will apply.\nClick the 'Compile|Recalc' button to refresh the grid","ShareList chosen");
             }
 
         }
@@ -1477,8 +1509,9 @@ namespace ShareViewer
             selectedShares = new string[] { };
             listBoxSelecteds.DataSource = selectedShares;
 
-            labelShareListName.Text = "All shares will be included";
+            labelShareListName.Text = "All shares to be included";
             selectedShares = null;
+            MessageBox.Show($"All shares will now qualify.\nClick the 'Compile|Recalc' button to refresh the grid", "All Shares chosen");
         }
 
         private void OverviewForm_HelpButtonClicked(object sender, CancelEventArgs e)
