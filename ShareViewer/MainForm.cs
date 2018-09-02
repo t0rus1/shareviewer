@@ -1097,5 +1097,12 @@ namespace ShareViewer
             }
 
         }
+
+        private void buttonAutoOps_Click(object sender, EventArgs e)
+        {
+            var opsForm = new AutoOpsForm();
+            opsForm.ShowDialog();
+        }
+
     }
 }

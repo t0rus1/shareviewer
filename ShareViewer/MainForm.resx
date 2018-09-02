@@ -117,6 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="buttonAutoOps.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
+        EgAACxIB0t1+/AAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4yMfEgaZUAAALjSURBVFhHxZbP
+        a1NBEMfzR3j0D/HowYMHTbT0UpoQFC+CB82L9dSTB0G8ieipICJ48FCkYE8VieCvQ9S20CrFUsUfaIui
+        UJPnI+5n8zZs983bzWuQDHxJsjPzncnuzOyWhpWT0zMHT1Sjc5VqY75ca2xWalHPhl5TOmywTd1Gl8p0
+        dLhSayy4AUMoV6NFfFOa4nJsqnFAkdyTyIsADrhS2uHkeP3CIbWdnyXCfUFxwZnS+6Vcax4p16JfItEI
+        gFMlcTQNIwtZ+oJP1C/G127ciRcfPf29ufUp/vptpwf4zho6bCRfkCYh7wTn5Nn25Obc/c72zs+kFxBs
+        sMXH4ehDxRBrIq/gqmdn4zer77qQ/02S3lLrRWf2yq0/k6cv7RobvrOGDhukvbwW42tzGRArDduXfqtl
+        DSHY+vglhnBlbSM+c/4y/yxjZwMbbPHBNy+JPS2qezZrlLxefauJnjx/xXbKWyojwQff9vJ6l9+OXqGx
+        oIMztbLKqMc5QsC/Ub+LBDdIzE6kNZGx0RNTj1dXUW/GFBPn6dv2pdbLDpB0AF844JK6g9gl5reroJ3I
+        nKJydTYQAkg6Aziwu3r9drYWVGw1eLIXCz2NE5Xt6mwYkXQGcGADp6sjdsldBBvvP+gdUEcR3AFE0hlM
+        1Ju72MAp6cUEmG6hrQVGJk/NyK2WAoFT0o2UgKlyPn1JFE6A2Y6TPe0kEDSUBBzo4XR1YKQiBKEkwkUo
+        tCEtg1OoDQ3sJOYfPt5zm5o2pLXtdQ3aUBpEDI1hBpENkmg9a3fm7j4YJGAPIoabbQ/0IBr7KEZyHp0J
+        FwkE/+My4gLUwZGxX8eI70FidoLzpKio7PCDZL2bFzzzIEHG/iRDhnmU0qL0tHmUft/+MXiUopOq3cD7
+        KDXC09mXxH4BJ0/+NIxfyNJzHMWhuIL/3BXOKa8wiwCO3DMfRmgXelYi90PNFrfVRhGmlh7ban5LF5he
+        UzpsBhMuKKXSP15n4Paa/LvpAAAAAElFTkSuQmCC
+</value>
+  </data>
   <metadata name="toolTipShareList.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>126, 17</value>
   </metadata>
@@ -124,23 +144,6 @@
     <value>Pops up a form whereby you may regenerate the All-Tables of selected Shares.
 !!!Caution!!!
 A full 100 trading days (which MUST correspond to the same trading day range of the other All-Tables and must  ALREADY be set on the calendars) </value>
-  </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="buttonAddToAllTables.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
-        EgAACxIB0t1+/AAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4yMfEgaZUAAAItSURBVFhHxVa7
-        SsRAFM1HWPohlhYWFpr4qGQ3rGJho4iJj1oFLQTBxsbGRlgQRGELBX9BRCxEQRAbxQeCFrpZwzpndibE
-        7M3MZNe4Bw4sc++cOzv3kbFMMVxY7B4q+tNO0Tu0Xe/Ocf16nHyN2eADX7GtfTgFv9dxvUoyoI520T/G
-        XiGTHQNjXhcTKVPiWQgNaAlZMwyW5nrYdT5Qgi2RaUFTyKthu/N9tut/kEJtEJrsEP0iDA2cMo/gkuIQ
-        9E0gT1mufXlj5+vm9j4A8ZvyIclikDVhWnCTs6vVs4urWj0BrMFG7UkSsUTYBhqtRjtLjpQWauWDkyAI
-        mmJHgA0+8KU0fjHeorxnKSdBXPHj02t65ATgq0+LV+HBMbVoh/TrNoUuLXxi8vFKGDe3995V120KaECL
-        ioHYFuY3ZfyPAyA2GzzNHxbJvFOA2BZlkJyYWamOji/xPm+lCLEXGpS2ZOoBZAqeX97C9a3dz6xtiD3Y
-        q0wBo/YAEueX18GUv8avlEqLvG74wFcsq2uAUZmCZLDvMKzvH51GaYmPYqzBBh8JXQ2AyiJMqwGZFuYT
-        gvK6hdm4BhpFqGnDXGsAbWg6iPKoAT6Isoziv66B6PGqe3S2WgNxjSTxAeTBgY5/joGOPkiAjj/JgI4+
-        SiXwdM7jENDEk1+EUQOnzJIOLZmW9p8ngTyZFqaK0EjNuQnQLuhZSlxNNluSrdYOMLX42Gbzm/qA8TVm
-        g0804bSwrB9y5oUdY+LG3AAAAABJRU5ErkJggg==
-</value>
   </data>
   <data name="buttonBusyAllTables.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

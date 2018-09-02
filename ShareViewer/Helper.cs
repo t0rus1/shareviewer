@@ -401,6 +401,10 @@ namespace ShareViewer
             }
         }
 
+        //Computes (inclusive) number of trading days between passed in dates
+        //If both days are the same (trading) date, it returns 1
+        //If either day is a weekend day or holiday, they get skipped over and do not add to the count
+        //If both dates are trading days and they are adjacent, 2 is returned
         internal static int ComputeTradingSpanDayCount(DateTime fromDate, DateTime toDate)
         {
             int days = 0;

@@ -848,7 +848,7 @@ namespace ShareViewer
                         _curOverviewLoadname = "";
                         linkLabelNotes.Enabled = false;
                         //set window title
-                        this.Text = $"Viewing a quick-saved overview dated {fileInfo.LastWriteTime.ToLocalTime()}.";
+                        this.Text = $"ShareViewer v{Application.ProductVersion} Viewing quick-saved overview dated {fileInfo.LastWriteTime.ToLocalTime()}.";
                     }
                 }
             }

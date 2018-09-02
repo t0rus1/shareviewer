@@ -94,6 +94,7 @@
             this.toolTipShareList = new System.Windows.Forms.ToolTip(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
+            this.buttonAutoOps = new System.Windows.Forms.Button();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -138,6 +139,7 @@
             // panel2
             // 
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.buttonAutoOps);
             this.panel2.Controls.Add(this.linkLabelRepair);
             this.panel2.Controls.Add(this.linkLabelSingleDayLoad);
             this.panel2.Controls.Add(this.linkLabelAllowNew);
@@ -164,7 +166,7 @@
             // 
             this.linkLabelRepair.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.linkLabelRepair.AutoSize = true;
-            this.linkLabelRepair.Location = new System.Drawing.Point(474, 102);
+            this.linkLabelRepair.Location = new System.Drawing.Point(474, 175);
             this.linkLabelRepair.Name = "linkLabelRepair";
             this.linkLabelRepair.Size = new System.Drawing.Size(157, 13);
             this.linkLabelRepair.TabIndex = 23;
@@ -178,7 +180,7 @@
             this.linkLabelSingleDayLoad.AutoSize = true;
             this.linkLabelSingleDayLoad.Enabled = false;
             this.linkLabelSingleDayLoad.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabelSingleDayLoad.Location = new System.Drawing.Point(380, 247);
+            this.linkLabelSingleDayLoad.Location = new System.Drawing.Point(355, 264);
             this.linkLabelSingleDayLoad.Name = "linkLabelSingleDayLoad";
             this.linkLabelSingleDayLoad.Size = new System.Drawing.Size(137, 20);
             this.linkLabelSingleDayLoad.TabIndex = 21;
@@ -193,7 +195,7 @@
             // 
             this.linkLabelAllowNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabelAllowNew.AutoSize = true;
-            this.linkLabelAllowNew.Location = new System.Drawing.Point(379, 102);
+            this.linkLabelAllowNew.Location = new System.Drawing.Point(379, 175);
             this.linkLabelAllowNew.Name = "linkLabelAllowNew";
             this.linkLabelAllowNew.Size = new System.Drawing.Size(39, 13);
             this.linkLabelAllowNew.TabIndex = 20;
@@ -209,10 +211,9 @@
             this.buttonAddToAllTables.Enabled = false;
             this.buttonAddToAllTables.FlatAppearance.BorderSize = 2;
             this.buttonAddToAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonAddToAllTables.Image = ((System.Drawing.Image)(resources.GetObject("buttonAddToAllTables.Image")));
-            this.buttonAddToAllTables.Location = new System.Drawing.Point(380, 182);
+            this.buttonAddToAllTables.Location = new System.Drawing.Point(520, 257);
             this.buttonAddToAllTables.Name = "buttonAddToAllTables";
-            this.buttonAddToAllTables.Size = new System.Drawing.Size(249, 47);
+            this.buttonAddToAllTables.Size = new System.Drawing.Size(152, 41);
             this.buttonAddToAllTables.TabIndex = 19;
             this.buttonAddToAllTables.Text = "Add new Data";
             this.buttonAddToAllTables.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
@@ -229,7 +230,7 @@
             this.buttonBusyAllTables.ForeColor = System.Drawing.Color.Green;
             this.buttonBusyAllTables.Image = ((System.Drawing.Image)(resources.GetObject("buttonBusyAllTables.Image")));
             this.buttonBusyAllTables.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.buttonBusyAllTables.Location = new System.Drawing.Point(352, 291);
+            this.buttonBusyAllTables.Location = new System.Drawing.Point(352, 308);
             this.buttonBusyAllTables.Name = "buttonBusyAllTables";
             this.buttonBusyAllTables.Size = new System.Drawing.Size(320, 76);
             this.buttonBusyAllTables.TabIndex = 18;
@@ -296,9 +297,9 @@
             this.buttonNewAllTables.FlatAppearance.BorderSize = 2;
             this.buttonNewAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonNewAllTables.Image = ((System.Drawing.Image)(resources.GetObject("buttonNewAllTables.Image")));
-            this.buttonNewAllTables.Location = new System.Drawing.Point(380, 118);
+            this.buttonNewAllTables.Location = new System.Drawing.Point(373, 191);
             this.buttonNewAllTables.Name = "buttonNewAllTables";
-            this.buttonNewAllTables.Size = new System.Drawing.Size(249, 47);
+            this.buttonNewAllTables.Size = new System.Drawing.Size(256, 47);
             this.buttonNewAllTables.TabIndex = 15;
             this.buttonNewAllTables.Text = "Generate NEW All-Tables";
             this.buttonNewAllTables.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
@@ -886,6 +887,19 @@
             this.stripText.Size = new System.Drawing.Size(22, 17);
             this.stripText.Text = "Ok";
             // 
+            // buttonAutoOps
+            // 
+            this.buttonAutoOps.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonAutoOps.Image = ((System.Drawing.Image)(resources.GetObject("buttonAutoOps.Image")));
+            this.buttonAutoOps.Location = new System.Drawing.Point(373, 105);
+            this.buttonAutoOps.Name = "buttonAutoOps";
+            this.buttonAutoOps.Size = new System.Drawing.Size(258, 55);
+            this.buttonAutoOps.TabIndex = 24;
+            this.buttonAutoOps.Text = "Daily Intake Auto Ops";
+            this.buttonAutoOps.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.buttonAutoOps.UseVisualStyleBackColor = true;
+            this.buttonAutoOps.Click += new System.EventHandler(this.buttonAutoOps_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -987,6 +1001,7 @@
         internal System.Windows.Forms.ToolStripStatusLabel stripText;
         private System.Windows.Forms.TabPage tabPageParameters;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Button buttonAutoOps;
     }
 }
 

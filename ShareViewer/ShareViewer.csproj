@@ -62,6 +62,13 @@
       <DependentUpon>AllTableSummaryForm.cs</DependentUpon>
     </Compile>
     <Compile Include="AlternateData.cs" />
+    <Compile Include="AutoOpsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AutoOpsForm.Designer.cs">
+      <DependentUpon>AutoOpsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AutoOpsEntry.cs" />
     <Compile Include="Calculations.cs" />
     <Compile Include="DirectionAndTurningParam.cs" />
     <Compile Include="DirectionAndTurningUI.cs" />
@@ -144,6 +151,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AllTableSummaryForm.resx">
       <DependentUpon>AllTableSummaryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AutoOpsForm.resx">
+      <DependentUpon>AutoOpsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HelpForm.resx">
       <DependentUpon>HelpForm.cs</DependentUpon>
