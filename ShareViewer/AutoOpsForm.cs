@@ -206,5 +206,13 @@ namespace ShareViewer
             timerAuto.Enabled = false;
             GoManualMode();
         }
+
+        //Take in (another) day of trading data in an effort to catch up
+        private void buttonCatchUp_Click(object sender, EventArgs e)
+        {
+            var intakeDate = dtInsteadDate.Value;
+            //ShareSite.DownloadSingleTradingFile()
+
+        }
     }
 }

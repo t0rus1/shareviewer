@@ -83,7 +83,7 @@ namespace ShareViewer
                 Match m = Regex.Match(item, @"(\d{4}_\d{2}_\d{2}.TXT) (\d+) ");
                 if (m.Success)
                 {
-                    string targetFile = m.Groups[1].Value;    
+                    string targetFile = m.Groups[1].Value;
                     Int64 targetFileReportedSize = Convert.ToInt64(m.Groups[2].Value);
                     var webResource = url + $"/{targetFile}";
                     var webClient = new WebClient();
@@ -100,7 +100,7 @@ namespace ShareViewer
                             awaiter.OnCompleted(() =>
                             {
                                 Helper.Log("Info", $"{targetFile} downloaded.");
-                                Helper.DecrementProgressCountdown("progressBarDownload","labelBusyDownload");
+                                Helper.DecrementProgressCountdown("progressBarDownload", "labelBusyDownload");
 
                                 var totalFiles = 0;
                                 if (Helper.MarkListboxItem("listBoxInhalt", item, out totalFiles) == 0)
@@ -145,7 +145,7 @@ namespace ShareViewer
                 if (cs.Count == 0)
                 {
                     //exit route... for each concurrent task                   
-                    Helper.Log("Info",$"Exiting DownloadFromStack. NumDownloadTasksActive={NumDownloadTasksActive}");
+                    Helper.Log("Info", $"Exiting DownloadFromStack. NumDownloadTasksActive={NumDownloadTasksActive}");
                     NumDownloadTasksActive--;
                     if (NumDownloadTasksActive == 0)
                     {
@@ -155,6 +155,43 @@ namespace ShareViewer
                 }
             }
 
+        }
+
+
+        internal static async void DownloadSingleTradingFile(string targetFile, String userName, String passWord, bool attended, Action<string> progressCallback)
+        {
+            var appUserSettings = Helper.UserSettings();
+            var url = appUserSettings.SharesUrl; //eg = "http://www.bsb-software.de/rese/";
+
+            Helper.Log("info", $"DownloadSingleTradingFile: {targetFile}");
+
+            var webResource = url + $"/{targetFile}";
+            var webClient = new WebClient();
+            webClient.Credentials = new NetworkCredential(userName, passWord);
+            var localFilename = appUserSettings.ExtraFolder + @"\" + targetFile;
+            var fileInfo = new FileInfo(localFilename);
+            if (!File.Exists(localFilename))
+            {
+                try
+                {
+                    progressCallback($"Downloading {targetFile} from {url} ...");
+                    await webClient.DownloadFileTaskAsync(webResource, localFilename);
+                    progressCallback($"{localFilename} downloaded.");
+                }
+                catch (Exception e)
+                {
+                    Helper.LogStatus("Error", $"Exception: {e.Message}");
+                    Helper.Log("Error", "Download terminated early.");
+                    if (attended)
+                    {
+                        MessageBox.Show(e.Message, "An error ocurred - download will end early.", MessageBoxButtons.OK);
+                    }
+                }
+            }
+            else
+            {
+                Helper.Log("Warn", $"{targetFile} already present, skipping download.");
+            }
         }
 
         //downloads files currently referenced in the left hand list box

@@ -296,6 +296,31 @@ Result:
             }
         }
 
+        //looks through PGFrowx15,PGFrowx16,PGFrowx17 values in atRows array from curRow back daysback rows
+        //and returns biggest of these values
+        private static double BiggestPrecedingPGF(ref AllTable[] atRows, int curRow, int daysBack)
+        {
+            double biggest = -1;
+            int downTo = curRow - daysBack;
+            if (downTo < 2) downTo = 2;
+            for (int i = curRow; i >= downTo; i--)
+            {
+                if (atRows[i].PGFrowx15 > biggest)
+                {
+                    biggest = atRows[i].PGFrowx15;
+                }
+                if (atRows[i].PGFrowx16 > biggest)
+                {
+                    biggest = atRows[i].PGFrowx16;
+                }
+                if (atRows[i].PGFrowx17 > biggest)
+                {
+                    biggest = atRows[i].PGFrowx17;
+                }
+            }
+            return biggest;
+        }
+
         //Compute per Gunther's notes 
         internal static void FindFiveMinsGradientsFigurePGF(ref AllTable[] atRows, FiveMinsGradientFigureParam calcFiveMinsGradientFigureParam, int startRow, int endRow, out string[] auditSummary)
         {
@@ -303,78 +328,45 @@ Result:
             auditSummary = new string[] { };
 
             //prefill APpg column 13 with 1's
-            for (int i = startRow; i <= endRow; i++)  // 2 -> 10401
+            for (int i = startRow; i <= endRow; i++)  // 10298 -> 10401
             {
                 atRows[i].APpg = 1;
             }
             //col 15
-            for (int i = startRow; i <= endRow; i++)  // 2 -> 10401
+            for (int i = startRow; i <= endRow; i++)  // 10298 -> 10401
             {
                 atRows[i].PGFrowx15 = atRows[i].PGa / atRows[i].APpg;
             }
             //col16
-            for (int i = startRow; i <= endRow - 1; i++)  // 2 -> 10400
+            for (int i = startRow; i <= endRow - 1; i++)  // 10298 -> 10400
             {
                 atRows[i].PGFrowx16 = (atRows[i].PGa * atRows[i + 1].PGa) / atRows[i].APpg;
             }
             //col17
-            for (int i = startRow; i <= endRow - 2; i++)  // 2 -> 10399
+            for (int i = startRow; i <= endRow - 2; i++)  // 10298 -> 10399
             {
                 atRows[i].PGFrowx17 = (atRows[i].PGa * atRows[i + 1].PGa * atRows[i + 2].PGa) / atRows[i].APpg;
             }
             auditSegment = $"FindFiveMinsGradientsFigurePGF:\nColumns APpg, PGFrowx15, PGFrowx16, PGFrowx17 filled from row {startRow}-{endRow}.\nPlease inspect the view.";
 
             // from Gunther
-            //2) look in the fields of columns 15 to17 and the last Z rows for the biggest figure. Z = 104 … 999  	
+            //2) look in the fields of columns 15 to17 and the PRECEDING Z rows for the biggest figure. Z = 104 … 999  	
             //   Z is a variable the user can choose.
 
-            //find biggest figure in last Z rows amongst PGFrowx15, PGFrowx16, PGFrowx17
-            double biggest = 0;
-            int rowBig = -1;
-            int colBig = -1;
-            for (int i = endRow-(calcFiveMinsGradientFigureParam.Z-1); i <= endRow; i++)
+            for (int i = startRow; i <= endRow; i++)
             {
-                if (atRows[i].PGFrowx15 > biggest)
-                {
-                    biggest = atRows[i].PGFrowx15;
-                    rowBig = i;
-                    colBig = 15;
-                }
-                if (atRows[i].PGFrowx16 > biggest)
-                {
-                    biggest = atRows[i].PGFrowx16;
-                    rowBig = i;
-                    colBig = 16;
-                }
-                if (atRows[i].PGFrowx17 > biggest)
-                {
-                    biggest = atRows[i].PGFrowx17;
-                    rowBig = i;
-                    colBig = 17;
-                }
-            }
-
-            if (rowBig != -1) {
+                //find biggest figure in the preceding Z rows amongst PGFrowx15, PGFrowx16, PGFrowx17
+                double biggest;
+                biggest = BiggestPrecedingPGF(ref atRows, i, calcFiveMinsGradientFigureParam.Z);
                 if (biggest > 1.0)
                 {
-                    for (int i = 3; i <= endRow; i++)
-                    {
-                        atRows[i].APpg = atRows[i-1].APpg * (1 + calcFiveMinsGradientFigureParam.Y);
-                    }
+                    atRows[i].APpg = atRows[i].APpg * (1 + calcFiveMinsGradientFigureParam.Y);
                 }
                 else
                 {
-                    for (int i = 3; i <= endRow; i++)
-                    {
-                        //atRows[i].APpg *= Math.Pow(1 - calcFiveMinsGradientFigureParam.Y, calcFiveMinsGradientFigureParam.X);
-                        atRows[i].APpg = atRows[i-1].APpg * Math.Pow(1 - calcFiveMinsGradientFigureParam.Y, calcFiveMinsGradientFigureParam.X);
-                    }
+                    atRows[i].APpg = atRows[i].APpg * Math.Pow(1 - calcFiveMinsGradientFigureParam.Y, calcFiveMinsGradientFigureParam.X);
                 }
-            }
-            else
-            {
-                auditSegment += $"FindFiveMinsGradientsFigurePGF:\nWarning: Unable to locate biggest figure in the last {calcFiveMinsGradientFigureParam.Z} rows amongst PGFrowx15, PGFrowx16, PGFrowx17";
-                auditSummary = auditSegment.Split('\n');
+
             }
 
         }
@@ -471,43 +463,43 @@ Result:
         }
 
         //ensure two UINT operands can produce a negative result
-        internal static int SubtractUints(uint a, uint b)
-        {
-            return (int)a - (int)b;
-        }
+        //internal static int SubtractUints(uint a, uint b)
+        //{
+        //    return (int)a - (int)b;
+        //}
 
         //add a uint to a double and prevent a too large double from causing overflow by clamping the result
-        internal static uint SafeAdd(uint a, double b)
-        {
-            uint result;
-            if (Double.IsNaN(b)) return a;
+        //internal static uint SafeAdd(uint a, double b)
+        //{
+        //    uint result;
+        //    if (Double.IsNaN(b)) return a;
 
-            try
-            {
-                result = a + Convert.ToUInt32(b);
-            }
-            catch (OverflowException ex)
-            {
-                result = UInt32.MaxValue;
-            }
-            return result;
-        }
+        //    try
+        //    {
+        //        result = a + Convert.ToUInt32(b);
+        //    }
+        //    catch (OverflowException ex)
+        //    {
+        //        result = UInt32.MaxValue;
+        //    }
+        //    return result;
+        //}
 
         //subtracts b from a, wanting an unsigned (positive) result
         //if result aint positive, clamp result to zero
-        internal static uint SafeSubtract(uint a, double b)
-        {
-            if (Double.IsNaN(b)) return a;
-            double posRes = Convert.ToDouble(a) - b;
-            if (posRes >=0)
-            {
-                return SafeAdd(0, posRes);
-            }
-            else
-            {
-                return 0;
-            }
-        }
+        //internal static uint SafeSubtract(uint a, double b)
+        //{
+        //    if (Double.IsNaN(b)) return a;
+        //    double posRes = Convert.ToDouble(a) - b;
+        //    if (posRes >=0)
+        //    {
+        //        return SafeAdd(0, posRes);
+        //    }
+        //    else
+        //    {
+        //        return 0;
+        //    }
+        //}
 
 
         internal static void MakeSlowVolume(ref AllTable[] atRows, MakeSlowVolumeParam svp, int startRow, int endRow, out string[] auditSummary)
@@ -532,40 +524,40 @@ Result:
                     if (i < 10401)
                     {
                         //case 1, SVa
-                        diffTerm = SubtractUints(atRows[i].FV,atRows[i - 1].SVa);
+                        diffTerm = atRows[i].FV- atRows[i - 1].SVa;
                         powTerm = Math.Pow(diffTerm, svp.Ya);
-                        atRows[i].SVa = SafeAdd(atRows[i - 1].SVa,powTerm);
+                        atRows[i].SVa = atRows[i - 1].SVa + powTerm;
                         //       SVb
-                        diffTerm = SubtractUints(atRows[i].FV, atRows[i - 1].SVb);
+                        diffTerm = atRows[i].FV - atRows[i - 1].SVb;
                         powTerm = Math.Pow(diffTerm, svp.Yb);
-                        atRows[i].SVb = SafeAdd(atRows[i - 1].SVb,powTerm);
+                        atRows[i].SVb = atRows[i - 1].SVb + powTerm;
                         //       SVc
-                        diffTerm = SubtractUints(atRows[i].FV,atRows[i - 1].SVc);
+                        diffTerm = atRows[i].FV - atRows[i - 1].SVc;
                         powTerm = Math.Pow(diffTerm, svp.Yc);
-                        atRows[i].SVc = SafeAdd(atRows[i - 1].SVc,powTerm);
+                        atRows[i].SVc = atRows[i - 1].SVc + powTerm;
                         //       SVd
-                        diffTerm = SubtractUints(atRows[i].FV, atRows[i - 1].SVd);
+                        diffTerm = atRows[i].FV - atRows[i - 1].SVd;
                         powTerm = Math.Pow(diffTerm, svp.Yd);
-                        atRows[i].SVd = SafeAdd(atRows[i - 1].SVd, powTerm);
+                        atRows[i].SVd = atRows[i - 1].SVd + powTerm;
                     }
                     else if (i == 10401)
                     {
                         //special treatment for the 17:35 band volume (FV) raise it to a settable power before using it
                         diffTerm = Math.Pow(atRows[10400].FV,svp.X) - atRows[i - 1].SVa;
                         powTerm = Math.Pow(diffTerm, svp.Ya);
-                        atRows[i].SVa = SafeAdd(atRows[i - 1].SVa, powTerm);
+                        atRows[i].SVa = atRows[i - 1].SVa + powTerm;
                         //       SVb
                         diffTerm = Math.Pow(atRows[10400].FV,svp.X) - atRows[i - 1].SVb;
                         powTerm = Math.Pow(diffTerm, svp.Yb);
-                        atRows[i].SVb = SafeAdd(atRows[i - 1].SVb, powTerm);
+                        atRows[i].SVb = atRows[i - 1].SVb + powTerm;
                         //       SVc
                         diffTerm = Math.Pow(atRows[10400].FV,svp.X) - atRows[i - 1].SVc;
                         powTerm = Math.Pow(diffTerm, svp.Yc);
-                        atRows[i].SVc = SafeAdd(atRows[i - 1].SVc,powTerm);
+                        atRows[i].SVc = atRows[i - 1].SVc+powTerm;
                         //       SVd
                         diffTerm = Math.Pow(atRows[10400].FV,svp.X) - atRows[i - 1].SVd;
                         powTerm = Math.Pow(diffTerm, svp.Yd);
-                        atRows[i].SVd = SafeAdd(atRows[i - 1].SVd, powTerm);
+                        atRows[i].SVd = atRows[i - 1].SVd + powTerm;
                     }
                 }
                 else if (atRows[i - 1].SVa > atRows[i].FV)
@@ -573,45 +565,60 @@ Result:
                     if (i < 10401)
                     {
                         //case 2, SVa
-                        diffTerm = SubtractUints(atRows[i - 1].SVa, atRows[i].FV);
+                        diffTerm = atRows[i - 1].SVa - atRows[i].FV;
                         powTerm = Math.Pow(diffTerm, svp.Ya);
                         atRows[i].SVa = atRows[i - 1].SVa - Convert.ToUInt32(powTerm);
                         //case 2, SVb
                         diffTerm = (int)((int)atRows[i - 1].SVb - (int)atRows[i].FV);
                         powTerm = Math.Pow(diffTerm, svp.Yb);
-                        atRows[i].SVb = SafeSubtract(atRows[i - 1].SVb,powTerm);
+                        atRows[i].SVb = atRows[i - 1].SVb -powTerm;
                         //case 2, SVc
                         diffTerm = atRows[i - 1].SVc - atRows[i].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yc);
-                        atRows[i].SVc = SafeSubtract(atRows[i - 1].SVc,powTerm);
+                        atRows[i].SVc = atRows[i - 1].SVc - powTerm;
                         //case 2, SVd
                         diffTerm = atRows[i - 1].SVd - atRows[i].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yd);
-                        atRows[i].SVd = SafeSubtract(atRows[i - 1].SVd,powTerm);
+                        atRows[i].SVd = atRows[i - 1].SVd - powTerm;
                     }
                     else if (i == 10401)
                     {
                         //case 2, SVa
                         diffTerm = Math.Pow(atRows[i].SVa,svp.X) - atRows[10400].FV;
                         powTerm = Math.Pow(diffTerm, svp.Ya);
-                        atRows[i].SVa = SafeSubtract(atRows[i - 1].SVa,powTerm);
+                        atRows[i].SVa = atRows[i - 1].SVa - powTerm;
                         //case 2, SVb
                         diffTerm = Math.Pow(atRows[i].SVb,svp.X) - atRows[10400].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yb);
-                        atRows[i].SVb = SafeSubtract(atRows[i - 1].SVb,powTerm);
+                        atRows[i].SVb = atRows[i - 1].SVb - powTerm;
                         //case 2, SVc
                         diffTerm = Math.Pow(atRows[i].SVc,svp.X) - atRows[10400].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yc);
-                        atRows[i].SVc = SafeSubtract(atRows[i - 1].SVc,powTerm);
+                        atRows[i].SVc = atRows[i - 1].SVc - powTerm;
                         //case 2, SVd
                         diffTerm = Math.Pow(atRows[i].SVd,svp.X) - atRows[10400].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yd);
-                        atRows[i].SVd = SafeSubtract(atRows[i - 1].SVd,powTerm);
+                        atRows[i].SVd = atRows[i - 1].SVd - powTerm;
                     }
                 }
 
             }
             auditSummary = $"MakeSlowVolume:\nSVa,SVb,SVc,SVd computed from row {startRow}-{endRow}.\nInspect the view".Split('\n');
+        }
+
+        private static double BiggestPrecedingSVFac(ref AllTable[] atRows, int curRow, int daysBack)
+        {
+            double biggest = -1;
+            int downTo = curRow - daysBack;
+            if (downTo < 2) downTo = 2;
+            for (int i = curRow; i >= downTo; i--)
+            {
+                if (atRows[i].SVFac > biggest)
+                {
+                    biggest = atRows[i].SVFac;
+                }
+            }
+            return biggest;
         }
 
         internal static void SlowVolumeFigureSVFac(ref AllTable[] atRows, SlowVolFigSVFacParam svf, int startRow, int endRow, out string[] auditSummary)
@@ -634,43 +641,39 @@ Result:
                 }
             }
             // look for biggest SVFac
-            double big = Double.MinValue;
-            int bigRow = -1;
-            for (int i = endRow-svf.Z; i <= endRow; i++)
+            for (int i = startRow; i <= endRow; i++)
             {
-                if (atRows[i].SVFac > big)
+                double biggest = BiggestPrecedingSVFac(ref atRows, i, svf.Z);
+                if (biggest > 1)
                 {
-                    big = atRows[i].SVFac;
-                    bigRow = i;
+                    atRows[i].APSVac *= (1 + svf.Y);
+                }
+                else
+                {
+                    atRows[i].APSVac *= Math.Pow(1 - svf.Y, svf.X);
+                }
+                if (biggest > svf.W)
+                {
+                    atRows[i].PtsVola += biggest;
                 }
             }
-            // biggest SVFac > 1 ?
-            if ((bigRow != -1) && (big > 1))
+
+            auditSummary = $"SlowVolumeFigureSVFac:\nSVFac computed for {startRow}-{endRow}.\nInspect the view".Split('\n');
+        }
+
+        private static double BiggestPrecedingSVFbd(ref AllTable[] atRows, int curRow, int daysBack)
+        {
+            double biggest = -1;
+            int downTo = curRow - daysBack;
+            if (downTo < 2) downTo = 2;
+            for (int i = curRow; i >= downTo; i--)
             {
-                //yes, increase APSVac onwards
-                for (int i = 3; i <=endRow ; i++)
+                if (atRows[i].SVFbd > biggest)
                 {
-                    atRows[i].APSVac = atRows[i-1].APSVac*(1 + svf.Y);
-                    if (i > 10401-104)
-                    {
-                        atRows[i].PtsVola += big;
-                    }
+                    biggest = atRows[i].SVFbd;
                 }
             }
-            else if ((bigRow != -1) && (big <= 1))
-            {
-                //no, decrease APSVac onwards
-                for (int i = 3; i <= endRow; i++)
-                {
-                    //atRows[i].APSVac *= Math.Pow(1 - svf.Y,svf.X);
-                    atRows[i].APSVac = atRows[i-1].APSVac * Math.Pow(1 - svf.Y, svf.X);
-                    if (i > 10401 - 104)
-                    {
-                        atRows[i].PtsVola += big;
-                    }
-                }
-            }
-            auditSummary = $"SlowVolumeFigureSVFac:\nSVFac computed for {startRow}-{endRow}.Biggest {big}, row {bigRow}\nInspect the view".Split('\n');
+            return biggest;
         }
 
 
@@ -694,45 +697,24 @@ Result:
                     atRows[i].SVFbd = atRows[i].SVb / denom;
                 }
             }
-            //look for biggest SVFbd
-            double big = Double.MinValue;
-            int bigRow = -1;
-            for (int i = endRow - svf.Z; i <= endRow; i++)
-            {
-                if (atRows[i].SVFbd > big)
-                {
-                    big = atRows[i].SVFbd;
-                    bigRow = i;
-                }
-            }
-            // biggest SVFbd > 1 ?
-            if ((bigRow != -1) && (big > 1))
-            {
-                //yes, increase APSVbd onwards
-                for (int i = 3; i <= endRow; i++)
-                {
-                    atRows[i].APSVbd = atRows[i-1].APSVbd*(1 + svf.Y);
-                    if (big > svf.W)
-                    {
-                        atRows[i].PtsVolb += big;
-                    }
-                }
-            }
-            else if ((bigRow != -1) && (big <= 1))
-            {
-                //no, decrease APSVbd onwards
-                for (int i = 3; i <= endRow; i++)
-                {
-                    atRows[i].APSVbd = atRows[i-1].APSVbd*(1 - svf.Y);
-                    //not sure if this is necessary
-                    if (big > svf.W)
-                    {
-                        atRows[i].PtsVolb += big;
-                    }
-                }
-            }
-            auditSummary = $"SlowVolumeFigureSVFbd:\nSVFbd computed for {startRow}-{endRow}.Biggest {big}, row {bigRow}\nInspect the view".Split('\n');
 
+            for (int i = startRow; i <= endRow; i++)
+            {
+                double biggest = BiggestPrecedingSVFbd(ref atRows, i, svf.Z);
+                if (biggest > 1)
+                {
+                    atRows[i].APSVbd *= (1 + svf.Y);
+                }
+                else
+                {
+                    atRows[i].APSVbd *= (1 - svf.Y);
+                }
+                if (biggest > svf.W)
+                {
+                    atRows[i].PtsVolb += biggest;
+                }
+            }
+            auditSummary = $"SlowVolumeFigureSVFbd:\nSVFbd computed for {startRow}-{endRow}.\nInspect the view".Split('\n');
         }
 
         // Performs the full series of Calculations
@@ -747,7 +729,7 @@ Result:
             Calculations.FindDirectionAndTurning(ref atSegment, directionAndTurningParams, 10298, 10401, out auditSummary);
 
             var fiveMinsGradientFigParam = Helper.UserSettings().ParamsFiveMinsGradientFigure;
-            Calculations.FindFiveMinsGradientsFigurePGF(ref atSegment, fiveMinsGradientFigParam, 2, 10401, out auditSummary);
+            Calculations.FindFiveMinsGradientsFigurePGF(ref atSegment, fiveMinsGradientFigParam, 10298, 10401, out auditSummary);
 
             Calculations.RelatedVolumeFigureOfBiggestPGF(ref atSegment, 10298, 10401, out auditSummary);
 

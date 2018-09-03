@@ -195,19 +195,19 @@ namespace ShareViewer
         private UInt32 fV; // XXXXXXX (Sum of the Volume of the Five minutes section: Five minutes volume)
         private double col_50;
         //cols 51-60
-        private UInt32 sVa; //XXXXXXX (Slow Volume a)
+        private double sVa; //XXXXXXX (Slow Volume a)
         private double aPSVac; //XXX,X (Self adjusting parameter c)
         private double sVFac; //X,XXXXXX (Slow Volume Figure)
         private double col_54; // 54 Do ignore: 
-        private UInt32 sVb; //XXXXXXX (Slow Volume b)
+        private double sVb; //XXXXXXX (Slow Volume b)
         private double aPSVbd; //XXX,X (Self adjusting parameter)
         private double sVFbd; //X,XXXXXX (Slow Volume Figure)
         private double col_58;
-        private UInt32 sVc; //XXXXXXX (Slow volume c)
+        private double sVc; //XXXXXXX (Slow volume c)
         private double rPGFV; //XXX,X (Related PGF volume Figure)
         //cols 61-70
         private double col_61;
-        private UInt32 sVd; //XXXXXXX (Slow volume d)
+        private double sVd; //XXXXXXX (Slow volume d)
         private double col_63;
         private double ptsGradA; // XXX,X (Points Gradient a)
         private double col_65;
@@ -344,7 +344,7 @@ namespace ShareViewer
         public double Col_50 { get => col_50; set => col_50 = value; }
         //51-60
         [Hint("Slow Volume a")]
-        public UInt32 SVa { get => sVa; set => sVa = value; }
+        public double SVa { get => sVa; set => sVa = value; }
         [Hint("Self adjusting parameter")]
         public double APSVac { get => aPSVac; set => aPSVac = value; }
         [Hint("Slow Volume figure")]
@@ -352,7 +352,7 @@ namespace ShareViewer
         [Hint("Do ignore")]
         public double Col_54 { get => col_54; set => col_54 = value; }
         [Hint("Slow Volume b")]
-        public UInt32 SVb { get => sVb; set => sVb = value; }
+        public double SVb { get => sVb; set => sVb = value; }
         [Hint("Self adjusting parameter")]
         public double APSVbd { get => aPSVbd; set => aPSVbd = value; }
         [Hint("Slow Volume figure")]
@@ -360,14 +360,14 @@ namespace ShareViewer
         [Hint("")]
         public double Col_58 { get => col_58; set => col_58 = value; }
         [Hint("Slow Volume c")]
-        public UInt32 SVc { get => sVc; set => sVc = value; }
+        public double SVc { get => sVc; set => sVc = value; }
         [Hint("Related PGF volume Figure")]
         public double RPGFV { get => rPGFV; set => rPGFV = value; }
         //61-70
         [Hint("")]
         public double Col_61 { get => col_61; set => col_61 = value; }
         [Hint("Slow Volume d")]
-        public UInt32 SVd { get => sVd; set => sVd = value; }
+        public double SVd { get => sVd; set => sVd = value; }
         [Hint("")]
         public double Col_63 { get => col_63; set => col_63 = value; }
         [Hint("Points Gradient a")]
@@ -716,15 +716,15 @@ namespace ShareViewer
                 case "LLd": return "N3";
                 case "DLLFPd": return "N3";
                 case "FV": return "N0";
-                case "SVa": return "N0";
+                case "SVa": return "N4";
                 case "APSVac": return "N4";
                 case "SVFac": return "N6";
-                case "SVb": return "N0";
+                case "SVb": return "N4";
                 case "APSVbd": return "N4";
                 case "SVFbd": return "N6";
-                case "SVc": return "N0";
+                case "SVc": return "N4";
                 case "RPGFV": return "N1";
-                case "SVd": return "N0";
+                case "SVd": return "N4";
                 case "PtsGradA": return "N1";
                 case "PtsGradB": return "N1";
                 case "PtsGradC": return "N1";

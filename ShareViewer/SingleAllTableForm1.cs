@@ -962,7 +962,7 @@ namespace ShareViewer
                         stripText.Text += $"{calculation}, ";
                         break;
                     case "Find Five minutes Gradients Figure PGF":
-                        Calculations.FindFiveMinsGradientsFigurePGF(ref atRows, Helper.UserSettings().ParamsFiveMinsGradientFigure, 2, 10401, out auditLines);
+                        Calculations.FindFiveMinsGradientsFigurePGF(ref atRows, Helper.UserSettings().ParamsFiveMinsGradientFigure, 10298, 10401, out auditLines);
                         stripText.Text += $"{calculation}, ";
                         calcsPerformed++;
                         break;

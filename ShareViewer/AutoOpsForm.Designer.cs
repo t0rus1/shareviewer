@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.labelUpToDateStatus = new System.Windows.Forms.Label();
             this.labelLastDate = new System.Windows.Forms.Label();
             this.labelLastIntake = new System.Windows.Forms.Label();
             this.dtInsteadDate = new System.Windows.Forms.DateTimePicker();
@@ -47,7 +48,6 @@
             this.dgOps = new System.Windows.Forms.DataGridView();
             this.timerAuto = new System.Windows.Forms.Timer(this.components);
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.labelUpToDateStatus = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.statusStrip2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -72,6 +72,15 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(890, 100);
             this.panel1.TabIndex = 0;
+            // 
+            // labelUpToDateStatus
+            // 
+            this.labelUpToDateStatus.AutoSize = true;
+            this.labelUpToDateStatus.Location = new System.Drawing.Point(353, 28);
+            this.labelUpToDateStatus.Name = "labelUpToDateStatus";
+            this.labelUpToDateStatus.Size = new System.Drawing.Size(61, 13);
+            this.labelUpToDateStatus.TabIndex = 8;
+            this.labelUpToDateStatus.Text = "up to date?";
             // 
             // labelLastDate
             // 
@@ -121,6 +130,7 @@
             this.buttonCatchUp.Text = "<--- (Start) catch up by processing for this date manually";
             this.buttonCatchUp.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonCatchUp.UseVisualStyleBackColor = true;
+            this.buttonCatchUp.Click += new System.EventHandler(this.buttonCatchUp_Click);
             // 
             // statusStrip2
             // 
@@ -226,15 +236,6 @@
             // 
             this.timerAuto.Interval = 1000;
             this.timerAuto.Tick += new System.EventHandler(this.timerAuto_Tick);
-            // 
-            // labelUpToDateStatus
-            // 
-            this.labelUpToDateStatus.AutoSize = true;
-            this.labelUpToDateStatus.Location = new System.Drawing.Point(353, 28);
-            this.labelUpToDateStatus.Name = "labelUpToDateStatus";
-            this.labelUpToDateStatus.Size = new System.Drawing.Size(61, 13);
-            this.labelUpToDateStatus.TabIndex = 8;
-            this.labelUpToDateStatus.Text = "up to date?";
             // 
             // AutoOpsForm
             // 
