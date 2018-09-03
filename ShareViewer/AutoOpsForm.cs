@@ -42,6 +42,23 @@ namespace ShareViewer
             ShowNumberOfShares();
             ShowCurrentDate();
             ShowLastIntake();
+            SetInsteadDate();
+
+        }
+
+        private void SetInsteadDate()
+        {
+            DateTime.TryParse(Helper.UserSettings().AllTableDataEnd, out DateTime dtLast);
+
+            // bump dtLast one trading day on and set InsteadDate
+            //while also preventing it from being moved further
+            dtInsteadDate.Value = dtLast.AddDays(1);
+            while (!Helper.IsTradingDay(dtInsteadDate.Value))
+            {
+                dtInsteadDate.Value = dtInsteadDate.Value.AddDays(1);
+            }
+            dtInsteadDate.MinDate = dtInsteadDate.Value;
+            dtInsteadDate.MaxDate = dtInsteadDate.Value;
 
         }
 
@@ -68,18 +85,19 @@ namespace ShareViewer
         private void ShowUpToDateness(DateTime dtLastIntake)
         {
             //up to date status?
-            int daySpan = Helper.ComputeTradingSpanDayCount(dtLastIntake, DateTime.Today)-1;
-            if (daySpan == 1)
+            int daysInclusive = Helper.ComputeTradingSpanInclusive(dtLastIntake, DateTime.Today);
+            int daysBehind = daysInclusive - 1;
+            if (daysBehind == 0)
             {
                 labelUpToDateStatus.Text = "Fully up to date, (including today!)";
             }
-            else if (daySpan > 2)
+            else if (daysBehind > 1)
             {
-                labelUpToDateStatus.Text = $"Data intake is behind. You may catch up 1 day at a time, or recreate a complete new set of All-Tables";
+                labelUpToDateStatus.Text = $"Data intake is up to {daysBehind} days behind. You may catch up 1 day at a time, or recreate a complete new set of All-Tables";
             }
-            else if (daySpan == 2)
+            else if (daysBehind == 1)
             {
-                labelUpToDateStatus.Text = "Up-To-Date. Go into Auto mode to await|download and process today's data";
+                labelUpToDateStatus.Text = "Go into Auto mode to await|download and process today's data";
             }
         }
 
@@ -127,20 +145,21 @@ namespace ShareViewer
                 //if last data intake was more than 1 trading day back, issue warning and disallow
                 DateTime.TryParse(Helper.UserSettings().AllTableDataEnd, out DateTime dtLast);
                 //determine trading day span between last data and today (inclusive)
-                int daySpan = Helper.ComputeTradingSpanDayCount(dtLast, DateTime.Today);
-                if (daySpan == 1)
+                int daySpan = Helper.ComputeTradingSpanInclusive(dtLast, DateTime.Today);
+                int daysBehind = daySpan - 1;
+                if (daysBehind == 0)
                 {
                     var msg = $"You are already up to date.\nNo Automatic processing is necessary.";
                     MessageBox.Show(msg, "Please Note", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
+                    return; // TODO: possibly allow it?
                 }
-                if (daySpan > 2)
+                if (daysBehind > 1)
                 {
-                    var msg = $"You are behind on Intake.\nPlease remain in Manual Mode and process each 'behind' trading day in turn.";
+                    var msg = $"You are up to {daysBehind} days behind on Intake.\nPlease remain in Manual Mode and process each 'behind' trading day in turn.";
                     MessageBox.Show(msg, "Warning: Data Intake is behind", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
-                // daySpan == 2 means we are only 1 trading day behind, so 
+                // We are only 1 trading day behind, so 
                 GoAutoMode();
             }
         }

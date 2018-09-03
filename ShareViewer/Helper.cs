@@ -405,7 +405,7 @@ namespace ShareViewer
         //If both days are the same (trading) date, it returns 1
         //If either day is a weekend day or holiday, they get skipped over and do not add to the count
         //If both dates are trading days and they are adjacent, 2 is returned
-        internal static int ComputeTradingSpanDayCount(DateTime fromDate, DateTime toDate)
+        internal static int ComputeTradingSpanInclusive(DateTime fromDate, DateTime toDate)
         {
             int days = 0;
             DateTime runDate = fromDate;
@@ -484,7 +484,7 @@ namespace ShareViewer
         {
             int estimatedDaysback = ((tradingDays * 7) / 5);
 
-            var computedTradingDays = ComputeTradingSpanDayCount(endDate.AddDays(-estimatedDaysback), endDate);
+            var computedTradingDays = ComputeTradingSpanInclusive(endDate.AddDays(-estimatedDaysback), endDate);
             var diff = computedTradingDays - tradingDays;
             while (diff != 0)
             {
@@ -499,7 +499,7 @@ namespace ShareViewer
                     //computed Trading days too few, move start day back by 1
                     estimatedDaysback++;
                 }
-                computedTradingDays = ComputeTradingSpanDayCount(endDate.AddDays(-estimatedDaysback), endDate);
+                computedTradingDays = ComputeTradingSpanInclusive(endDate.AddDays(-estimatedDaysback), endDate);
                 diff = computedTradingDays - tradingDays;
             }
 

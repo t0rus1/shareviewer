@@ -345,7 +345,7 @@ namespace ShareViewer
             listBoxInhalt.DataSource = null;
 
             SuppressDaysBackChangeHandling = true;
-            daysBack.Value = Helper.ComputeTradingSpanDayCount(calendarFrom.SelectionStart, calendarTo.SelectionStart);
+            daysBack.Value = Helper.ComputeTradingSpanInclusive(calendarFrom.SelectionStart, calendarTo.SelectionStart);
             SuppressDaysBackChangeHandling = false;
             ShowHolidaysSpanned();
             if (!initializing) ShowDataOnHand(true);
@@ -377,7 +377,7 @@ namespace ShareViewer
 
             //recalc number of trading days back
             SuppressDaysBackChangeHandling = true;
-            daysBack.Value = Helper.ComputeTradingSpanDayCount(calendarFrom.SelectionStart, calendarTo.SelectionStart);
+            daysBack.Value = Helper.ComputeTradingSpanInclusive(calendarFrom.SelectionStart, calendarTo.SelectionStart);
             SuppressDaysBackChangeHandling = false;
             ShowHolidaysSpanned();
             if (!initializing) ShowDataOnHand(true);
@@ -608,7 +608,7 @@ namespace ShareViewer
             {
                 DateTime startDate = calendarFrom.SelectionStart;
                 DateTime endDate = calendarTo.SelectionStart;
-                int tradingSpan = Helper.ComputeTradingSpanDayCount(startDate, endDate);
+                int tradingSpan = Helper.ComputeTradingSpanInclusive(startDate, endDate);
 
                 string createOrTopup = topUp ? "OVERLAY" : "CREATE";
                 var msg = $"{createOrTopup} All-tables for the {tradingSpan} trading days up to {endDate.ToShortDateString()} (inclusive)?";
