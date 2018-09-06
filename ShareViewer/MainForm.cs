@@ -626,14 +626,14 @@ namespace ShareViewer
             }
         }
 
-        // CREATE ALL NEW ALL_TABLES
+        //// CREATE ALL NEW ALL_TABLES
         private void OnMakeNewAllTables(object sender, EventArgs e)
         {
             if (BleatForFullTradingSpan()) return;
             if (BleatForDataFilesListEmpty()) return;
             if (BleatForDataFilesNeeded()) return;
 
-            CreateOrTopupAllTables(false,null); // not a top up, full blown set of new all-tables
+            CreateOrTopupAllTables(false, null); // not a top up, full blown set of new all-tables
 
         }
 
@@ -644,19 +644,6 @@ namespace ShareViewer
             if (BleatForDataFilesNeeded()) return;
 
             CreateOrTopupAllTables(false, selectedShares); // just selected shares, non top up
-
-        }
-
-
-        // TOP UP ALL-TABLES
-        private void OnTopupAllTables(object sender, EventArgs e)
-        {
-            if (BleatForDataFilesListEmpty()) return;
-            if (BleatForDataFilesNeeded()) return;
-
-            if (BleatForSpan()) return;
-
-            CreateOrTopupAllTables(true,null); // just a top up
 
         }
 
@@ -838,8 +825,9 @@ namespace ShareViewer
 
         private void linkLabelSummary_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            var summaryForm = new AllTableSummaryForm();
-            summaryForm.Show();
+            MessageBox.Show("Functionaity needs a rewrite", "Under construction for version 2");
+            //var summaryForm = new AllTableSummaryForm();
+            //summaryForm.Show();
         }
 
         //Toggle lock/unlock status of 'Generate New AllTables' button
@@ -856,83 +844,17 @@ namespace ShareViewer
                 stripText.Text = "Ok";
             }
 
-
         }
+
 
         //Reveal the linkLabelSingleDayLoad button if both calendars are indicating the same, single day
         private void calendarFrom_DateSelected(object sender, DateRangeEventArgs e)
         {
-            //linkLabelSingleDayLoad.Visible = (DateTime.Compare(e.Start,calendarTo.SelectionStart) == 0);
-            //linkLabelSingleDayLoad.Enabled = linkLabelSingleDayLoad.Visible;
-            //buttonAddToAllTables.Enabled = !linkLabelSingleDayLoad.Visible;
         }
 
         //Reveal the linkLabelSingleDayLoad button if both calendars are indicating the same, single day
         private void calendarTo_DateSelected(object sender, DateRangeEventArgs e)
         {
-        }
-
-        //Single Day reload
-        private void linkLabelSingleDayLoad_Click(object sender, EventArgs e)
-        {
-            if (true) return; // DISABLE FOR NOW
-
-            ////user want to reload for a single day
-            //var reloadDate = Helper.GetCompressedDate(calendarTo.SelectionStart);
-            //var onhandSummary = LocalStore.GetAllTableSummaryForShare(1);
-
-            //if ((String.Compare(onhandSummary.FirstDay, reloadDate) <= 0) &&
-            //    (String.Compare(onhandSummary.LastDay, reloadDate) >= 0))
-            //{
-            //    //check for data file availability
-            //    var path = Helper.GetAppUserSettings().ExtraFolder;
-            //    var yy = reloadDate.Substring(0, 2);
-            //    var mm = reloadDate.Substring(2, 2);
-            //    var dd = reloadDate.Substring(4, 2);
-            //    var pattern = $"20{yy}_{mm}_{dd}.TXT";
-            //    if (!Directory.EnumerateFiles(path, pattern).Any())
-            //    {
-            //        var msg = $"The required Datafile '{pattern}' is not present, cannot reload!";
-            //        MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //    }
-            //    else
-            //    {
-            //        //we may proceed with RE-load
-            //        var dlgResult = MessageBox.Show($"Re-load the AllTables with data from this day: '{reloadDate}' ?",
-            //            "Single Day Re-Load", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            //        if (dlgResult == DialogResult.Yes)
-            //        {
-            //            var allShareArray = LocalStore.CreateShareArrayFromShareList();
-            //            if (allShareArray.Count() > 0)
-            //            {
-            //                //linkLabelSingleDayLoad.Enabled = false;
-            //                DateTime endDate = calendarTo.SelectionStart;
-            //                //force startDate to be the same as endDate
-            //                DateTime startDate = endDate; ; // calendarFrom.SelectionStart;
-            //                int tradingSpan = Helper.ComputeTradingSpanDayCount(startDate, endDate);
-            //                if (tradingSpan == 1)
-            //                {
-            //                    LocalStore.RefreshNewAllTables(startDate, endDate, tradingSpan, allShareArray, false, reloadDate);
-            //                }
-            //            }
-            //        }
-            //        else
-            //        {
-            //            //reset calendars
-            //            calendarFrom.SetDate(DateTime.Today.AddDays(-Helper.ActualDaysBackToEncompassTradingDays(DateTime.Today, 100)));
-            //            calendarTo.SetDate(DateTime.Today);
-            //            labelBackFrom.Text = "ending Today";
-            //            //linkLabelSingleDayLoad.Enabled = false;
-            //            //linkLabelSingleDayLoad.Visible = false;
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    var msg = $"Reload Date '{reloadDate}' is not in current All-Table range ('{onhandSummary.FirstDay}' -> '{onhandSummary.LastDay}')";
-            //    MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //}
-
         }
 
         private void buttonOverview_Click(object sender, EventArgs e)
@@ -943,11 +865,12 @@ namespace ShareViewer
 
         private void linkLabelRepair_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+
             List<string> selectedShares = new List<string>();
 
             var repairForm = new AllTableRepairForm();
             var dlgResult = repairForm.ShowDialog();
-            if (dlgResult == DialogResult.Yes && 
+            if (dlgResult == DialogResult.Yes &&
                 repairForm.listBoxRepairShares.DataSource != null && repairForm.listBoxRepairShares.SelectedIndices.Count > 0)
             {
                 var msg = $"Create New AllTables for the {repairForm.listBoxRepairShares.SelectedIndices.Count} selected Shares?";

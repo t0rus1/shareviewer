@@ -118,6 +118,24 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="buttonNewAllTables.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+        xAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4yMfEgaZUAAAKUSURBVFhHtVdB
+        S1VBFL4/omU/xGWLFi1871HQIt67Ii3DIL3PMIRHIIRhgkRBG5FocXcliD0rAhcVIrgIQQlEEVKRIKXS
+        cjXNd+7MY97cM/fe8fo++BZvzsz5zsw9c+a8oCiu1+9frjSioVpjZL7aiHZqYSRM0pi0YQ7mqmXlUatH
+        V6RA2xbM5UC0gLXKjT/6b41cqoXNmHXuxWYMX8ptMVTqw33yOA94h+eg9AWfyn02Ko3ha9Uw+s06YjgX
+        L4ioNcPaTMJnNWxeVTI8EKWP+M3bYwKIX79j7Tbh23kS9M09jv3ugynxff+QAvhzcioWP3xi56UoNdic
+        8E04BLC+uUUBHP74Kd68XabxwaGHNL708Yu4MTiaWpewGSvZBOqqMRPzCehPAHF9KsDn1a/uIMwrSneW
+        m6T4aGZOrKyts7a//84oEW1xjYnpWXadZJvEUbUYYxexQ4CzgS5xjIV3WuwakComlVfGqLnxbVu5S9Ca
+        fNFlhwCu4dHxLzUjAcQRmDnXJrQD1G/OqPn46ctOsuEkzB3pnSNIM4gi4kSpHXAPi03uE9jHroNAsIXE
+        JaEtrx9vNIlTgID+bYtrvF9e6VoHInmRxPa4ZqEATLrEXccOZFVKrwB8xJGsJswTNFk4AN+dI1lRnoHt
+        3T3x5Pmr1BywUBL6ipsEXJ8gScKca1hGHMTRI4k5G13DrEJUVjyPVIhcpbjX4mCneZU/Uk1nr8XxAJI4
+        wD3HaDJMXKg4aHfMdkMyNvGMntqeiNsNCcC1ZPfGp+kKXai4qyUDfJtSX2Y2pRponXsRBInLll/JZANR
+        2p+jFKWv3J3boJzw7JR5nuOvmQm6ojlNq4Pt1FUrA1QtKtuyfnMPGI1JG+Z0KlwuguA/5ATW6QQMz9UA
+        AAAASUVORK5CYII=
+</value>
+  </data>
   <data name="buttonAutoOps.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
@@ -145,34 +163,6 @@
 !!!Caution!!!
 A full 100 trading days (which MUST correspond to the same trading day range of the other All-Tables and must  ALREADY be set on the calendars) </value>
   </data>
-  <data name="buttonBusyAllTables.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        R0lGODlhMAAwAIcAAA8PDx8fHyUlJSYmJi4uLjQ0NDU1NTY2Njc3Nz09PUJCQkRERExMTE5OTk9PT1BQ
-        UFFRUVJSUlVVVVhYWFlZWVxcXF1dXV9fX2FhYWJiYmVlZWdnZ2pqamtra2xsbG1tbXNzc3R0dHV1dXd3
-        d3h4eHl5eXp6ent7e35+foGBgYODg4aGhoeHh4iIiIqKioyMjI2NjY6Ojo+Pj5CQkJGRkZOTk5SUlJWV
-        lZeXl5iYmJqampycnKCgoKOjo6SkpKWlpaampqenp6ioqKmpqaurq6ysrK6urrCwsLGxsbKysrOzs7i4
-        uLm5ubq6ury8vL29vb6+vsHBwcLCwsPDw8TExMXFxcbGxs3Nzc/Pz9PT09TU1NXV1dzc3OHh4ePj4+Tk
-        5Ofn5+np6evr6+3t7e7u7u/v7/Dw8PHx8fLy8vPz8/T09PX19fb29vf39/j4+Pn5+fr6+v7+/v///wAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        ACH/C05FVFNDQVBFMi4wAwEBAAAh+QQAAAAAACwAAAAAMAAwAAAI/wDlCBxIsKDBgwgTKlzIsKHDhxAj
-        SpxIkeCSAQOWVNwoRwAAAAM4MjxDg4aZgh8/FmxjxUobkQIpBAggIQ7BlAAKAnHhYgjMjjMDGLmZkuAW
-        ni5g/NwQFMGagTgHwsGB9MjPLgKCvoBaVOAUpDBO/mwRdIAXgVHlmImBNMpPgWoMBOUg0CNIgUmQ3nhD
-        8YyGAyDODiQSVIDAixkFwkCahWAZJDGEvFyIg4DlAjOeyonzYOYEhEJ4+rAp500UtjyrMKxs2bICJDbH
-        wIBRBmEbKlTYbM5yA2nqkRdat7Yg1iGbH755Apm8MI6SBcIJ2ID41TeOLRHZ1DDQevrD6i5iSP+BQ/GL
-        iAMZyEBkE0RGkuJv48sXaeVBgvv4H1ihyKV38htcIOQAfgQm4ABF/iXnwg0INVAgfgdOlOB/CNX3oH78
-        TcgTgPN16KFEYbgQQQlnrNeeEvBB1EYPETDgYg/UIRXDFOQ9FAcUF7ioI4zfJXedQ2mMoKOOIaCxng8K
-        LscQEEMyYIETNqFRRBFpILSGE06osZuGqi3EpIsQ8KDbZilUUMEKCO1gggk5kGbaYr8tlMYJEbAABkFS
-        mFkBBgJlUUIJWgiEwpomXOEYZJJR1IYHetYgEAkddFCCQEEQyoIb8Q2hJwZiCBRppAKVMeiaTLwVBgZ6
-        EjHQpx0M1AShKIxJ8RMNen7AHKsDvdECoT/8hKqZVBCE60BYwPrTCmaqQJqnnxakw5o7/KSGEUZoKWyz
-        BLHxxBNjfgippB8u5GcJjYVr7rnopvthQAA7
-</value>
-  </data>
   <data name="buttonNewShareList.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
@@ -186,24 +176,6 @@ A full 100 trading days (which MUST correspond to the same trading day range of 
         xvED1MVBzO84VkIj596Yt3ohAZu4kuEiAo+gKxkIuZT2UeulVMDVeROLgCeu/KZMO1il/Tl6S3l5n9wF
         38ndmF0Ejx+/eQg4LjizzLxdqre4R60P6Fq6bav+zX5gOqZyGLPqcF6S5AuIm2TxdGaxIQAAAABJRU5E
         rkJggg==
-</value>
-  </data>
-  <data name="buttonNewAllTables.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        xAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4yMfEgaZUAAAKUSURBVFhHtVdB
-        S1VBFL4/omU/xGWLFi1871HQIt67Ii3DIL3PMIRHIIRhgkRBG5FocXcliD0rAhcVIrgIQQlEEVKRIKXS
-        cjXNd+7MY97cM/fe8fo++BZvzsz5zsw9c+a8oCiu1+9frjSioVpjZL7aiHZqYSRM0pi0YQ7mqmXlUatH
-        V6RA2xbM5UC0gLXKjT/6b41cqoXNmHXuxWYMX8ptMVTqw33yOA94h+eg9AWfyn02Ko3ha9Uw+s06YjgX
-        L4ioNcPaTMJnNWxeVTI8EKWP+M3bYwKIX79j7Tbh23kS9M09jv3ugynxff+QAvhzcioWP3xi56UoNdic
-        8E04BLC+uUUBHP74Kd68XabxwaGHNL708Yu4MTiaWpewGSvZBOqqMRPzCehPAHF9KsDn1a/uIMwrSneW
-        m6T4aGZOrKyts7a//84oEW1xjYnpWXadZJvEUbUYYxexQ4CzgS5xjIV3WuwakComlVfGqLnxbVu5S9Ca
-        fNFlhwCu4dHxLzUjAcQRmDnXJrQD1G/OqPn46ctOsuEkzB3pnSNIM4gi4kSpHXAPi03uE9jHroNAsIXE
-        JaEtrx9vNIlTgID+bYtrvF9e6VoHInmRxPa4ZqEATLrEXccOZFVKrwB8xJGsJswTNFk4AN+dI1lRnoHt
-        3T3x5Pmr1BywUBL6ipsEXJ8gScKca1hGHMTRI4k5G13DrEJUVjyPVIhcpbjX4mCneZU/Uk1nr8XxAJI4
-        wD3HaDJMXKg4aHfMdkMyNvGMntqeiNsNCcC1ZPfGp+kKXai4qyUDfJtSX2Y2pRponXsRBInLll/JZANR
-        2p+jFKWv3J3boJzw7JR5nuOvmQm6ojlNq4Pt1FUrA1QtKtuyfnMPGI1JG+Z0KlwuguA/5ATW6QQMz9UA
-        AAAASUVORK5CYII=
 </value>
   </data>
   <data name="buttonLogfile.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

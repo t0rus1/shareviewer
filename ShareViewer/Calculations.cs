@@ -303,7 +303,7 @@ Result:
             double biggest = -1;
             int downTo = curRow - daysBack;
             if (downTo < 2) downTo = 2;
-            for (int i = curRow; i >= downTo; i--)
+            for (int i = curRow-1; i >= downTo; i--)
             {
                 if (atRows[i].PGFrowx15 > biggest)
                 {
@@ -360,11 +360,16 @@ Result:
                 biggest = BiggestPrecedingPGF(ref atRows, i, calcFiveMinsGradientFigureParam.Z);
                 if (biggest > 1.0)
                 {
-                    atRows[i].APpg = atRows[i].APpg * (1 + calcFiveMinsGradientFigureParam.Y);
+                    atRows[i].APpg *= (1 + calcFiveMinsGradientFigureParam.Y);
                 }
                 else
                 {
-                    atRows[i].APpg = atRows[i].APpg * Math.Pow(1 - calcFiveMinsGradientFigureParam.Y, calcFiveMinsGradientFigureParam.X);
+                    atRows[i].APpg *= Math.Pow(1 - calcFiveMinsGradientFigureParam.Y, calcFiveMinsGradientFigureParam.X);
+                }
+                //carry the calculated APpg value onwards to the last row
+                for (int j = i + 1; j <= endRow; j++)
+                {
+                    atRows[j].APpg = atRows[i].APpg;
                 }
 
             }
@@ -517,25 +522,118 @@ Result:
                 atRows[i].SVc = 1;
                 atRows[i].SVd = 1;
             }
-            for (int i = startRow+1; i <= endRow; i++)  // 2 -> 10401
+            //SVa
+            for (int i = startRow + 1; i <= endRow; i++)  // 2 -> 10401
             {
-                if (atRows[i-1].SVa < atRows[i].FV)
+                if (atRows[i - 1].SVa < atRows[i].FV)
                 {
                     if (i < 10401)
                     {
-                        //case 1, SVa
-                        diffTerm = atRows[i].FV- atRows[i - 1].SVa;
+                        diffTerm = atRows[i].FV - atRows[i - 1].SVa;
                         powTerm = Math.Pow(diffTerm, svp.Ya);
                         atRows[i].SVa = atRows[i - 1].SVa + powTerm;
-                        //       SVb
+                    }
+                    else if (i == 10401)
+                    {
+                        //special treatment for the 17:35 band volume (FV) raise it to a settable power before using it
+                        diffTerm = Math.Pow(atRows[10400].FV, svp.X) - atRows[i - 1].SVa;
+                        powTerm = Math.Pow(diffTerm, svp.Ya);
+                        atRows[i].SVa = atRows[i - 1].SVa + powTerm;
+                    }
+                }
+                else if (atRows[i - 1].SVa > atRows[i].FV)
+                {
+                    if (i < 10401)
+                    {
+                        diffTerm = atRows[i - 1].SVa - atRows[i].FV;
+                        powTerm = Math.Pow(diffTerm, svp.Ya);
+                        atRows[i].SVa = atRows[i - 1].SVa - powTerm;
+                    }
+                    else if (i == 10401)
+                    {
+                        diffTerm = Math.Pow(atRows[i].SVa, svp.X) - atRows[10400].FV;
+                        powTerm = Math.Pow(diffTerm, svp.Ya);
+                        atRows[i].SVa = atRows[i - 1].SVa - powTerm;
+                    }
+                }
+            }
+            //SVb
+            for (int i = startRow + 1; i <= endRow; i++)  // 2 -> 10401
+            {
+                if (atRows[i - 1].SVb < atRows[i].FV)
+                {
+                    if (i < 10401)
+                    {
                         diffTerm = atRows[i].FV - atRows[i - 1].SVb;
                         powTerm = Math.Pow(diffTerm, svp.Yb);
                         atRows[i].SVb = atRows[i - 1].SVb + powTerm;
-                        //       SVc
+                    }
+                    else if (i == 10401)
+                    {
+                        //special treatment for the 17:35 band volume (FV) raise it to a settable power before using it
+                        diffTerm = Math.Pow(atRows[10400].FV, svp.X) - atRows[i - 1].SVb;
+                        powTerm = Math.Pow(diffTerm, svp.Yb);
+                        atRows[i].SVb = atRows[i - 1].SVb + powTerm;
+                    }
+                }
+                else if (atRows[i - 1].SVb > atRows[i].FV)
+                {
+                    if (i < 10401)
+                    {
+                        diffTerm = atRows[i - 1].SVb - atRows[i].FV;
+                        powTerm = Math.Pow(diffTerm, svp.Yb);
+                        atRows[i].SVb = atRows[i - 1].SVb - powTerm;
+                    }
+                    else if (i == 10401)
+                    {
+                        diffTerm = Math.Pow(atRows[i].SVb, svp.X) - atRows[10400].FV;
+                        powTerm = Math.Pow(diffTerm, svp.Yb);
+                        atRows[i].SVb = atRows[i - 1].SVb - powTerm;
+                    }
+                }
+            }
+            //SVc
+            for (int i = startRow + 1; i <= endRow; i++)  // 2 -> 10401
+            {
+                if (atRows[i - 1].SVc < atRows[i].FV)
+                {
+                    if (i < 10401)
+                    {
                         diffTerm = atRows[i].FV - atRows[i - 1].SVc;
                         powTerm = Math.Pow(diffTerm, svp.Yc);
                         atRows[i].SVc = atRows[i - 1].SVc + powTerm;
-                        //       SVd
+                    }
+                    else if (i == 10401)
+                    {
+                        //special treatment for the 17:35 band volume (FV) raise it to a settable power before using it
+                        diffTerm = Math.Pow(atRows[10400].FV, svp.X) - atRows[i - 1].SVc;
+                        powTerm = Math.Pow(diffTerm, svp.Yc);
+                        atRows[i].SVc = atRows[i - 1].SVc + powTerm;
+                    }
+                }
+                else if (atRows[i - 1].SVc > atRows[i].FV)
+                {
+                    if (i < 10401)
+                    {
+                        diffTerm = atRows[i - 1].SVc - atRows[i].FV;
+                        powTerm = Math.Pow(diffTerm, svp.Yc);
+                        atRows[i].SVc = atRows[i - 1].SVc - powTerm;
+                    }
+                    else if (i == 10401)
+                    {
+                        diffTerm = Math.Pow(atRows[i].SVc, svp.X) - atRows[10400].FV;
+                        powTerm = Math.Pow(diffTerm, svp.Yc);
+                        atRows[i].SVc = atRows[i - 1].SVc - powTerm;
+                    }
+                }
+            }
+            //SVd
+            for (int i = startRow + 1; i <= endRow; i++)  // 2 -> 10401
+            {
+                if (atRows[i - 1].SVd < atRows[i].FV)
+                {
+                    if (i < 10401)
+                    {
                         diffTerm = atRows[i].FV - atRows[i - 1].SVd;
                         powTerm = Math.Pow(diffTerm, svp.Yd);
                         atRows[i].SVd = atRows[i - 1].SVd + powTerm;
@@ -543,66 +641,29 @@ Result:
                     else if (i == 10401)
                     {
                         //special treatment for the 17:35 band volume (FV) raise it to a settable power before using it
-                        diffTerm = Math.Pow(atRows[10400].FV,svp.X) - atRows[i - 1].SVa;
-                        powTerm = Math.Pow(diffTerm, svp.Ya);
-                        atRows[i].SVa = atRows[i - 1].SVa + powTerm;
-                        //       SVb
-                        diffTerm = Math.Pow(atRows[10400].FV,svp.X) - atRows[i - 1].SVb;
-                        powTerm = Math.Pow(diffTerm, svp.Yb);
-                        atRows[i].SVb = atRows[i - 1].SVb + powTerm;
-                        //       SVc
-                        diffTerm = Math.Pow(atRows[10400].FV,svp.X) - atRows[i - 1].SVc;
-                        powTerm = Math.Pow(diffTerm, svp.Yc);
-                        atRows[i].SVc = atRows[i - 1].SVc+powTerm;
-                        //       SVd
-                        diffTerm = Math.Pow(atRows[10400].FV,svp.X) - atRows[i - 1].SVd;
+                        diffTerm = Math.Pow(atRows[10400].FV, svp.X) - atRows[i - 1].SVd;
                         powTerm = Math.Pow(diffTerm, svp.Yd);
                         atRows[i].SVd = atRows[i - 1].SVd + powTerm;
                     }
                 }
-                else if (atRows[i - 1].SVa > atRows[i].FV)
+                else if (atRows[i - 1].SVd > atRows[i].FV)
                 {
                     if (i < 10401)
                     {
-                        //case 2, SVa
-                        diffTerm = atRows[i - 1].SVa - atRows[i].FV;
-                        powTerm = Math.Pow(diffTerm, svp.Ya);
-                        atRows[i].SVa = atRows[i - 1].SVa - Convert.ToUInt32(powTerm);
-                        //case 2, SVb
-                        diffTerm = (int)((int)atRows[i - 1].SVb - (int)atRows[i].FV);
-                        powTerm = Math.Pow(diffTerm, svp.Yb);
-                        atRows[i].SVb = atRows[i - 1].SVb -powTerm;
-                        //case 2, SVc
-                        diffTerm = atRows[i - 1].SVc - atRows[i].FV;
-                        powTerm = Math.Pow(diffTerm, svp.Yc);
-                        atRows[i].SVc = atRows[i - 1].SVc - powTerm;
-                        //case 2, SVd
                         diffTerm = atRows[i - 1].SVd - atRows[i].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yd);
                         atRows[i].SVd = atRows[i - 1].SVd - powTerm;
                     }
                     else if (i == 10401)
                     {
-                        //case 2, SVa
-                        diffTerm = Math.Pow(atRows[i].SVa,svp.X) - atRows[10400].FV;
-                        powTerm = Math.Pow(diffTerm, svp.Ya);
-                        atRows[i].SVa = atRows[i - 1].SVa - powTerm;
-                        //case 2, SVb
-                        diffTerm = Math.Pow(atRows[i].SVb,svp.X) - atRows[10400].FV;
-                        powTerm = Math.Pow(diffTerm, svp.Yb);
-                        atRows[i].SVb = atRows[i - 1].SVb - powTerm;
-                        //case 2, SVc
-                        diffTerm = Math.Pow(atRows[i].SVc,svp.X) - atRows[10400].FV;
-                        powTerm = Math.Pow(diffTerm, svp.Yc);
-                        atRows[i].SVc = atRows[i - 1].SVc - powTerm;
-                        //case 2, SVd
-                        diffTerm = Math.Pow(atRows[i].SVd,svp.X) - atRows[10400].FV;
+                        diffTerm = Math.Pow(atRows[i].SVd, svp.X) - atRows[10400].FV;
                         powTerm = Math.Pow(diffTerm, svp.Yd);
                         atRows[i].SVd = atRows[i - 1].SVd - powTerm;
                     }
                 }
-
             }
+
+
             auditSummary = $"MakeSlowVolume:\nSVa,SVb,SVc,SVd computed from row {startRow}-{endRow}.\nInspect the view".Split('\n');
         }
 
@@ -611,7 +672,7 @@ Result:
             double biggest = -1;
             int downTo = curRow - daysBack;
             if (downTo < 2) downTo = 2;
-            for (int i = curRow; i >= downTo; i--)
+            for (int i = curRow-1; i >= downTo; i--)
             {
                 if (atRows[i].SVFac > biggest)
                 {
@@ -652,6 +713,12 @@ Result:
                 {
                     atRows[i].APSVac *= Math.Pow(1 - svf.Y, svf.X);
                 }
+                //also carry this value onwards to last row
+                for (int j = i+1; j <= endRow; j++)
+                {
+                    atRows[j].APSVac = atRows[i].APSVac;
+                }
+                //add to PtsVol
                 if (biggest > svf.W)
                 {
                     atRows[i].PtsVola += biggest;
@@ -666,7 +733,7 @@ Result:
             double biggest = -1;
             int downTo = curRow - daysBack;
             if (downTo < 2) downTo = 2;
-            for (int i = curRow; i >= downTo; i--)
+            for (int i = curRow-1; i >= downTo; i--)
             {
                 if (atRows[i].SVFbd > biggest)
                 {
@@ -709,6 +776,12 @@ Result:
                 {
                     atRows[i].APSVbd *= (1 - svf.Y);
                 }
+                //also carry this value onwards to last row
+                for (int j = i + 1; j <= endRow; j++)
+                {
+                    atRows[j].APSVbd = atRows[i].APSVbd;
+                }
+                // add to PtsVol
                 if (biggest > svf.W)
                 {
                     atRows[i].PtsVolb += biggest;
@@ -729,7 +802,7 @@ Result:
             Calculations.FindDirectionAndTurning(ref atSegment, directionAndTurningParams, 10298, 10401, out auditSummary);
 
             var fiveMinsGradientFigParam = Helper.UserSettings().ParamsFiveMinsGradientFigure;
-            Calculations.FindFiveMinsGradientsFigurePGF(ref atSegment, fiveMinsGradientFigParam, 10298, 10401, out auditSummary);
+            Calculations.FindFiveMinsGradientsFigurePGF(ref atSegment, fiveMinsGradientFigParam, 2, 10401, out auditSummary);
 
             Calculations.RelatedVolumeFigureOfBiggestPGF(ref atSegment, 10298, 10401, out auditSummary);
 

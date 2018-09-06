@@ -234,8 +234,6 @@ namespace ShareViewer
                 ((Button)form.Controls.Find("buttonNewAllTables", true)[0]).Enabled = false;
                 //label text must be based on state of button
                 ((LinkLabel)form.Controls.Find("linkLabelAllowNew", true)[0]).Text = "unlock";
-                //single day reload link label can only be made invisible
-                //((LinkLabel)form.Controls.Find("linkLabelSingleDayLoad", true)[0]).Visible = false;
             }
             //((Button)form.Controls.Find("buttonAddToAllTables", true)[0]).Enabled = !hold; 
 
