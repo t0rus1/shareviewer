@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -116,7 +117,59 @@ namespace ShareViewer
 
         private void dgViewFilters_CellValidated(object sender, DataGridViewCellEventArgs e)
         {
-            stripText.Text = "";
+            //stripText.Text = "";
+        }
+
+        private void linkLabelSave_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_filters.Count > 0)
+            {
+                var saveFileDlg = new SaveFileDialog();
+                saveFileDlg.Filter = "Saved Overview Row Filters|*.orf";
+                saveFileDlg.Title = "Save Named Filter";
+                saveFileDlg.ShowDialog();
+
+                if (saveFileDlg.FileName != "")
+                {
+                    using (FileStream fs = (FileStream)saveFileDlg.OpenFile())
+                    {
+                        foreach (var item in _filters.Values)
+                        {
+                            Helper.SerializeFilterRecord(fs, item);
+                        }
+                        stripText.Text = $"Filter saved";
+                    }
+                }
+
+            }
+        }
+
+
+        private void linkLabelLoad_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                FileInfo fileInfo = new FileInfo(openFileDialog1.FileName);
+
+                _filters.Clear();
+                using (FileStream fs = new FileStream(openFileDialog1.FileName, FileMode.Open))
+                {
+                    var ourFilters = (List<OverviewFilter>)Helper.DeserializeFilters<OverviewFilter>(fs);
+                    foreach (OverviewFilter item in ourFilters)
+                    {
+                        _filters.Add(item.PropName, item);
+                    }
+                    stripText.Text = $"{fileInfo.Name} loaded";
+                }
+
+                LoadGrid();
+            }
+
+        }
+
+        private void stripText_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

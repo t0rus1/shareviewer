@@ -322,6 +322,36 @@ namespace ShareViewer
             }
         }
 
+        internal static void SerializeFilterRecord(FileStream fs, OverviewFilter overviewFilter)
+        {
+            // Construct a BinaryFormatter and use it to serialize the data to the stream.
+            BinaryFormatter formatter = new BinaryFormatter();
+            try
+            {
+                formatter.Serialize(fs, overviewFilter);
+            }
+            catch (SerializationException e)
+            {
+                Helper.Log("Error", "Failed to serialize. Reason: " + e.Message);
+                throw;
+            }
+        }
+
+        internal static ICollection<OverviewFilter> DeserializeFilters<OverviewFilter>(FileStream fs)
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            List<OverviewFilter> list = new List<OverviewFilter>();
+            while (fs.Position != fs.Length)
+            {
+                //deserialize each object in the file
+                var deserialized = (OverviewFilter)bf.Deserialize(fs);
+                //add individual object to a list
+                list.Add(deserialized);
+            }
+            //return the list of objects
+            return list;
+        }
+
         //given a date, construct a file name like "YYYY_MM_DD.TXT"
         internal static string BuildDayDataFilename(DateTime date)
         {

@@ -13,6 +13,7 @@ namespace ShareViewer
         GreaterThan = 1
     }
 
+    [Serializable]
     public class OverviewFilter
     {
         public OverviewFilter(string propName, Comparison kind, string header)

@@ -1387,7 +1387,7 @@ namespace ShareViewer
 
         private void loadNamedOverviewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 //StreamReader sr = new StreamReader(openFileDialog1.FileName);
                 //MessageBox.Show(sr.ReadToEnd());

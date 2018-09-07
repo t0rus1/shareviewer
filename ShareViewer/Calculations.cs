@@ -692,6 +692,7 @@ Result:
             {
                 atRows[i].APSVac = 1;
             }
+
             // calculate SVFac
             for (int i = startRow; i <= endRow; i++)  // 2 -> 10401
             {
@@ -700,10 +701,10 @@ Result:
                 {
                     atRows[i].SVFac = atRows[i].SVa / denom;
                 }
-            }
+            //}
             // look for biggest SVFac
-            for (int i = startRow; i <= endRow; i++)
-            {
+            //for (int i = startRow; i <= endRow; i++)
+            //{
                 double biggest = BiggestPrecedingSVFac(ref atRows, i, svf.Z);
                 if (biggest > 1)
                 {
@@ -763,10 +764,9 @@ Result:
                 {
                     atRows[i].SVFbd = atRows[i].SVb / denom;
                 }
-            }
-
-            for (int i = startRow; i <= endRow; i++)
-            {
+            //}
+            //for (int i = startRow; i <= endRow; i++)
+            //{
                 double biggest = BiggestPrecedingSVFbd(ref atRows, i, svf.Z);
                 if (biggest > 1)
                 {

@@ -33,6 +33,9 @@
             this.tabControlMain = new System.Windows.Forms.TabControl();
             this.tabPageImportation = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.buttonBusyAllTables = new System.Windows.Forms.Button();
+            this.linkLabelAllowNew = new System.Windows.Forms.LinkLabel();
+            this.buttonNewAllTables = new System.Windows.Forms.Button();
             this.buttonAutoOps = new System.Windows.Forms.Button();
             this.linkLabelRepair = new System.Windows.Forms.LinkLabel();
             this.labelGenNewAllTables = new System.Windows.Forms.Label();
@@ -90,9 +93,6 @@
             this.toolTipShareList = new System.Windows.Forms.ToolTip(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
-            this.buttonNewAllTables = new System.Windows.Forms.Button();
-            this.linkLabelAllowNew = new System.Windows.Forms.LinkLabel();
-            this.buttonBusyAllTables = new System.Windows.Forms.Button();
             this.tabControlMain.SuspendLayout();
             this.tabPageImportation.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -117,7 +117,7 @@
             this.tabControlMain.Location = new System.Drawing.Point(0, 0);
             this.tabControlMain.Name = "tabControlMain";
             this.tabControlMain.SelectedIndex = 0;
-            this.tabControlMain.Size = new System.Drawing.Size(1008, 737);
+            this.tabControlMain.Size = new System.Drawing.Size(1008, 657);
             this.tabControlMain.TabIndex = 0;
             this.tabControlMain.SelectedIndexChanged += new System.EventHandler(this.tabControlMain_SelectedIndexChanged);
             this.tabControlMain.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControlMain_Selected);
@@ -130,7 +130,7 @@
             this.tabPageImportation.Location = new System.Drawing.Point(4, 22);
             this.tabPageImportation.Name = "tabPageImportation";
             this.tabPageImportation.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageImportation.Size = new System.Drawing.Size(1000, 711);
+            this.tabPageImportation.Size = new System.Drawing.Size(1000, 631);
             this.tabPageImportation.TabIndex = 0;
             this.tabPageImportation.Text = "Downloading & Filling";
             // 
@@ -155,11 +155,53 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(3, 218);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(994, 490);
+            this.panel2.Size = new System.Drawing.Size(994, 410);
             this.panel2.TabIndex = 4;
+            // 
+            // buttonBusyAllTables
+            // 
+            this.buttonBusyAllTables.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonBusyAllTables.Location = new System.Drawing.Point(415, 278);
+            this.buttonBusyAllTables.Name = "buttonBusyAllTables";
+            this.buttonBusyAllTables.Size = new System.Drawing.Size(169, 46);
+            this.buttonBusyAllTables.TabIndex = 27;
+            this.buttonBusyAllTables.Text = "Busy generating All-Tables... Click to Abort";
+            this.buttonBusyAllTables.UseVisualStyleBackColor = true;
+            this.buttonBusyAllTables.Visible = false;
+            this.buttonBusyAllTables.Click += new System.EventHandler(this.buttonBusyAllTables_Click);
+            // 
+            // linkLabelAllowNew
+            // 
+            this.linkLabelAllowNew.AutoSize = true;
+            this.linkLabelAllowNew.Location = new System.Drawing.Point(373, 188);
+            this.linkLabelAllowNew.Name = "linkLabelAllowNew";
+            this.linkLabelAllowNew.Size = new System.Drawing.Size(39, 13);
+            this.linkLabelAllowNew.TabIndex = 26;
+            this.linkLabelAllowNew.TabStop = true;
+            this.linkLabelAllowNew.Text = "unlock";
+            this.linkLabelAllowNew.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelAllowNew_LinkClicked);
+            // 
+            // buttonNewAllTables
+            // 
+            this.buttonNewAllTables.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonNewAllTables.Enabled = false;
+            this.buttonNewAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonNewAllTables.Image = ((System.Drawing.Image)(resources.GetObject("buttonNewAllTables.Image")));
+            this.buttonNewAllTables.Location = new System.Drawing.Point(373, 208);
+            this.buttonNewAllTables.Name = "buttonNewAllTables";
+            this.buttonNewAllTables.Size = new System.Drawing.Size(258, 46);
+            this.buttonNewAllTables.TabIndex = 25;
+            this.buttonNewAllTables.Text = "Create New All Tables";
+            this.buttonNewAllTables.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.buttonNewAllTables.UseVisualStyleBackColor = true;
+            this.buttonNewAllTables.Click += new System.EventHandler(this.OnMakeNewAllTables);
             // 
             // buttonAutoOps
             // 
+            this.buttonAutoOps.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAutoOps.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonAutoOps.Image = ((System.Drawing.Image)(resources.GetObject("buttonAutoOps.Image")));
             this.buttonAutoOps.Location = new System.Drawing.Point(373, 105);
@@ -173,9 +215,9 @@
             // 
             // linkLabelRepair
             // 
-            this.linkLabelRepair.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.linkLabelRepair.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabelRepair.AutoSize = true;
-            this.linkLabelRepair.Location = new System.Drawing.Point(474, 228);
+            this.linkLabelRepair.Location = new System.Drawing.Point(474, 188);
             this.linkLabelRepair.Name = "linkLabelRepair";
             this.linkLabelRepair.Size = new System.Drawing.Size(157, 13);
             this.linkLabelRepair.TabIndex = 23;
@@ -189,7 +231,7 @@
             this.labelGenNewAllTables.AutoSize = true;
             this.labelGenNewAllTables.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.labelGenNewAllTables.ForeColor = System.Drawing.Color.ForestGreen;
-            this.labelGenNewAllTables.Location = new System.Drawing.Point(299, 406);
+            this.labelGenNewAllTables.Location = new System.Drawing.Point(299, 326);
             this.labelGenNewAllTables.Name = "labelGenNewAllTables";
             this.labelGenNewAllTables.Size = new System.Drawing.Size(16, 13);
             this.labelGenNewAllTables.TabIndex = 17;
@@ -199,7 +241,7 @@
             // progressBarGenNewAllTables
             // 
             this.progressBarGenNewAllTables.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.progressBarGenNewAllTables.Location = new System.Drawing.Point(299, 419);
+            this.progressBarGenNewAllTables.Location = new System.Drawing.Point(299, 339);
             this.progressBarGenNewAllTables.Name = "progressBarGenNewAllTables";
             this.progressBarGenNewAllTables.Size = new System.Drawing.Size(419, 23);
             this.progressBarGenNewAllTables.TabIndex = 16;
@@ -219,7 +261,7 @@
             // 
             // buttonNewShareList
             // 
-            this.buttonNewShareList.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.buttonNewShareList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonNewShareList.Enabled = false;
             this.buttonNewShareList.FlatAppearance.BorderSize = 2;
             this.buttonNewShareList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -239,7 +281,7 @@
             this.buttonLogfile.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.buttonLogfile.Image = ((System.Drawing.Image)(resources.GetObject("buttonLogfile.Image")));
             this.buttonLogfile.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonLogfile.Location = new System.Drawing.Point(299, 442);
+            this.buttonLogfile.Location = new System.Drawing.Point(299, 362);
             this.buttonLogfile.Name = "buttonLogfile";
             this.buttonLogfile.Size = new System.Drawing.Size(419, 23);
             this.buttonLogfile.TabIndex = 12;
@@ -252,7 +294,7 @@
             this.buttonExplorer.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.buttonExplorer.Image = ((System.Drawing.Image)(resources.GetObject("buttonExplorer.Image")));
             this.buttonExplorer.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonExplorer.Location = new System.Drawing.Point(299, 465);
+            this.buttonExplorer.Location = new System.Drawing.Point(299, 385);
             this.buttonExplorer.Name = "buttonExplorer";
             this.buttonExplorer.Size = new System.Drawing.Size(419, 23);
             this.buttonExplorer.TabIndex = 13;
@@ -271,7 +313,6 @@
             // 
             // buttonDayDataDownload
             // 
-            this.buttonDayDataDownload.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.buttonDayDataDownload.Enabled = false;
             this.buttonDayDataDownload.FlatAppearance.BorderSize = 2;
             this.buttonDayDataDownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -296,7 +337,7 @@
             this.listBoxShareList.Location = new System.Drawing.Point(718, 0);
             this.listBoxShareList.Name = "listBoxShareList";
             this.listBoxShareList.ScrollAlwaysVisible = true;
-            this.listBoxShareList.Size = new System.Drawing.Size(274, 488);
+            this.listBoxShareList.Size = new System.Drawing.Size(274, 408);
             this.listBoxShareList.Sorted = true;
             this.listBoxShareList.TabIndex = 14;
             this.toolTipShareList.SetToolTip(this.listBoxShareList, "Double-Click for All-Table");
@@ -312,7 +353,7 @@
             this.listBoxInhalt.Name = "listBoxInhalt";
             this.listBoxInhalt.ScrollAlwaysVisible = true;
             this.listBoxInhalt.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
-            this.listBoxInhalt.Size = new System.Drawing.Size(299, 488);
+            this.listBoxInhalt.Size = new System.Drawing.Size(299, 408);
             this.listBoxInhalt.TabIndex = 9;
             this.listBoxInhalt.Click += new System.EventHandler(this.OnInhaltClicked);
             // 
@@ -804,7 +845,7 @@
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.stripText});
-            this.statusStrip.Location = new System.Drawing.Point(0, 739);
+            this.statusStrip.Location = new System.Drawing.Point(0, 659);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(1008, 22);
             this.statusStrip.TabIndex = 4;
@@ -815,48 +856,12 @@
             this.stripText.Size = new System.Drawing.Size(22, 17);
             this.stripText.Text = "Ok";
             // 
-            // buttonNewAllTables
-            // 
-            this.buttonNewAllTables.Enabled = false;
-            this.buttonNewAllTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonNewAllTables.Image = ((System.Drawing.Image)(resources.GetObject("buttonNewAllTables.Image")));
-            this.buttonNewAllTables.Location = new System.Drawing.Point(373, 251);
-            this.buttonNewAllTables.Name = "buttonNewAllTables";
-            this.buttonNewAllTables.Size = new System.Drawing.Size(258, 46);
-            this.buttonNewAllTables.TabIndex = 25;
-            this.buttonNewAllTables.Text = "Create New All Tables";
-            this.buttonNewAllTables.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-            this.buttonNewAllTables.UseVisualStyleBackColor = true;
-            this.buttonNewAllTables.Click += new System.EventHandler(this.OnMakeNewAllTables);
-            // 
-            // linkLabelAllowNew
-            // 
-            this.linkLabelAllowNew.AutoSize = true;
-            this.linkLabelAllowNew.Location = new System.Drawing.Point(373, 228);
-            this.linkLabelAllowNew.Name = "linkLabelAllowNew";
-            this.linkLabelAllowNew.Size = new System.Drawing.Size(39, 13);
-            this.linkLabelAllowNew.TabIndex = 26;
-            this.linkLabelAllowNew.TabStop = true;
-            this.linkLabelAllowNew.Text = "unlock";
-            this.linkLabelAllowNew.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelAllowNew_LinkClicked);
-            // 
-            // buttonBusyAllTables
-            // 
-            this.buttonBusyAllTables.Location = new System.Drawing.Point(415, 336);
-            this.buttonBusyAllTables.Name = "buttonBusyAllTables";
-            this.buttonBusyAllTables.Size = new System.Drawing.Size(169, 46);
-            this.buttonBusyAllTables.TabIndex = 27;
-            this.buttonBusyAllTables.Text = "Busy generating All-Tables... Click to Abort";
-            this.buttonBusyAllTables.UseVisualStyleBackColor = true;
-            this.buttonBusyAllTables.Visible = false;
-            this.buttonBusyAllTables.Click += new System.EventHandler(this.buttonBusyAllTables_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1008, 761);
+            this.ClientSize = new System.Drawing.Size(1008, 681);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.tabControlMain);
             this.MinimizeBox = false;
