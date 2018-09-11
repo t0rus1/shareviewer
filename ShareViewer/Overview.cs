@@ -45,6 +45,8 @@ namespace ShareViewer
         private double sumOfSumCols64_79trf;       //28. 84 The same as column 83, but when transfer it to the Overview, it is another treatment.
         private bool lazy;
         private int shareNumber;
+        private double bigLastDaySVFac; // requestd by Gunther 11 Sept 2019
+        private double bigLastDaySVFbd; // requestd by Gunther 11 Sept 2019
 
         [Hint("")]
         public bool Lazy { get => lazy; set => lazy = value; }
@@ -104,6 +106,11 @@ namespace ShareViewer
         public double SumOfSumCols64_79trf { get => sumOfSumCols64_79trf; set => sumOfSumCols64_79trf = value; }
         [Hint("")]
         public int ShareNumber { get => shareNumber; set => shareNumber = value; }
+        [Hint("")]
+        public double BigLastDaySVFac { get => bigLastDaySVFac; set => bigLastDaySVFac = value; }
+        [Hint("")]
+        public double BigLastDaySVFbd { get => bigLastDaySVFbd; set => bigLastDaySVFbd = value; }
+
 
 
         public static int NameToIndex(string colName)
@@ -139,6 +146,8 @@ namespace ShareViewer
                 case "SumOfSumCols64_79": return 26;
                 case "SumOfSumCols64_79trf": return 27;
                 case "ShareNumber": return 28;
+                case "BigLastDaySVFac": return 29;
+                case "BigLastDaySVFbd": return 30;
 
                 default: return -1;
             }
@@ -190,6 +199,8 @@ namespace ShareViewer
                 case "SumOfSumCols64_79": return "N1";          //26;
                 case "SumOfSumCols64_79trf": return "N1";       //27;
                 case "ShareNumber": return "N0";                //28;
+                case "BigLastDaySVFac": return "N4";            // 29
+                case "BigLastDaySVFbd": return "N4";            // 30
 
                 default: return "N3";
 

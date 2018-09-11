@@ -19,6 +19,26 @@ namespace ShareViewer
             return big;
         }
 
+        internal static double BiggestSVFac(AllTable[] bands, int rowFrom, int rowTo)
+        {
+            double big = double.MinValue;
+            for (int row = rowFrom; row < rowTo; row++)
+            {
+                if (bands[row].SVFac > big) big = bands[row].SVFac;
+            }
+            return big;
+        }
+
+        internal static double BiggestSVFbd(AllTable[] bands, int rowFrom, int rowTo)
+        {
+            double big = double.MinValue;
+            for (int row = rowFrom; row < rowTo; row++)
+            {
+                if (bands[row].SVFbd > big) big = bands[row].SVFbd;
+            }
+            return big;
+        }
+
         internal static double BiggestPGFinBlock(AllTable[] bands, int rowFrom, int rowTo)
         {
             double big = double.MinValue;
@@ -170,6 +190,8 @@ namespace ShareViewer
             //col 26: duplicate of col 20???
             //col 27: ask Gunther
             //col 28: ask Gunther
+            oview.BigLastDaySVFac = BiggestSVFac(atSegment, 10298, 10401);
+            oview.BigLastDaySVFbd = BiggestSVFbd(atSegment, 10298, 10401);
 
         }
 
@@ -225,6 +247,9 @@ namespace ShareViewer
             //col 26: duplicate of col 20???
             //col 27: ask Gunther
             //col 28: ask Gunther
+
+            oview.BigLastDaySVFac = atLast.SVFac;
+            oview.BigLastDaySVFbd = atLast.SVFbd;
 
         }
 
