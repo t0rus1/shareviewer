@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OverviewForm));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripText = new System.Windows.Forms.ToolStripStatusLabel();
             this.panelLeft = new System.Windows.Forms.Panel();
@@ -67,6 +67,8 @@
             this.dgOverview = new System.Windows.Forms.DataGridView();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.statusStrip.SuspendLayout();
             this.panelLeft.SuspendLayout();
             this.panelTop.SuspendLayout();
@@ -74,15 +76,20 @@
             this.statusStrip1.SuspendLayout();
             this.groupBoxParams.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgOverview)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // statusStrip
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.stripText});
-            this.statusStrip.Location = new System.Drawing.Point(0, 746);
+            this.statusStrip.Location = new System.Drawing.Point(0, 707);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(1157, 22);
+            this.statusStrip.Size = new System.Drawing.Size(1008, 22);
             this.statusStrip.TabIndex = 0;
             this.statusStrip.Text = "statusStrip";
             // 
@@ -94,15 +101,11 @@
             // 
             // panelLeft
             // 
-            this.panelLeft.Controls.Add(this.labelShareListName);
-            this.panelLeft.Controls.Add(this.linkLabelAllShares);
-            this.panelLeft.Controls.Add(this.linkLabelChooseSelecteds);
-            this.panelLeft.Controls.Add(this.listBoxSelecteds);
-            this.panelLeft.Controls.Add(this.listBoxCols);
+            this.panelLeft.Controls.Add(this.splitContainer1);
             this.panelLeft.Dock = System.Windows.Forms.DockStyle.Left;
             this.panelLeft.Location = new System.Drawing.Point(0, 0);
             this.panelLeft.Name = "panelLeft";
-            this.panelLeft.Size = new System.Drawing.Size(165, 746);
+            this.panelLeft.Size = new System.Drawing.Size(165, 707);
             this.panelLeft.TabIndex = 4;
             // 
             // labelShareListName
@@ -111,7 +114,7 @@
             this.labelShareListName.AutoSize = true;
             this.labelShareListName.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelShareListName.ForeColor = System.Drawing.Color.Green;
-            this.labelShareListName.Location = new System.Drawing.Point(1, 495);
+            this.labelShareListName.Location = new System.Drawing.Point(2, 23);
             this.labelShareListName.Name = "labelShareListName";
             this.labelShareListName.Size = new System.Drawing.Size(163, 17);
             this.labelShareListName.TabIndex = 8;
@@ -121,7 +124,7 @@
             // 
             this.linkLabelAllShares.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkLabelAllShares.AutoSize = true;
-            this.linkLabelAllShares.Location = new System.Drawing.Point(110, 478);
+            this.linkLabelAllShares.Location = new System.Drawing.Point(108, 4);
             this.linkLabelAllShares.Name = "linkLabelAllShares";
             this.linkLabelAllShares.Size = new System.Drawing.Size(54, 13);
             this.linkLabelAllShares.TabIndex = 7;
@@ -133,7 +136,7 @@
             // 
             this.linkLabelChooseSelecteds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkLabelChooseSelecteds.AutoSize = true;
-            this.linkLabelChooseSelecteds.Location = new System.Drawing.Point(1, 478);
+            this.linkLabelChooseSelecteds.Location = new System.Drawing.Point(1, 4);
             this.linkLabelChooseSelecteds.Name = "linkLabelChooseSelecteds";
             this.linkLabelChooseSelecteds.Size = new System.Drawing.Size(99, 13);
             this.linkLabelChooseSelecteds.TabIndex = 6;
@@ -143,24 +146,24 @@
             // 
             // listBoxSelecteds
             // 
-            this.listBoxSelecteds.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.listBoxSelecteds.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBoxSelecteds.FormattingEnabled = true;
-            this.listBoxSelecteds.Location = new System.Drawing.Point(0, 521);
+            this.listBoxSelecteds.Location = new System.Drawing.Point(0, 48);
             this.listBoxSelecteds.Name = "listBoxSelecteds";
             this.listBoxSelecteds.ScrollAlwaysVisible = true;
             this.listBoxSelecteds.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.listBoxSelecteds.Size = new System.Drawing.Size(165, 225);
+            this.listBoxSelecteds.Size = new System.Drawing.Size(165, 293);
             this.listBoxSelecteds.TabIndex = 5;
             // 
             // listBoxCols
             // 
-            this.listBoxCols.Dock = System.Windows.Forms.DockStyle.Top;
+            this.listBoxCols.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBoxCols.FormattingEnabled = true;
             this.listBoxCols.Location = new System.Drawing.Point(0, 0);
             this.listBoxCols.Name = "listBoxCols";
             this.listBoxCols.ScrollAlwaysVisible = true;
             this.listBoxCols.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
-            this.listBoxCols.Size = new System.Drawing.Size(165, 472);
+            this.listBoxCols.Size = new System.Drawing.Size(165, 360);
             this.listBoxCols.TabIndex = 4;
             this.listBoxCols.SelectedIndexChanged += new System.EventHandler(this.listBoxCols_SelectedIndexChanged);
             // 
@@ -179,7 +182,7 @@
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(165, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(992, 211);
+            this.panelTop.Size = new System.Drawing.Size(843, 211);
             this.panelTop.TabIndex = 5;
             // 
             // label3
@@ -239,7 +242,7 @@
             this.groupBoxCalculations.Controls.Add(this.listBoxVariables);
             this.groupBoxCalculations.Location = new System.Drawing.Point(246, 1);
             this.groupBoxCalculations.Name = "groupBoxCalculations";
-            this.groupBoxCalculations.Size = new System.Drawing.Size(743, 208);
+            this.groupBoxCalculations.Size = new System.Drawing.Size(594, 208);
             this.groupBoxCalculations.TabIndex = 22;
             this.groupBoxCalculations.TabStop = false;
             this.groupBoxCalculations.Text = "Calculations";
@@ -248,7 +251,7 @@
             // 
             this.linkLabelLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabelLoad.AutoSize = true;
-            this.linkLabelLoad.Location = new System.Drawing.Point(645, 161);
+            this.linkLabelLoad.Location = new System.Drawing.Point(496, 161);
             this.linkLabelLoad.Name = "linkLabelLoad";
             this.linkLabelLoad.Size = new System.Drawing.Size(75, 13);
             this.linkLabelLoad.TabIndex = 18;
@@ -263,7 +266,7 @@
             this.buttonCalcAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCalcAll.Image = ((System.Drawing.Image)(resources.GetObject("buttonCalcAll.Image")));
             this.buttonCalcAll.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.buttonCalcAll.Location = new System.Drawing.Point(620, 12);
+            this.buttonCalcAll.Location = new System.Drawing.Point(471, 12);
             this.buttonCalcAll.Name = "buttonCalcAll";
             this.buttonCalcAll.Size = new System.Drawing.Size(117, 65);
             this.buttonCalcAll.TabIndex = 17;
@@ -279,7 +282,7 @@
             // 
             this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonSave.Location = new System.Drawing.Point(643, 128);
+            this.buttonSave.Location = new System.Drawing.Point(494, 128);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(76, 28);
             this.buttonSave.TabIndex = 16;
@@ -298,7 +301,7 @@
             this.toolStripCalcs});
             this.statusStrip1.Location = new System.Drawing.Point(3, 181);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(737, 24);
+            this.statusStrip1.Size = new System.Drawing.Size(588, 24);
             this.statusStrip1.TabIndex = 15;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -365,7 +368,7 @@
             this.groupBoxParams.Controls.Add(this.propertyGrid1);
             this.groupBoxParams.Location = new System.Drawing.Point(240, 1);
             this.groupBoxParams.Name = "groupBoxParams";
-            this.groupBoxParams.Size = new System.Drawing.Size(374, 180);
+            this.groupBoxParams.Size = new System.Drawing.Size(225, 180);
             this.groupBoxParams.TabIndex = 13;
             this.groupBoxParams.TabStop = false;
             // 
@@ -380,7 +383,7 @@
             // listBoxVariables
             // 
             this.listBoxVariables.FormattingEnabled = true;
-            this.listBoxVariables.Location = new System.Drawing.Point(13, 15);
+            this.listBoxVariables.Location = new System.Drawing.Point(16, 13);
             this.listBoxVariables.Name = "listBoxVariables";
             this.listBoxVariables.Size = new System.Drawing.Size(207, 160);
             this.listBoxVariables.TabIndex = 11;
@@ -449,18 +452,18 @@
             // dgOverview
             // 
             this.dgOverview.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgOverview.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgOverview.DefaultCellStyle = dataGridViewCellStyle1;
             this.dgOverview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgOverview.Location = new System.Drawing.Point(165, 211);
             this.dgOverview.Name = "dgOverview";
-            this.dgOverview.Size = new System.Drawing.Size(992, 535);
+            this.dgOverview.Size = new System.Drawing.Size(843, 496);
             this.dgOverview.TabIndex = 6;
             this.dgOverview.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgOverview_ColumnHeaderMouseClick);
             this.dgOverview.RowHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgOverview_RowHeaderMouseClick);
@@ -475,11 +478,44 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.BackColor = System.Drawing.SystemColors.Control;
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.listBoxCols);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.listBoxSelecteds);
+            this.splitContainer1.Panel2.Controls.Add(this.panel1);
+            this.splitContainer1.Size = new System.Drawing.Size(165, 707);
+            this.splitContainer1.SplitterDistance = 360;
+            this.splitContainer1.SplitterIncrement = 2;
+            this.splitContainer1.SplitterWidth = 6;
+            this.splitContainer1.TabIndex = 0;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.labelShareListName);
+            this.panel1.Controls.Add(this.linkLabelChooseSelecteds);
+            this.panel1.Controls.Add(this.linkLabelAllShares);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(165, 48);
+            this.panel1.TabIndex = 0;
+            // 
             // OverviewForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1157, 768);
+            this.ClientSize = new System.Drawing.Size(1008, 729);
             this.Controls.Add(this.dgOverview);
             this.Controls.Add(this.panelTop);
             this.Controls.Add(this.panelLeft);
@@ -491,7 +527,6 @@
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.panelLeft.ResumeLayout(false);
-            this.panelLeft.PerformLayout();
             this.panelTop.ResumeLayout(false);
             this.panelTop.PerformLayout();
             this.groupBoxCalculations.ResumeLayout(false);
@@ -500,6 +535,12 @@
             this.statusStrip1.PerformLayout();
             this.groupBoxParams.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgOverview)).EndInit();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -543,5 +584,7 @@
         private System.Windows.Forms.Label labelShareListName;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemSaveNewShareList;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.Panel panel1;
     }
 }

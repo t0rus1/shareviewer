@@ -1293,6 +1293,28 @@ namespace ShareViewer
                         foreach (Overview ov in sharesOverview.OrderByDescending(x => x.ShareNumber)) dgViewBindingSource.Add(ov);
                     }
                     break;
+                case "BigLastDaySVFac":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.BigLastDaySVFac)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.BigLastDaySVFac)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
+                case "BigLastDaySVFbd":
+                    dgViewBindingSource.Clear();
+                    if (GoAscending)
+                    {
+                        foreach (Overview ov in sharesOverview.OrderBy(x => x.BigLastDaySVFbd)) dgViewBindingSource.Add(ov);
+                    }
+                    else
+                    {
+                        foreach (Overview ov in sharesOverview.OrderByDescending(x => x.BigLastDaySVFbd)) dgViewBindingSource.Add(ov);
+                    }
+                    break;
 
                 default:
                     sortHandled = false;
