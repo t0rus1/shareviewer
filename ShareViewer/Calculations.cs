@@ -685,10 +685,6 @@ Result:
                 {
                     atRows[i].SVFac = atRows[i].SVa / denom;
                 }
-            //}
-            // look for biggest SVFac
-            //for (int i = startRow; i <= endRow; i++)
-            //{
                 double biggest = BiggestPrecedingSVFac(ref atRows, i, svf.Z);
                 if (biggest > 1)
                 {
@@ -748,22 +744,24 @@ Result:
                 {
                     atRows[i].SVFbd = atRows[i].SVb / denom;
                 }
-            //}
-            //for (int i = startRow; i <= endRow; i++)
-            //{
                 double biggest = BiggestPrecedingSVFbd(ref atRows, i, svf.Z);
                 if (biggest > 1)
                 {
                     atRows[i].APSVbd *= (1 + svf.Y);
+                    //also onwards to last row
+                    for (int j = i + 1; j <= endRow; j++)
+                    {
+                        atRows[j].APSVbd *= (1 + svf.Y);
+                    }
                 }
                 else
                 {
                     atRows[i].APSVbd *= (1 - svf.Y);
-                }
-                //also carry this value onwards to last row
-                for (int j = i + 1; j <= endRow; j++)
-                {
-                    atRows[j].APSVbd = atRows[i].APSVbd;
+                    //also onwards to last row
+                    for (int j = i + 1; j <= endRow; j++)
+                    {
+                        atRows[j].APSVbd *= (1 - svf.Y);
+                    }
                 }
                 // add to PtsVol
                 if (biggest > svf.W)
